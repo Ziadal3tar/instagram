@@ -1,0 +1,190 @@
+<section id="display-explore" *ngIf="open">
+  <i style="z-index: 9;"
+    class="bi bi-x-lg position-absolute top-0 end-0 m-3 cursorPointer fw-bolder px-5 pt-3 fs-5 d-md-block d-none"
+    (click)="closeEX()"></i>
+  <div class="d-block row d-md-none p-2 bg-black d-flex position-relative">
+    <i (click)="closeEX()" class="bi bi-arrow-left text-start position-absolute start-0 ms-3 cursorPointer"></i>
+    <p class=" text-center">EXPLORE</p>
+  </div>
+  <app-display-explore id="display-explore1" (open)="open = $event " [exploreData]="exploreData"></app-display-explore>
+</section>
+
+<section class=" row m-0">
+  <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed" id="myTab" role="tablist">
+    <div class="logo">
+      <p class=" p-3">Instagram</p>
+      <i class="bi bi-instagram"></i>
+    </div>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
+        role="tab" aria-controls="home-tab-pane" aria-selected="true"><i class="bi bi-house-door"></i>
+        <p class="par">Home</p>
+      </button>
+    </li>
+    <div class="">
+      <button class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('search')"><i
+          class="bi bi-search"></i>
+        <p class="par">Search</p>
+      </button>
+      <div id="search" class="transition  rounded-3 text-white mx-3 p-3 " [ngClass]=" closeSearch?'close':'open'">
+        <app-search (close)="closeTap($event,'search')"></app-search>
+      </div>
+    </div>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation">
+      <button class="nav-link " id="Explore-tab" data-bs-toggle="tab" data-bs-target="#Explore-tab-pane" type="button"
+        role="tab" aria-controls="Explore-tab-pane" aria-selected="false"><i class="bi bi-compass"></i>
+        <p class="par">Explore</p>
+      </button>
+    </li>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation">
+      <button class="nav-link " id="Reels-tab" data-bs-toggle="tab" data-bs-target="#Reels-tab-pane" type="button"
+        role="tab" aria-controls="Reels-tab-pane" aria-selected="true"><i class="bi bi-fast-forward-btn"></i>
+        <p class="par">Reels</p>
+      </button>
+    </li>
+    <div class="" role="presentation">
+      <button id="Message-tab" data-bs-toggle="tab" data-bs-target="#Message-tab-pane" type="button" role="tab"
+        aria-controls="Message-tab-pane" aria-selected="true"
+        class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('message')"><i
+          class="bi bi-chat"></i>
+        <p class="par">Message</p>
+      </button>
+      <div id="message" class="transition rounded-3 text-white mx-3 p-3" [ngClass]=" closeMessage?'close':'open'">
+        <app-message (close)="closeTap($event,'message')"></app-message>
+      </div>
+    </div>
+    <div class="">
+      <button class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('Notification')"><i
+          class="bi bi-bell"></i>
+        <p class="par">Notification</p>
+      </button>
+      <div id="Notification" class="transition rounded-3 text-white mx-3 p-3"
+        [ngClass]=" closeNotification?'close':'open'">
+        <app-notification (close)="closeTap($event,'notification')"></app-notification>
+      </div>
+    </div>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation">
+      <button class="nav-link d-flex align-items-center justify-content-center" id="Create-tab" data-bs-toggle="tab"
+        data-bs-target="#Create-tab-pane" type="button" role="tab" aria-controls="Create-tab-pane"
+        aria-selected="true"><i class="bi bi-plus-circle"></i>
+        <p class="par">Create</p>
+      </button>
+    </li>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation">
+      <button class="nav-link d-flex" id="Profile-tab" data-bs-toggle="tab" data-bs-target="#Profile-tab-pane"
+        type="button" role="tab" aria-controls="Profile-tab-pane" aria-selected="false">
+        <div class="profileImg"></div>
+        <p class="par">Profile</p>
+      </button>
+    </li>
+    <div class="dropdown-center" style="margin-top: 64px;">
+      <button class="nav-link d-flex align-items-center" id="Create-tab" type="button" data-bs-toggle="dropdown"
+        aria-expanded="false" role="tab" aria-controls="Create-tab-pane" aria-selected="true"><i
+          class="bi bi-three-dots-vertical"></i>
+        <div class="par">More</div>
+      </button>
+      <ul class="dropdown-menu rounded-3 mx-3 p-3">
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#"><i
+              class="bi bi-gear me-2"></i> Setting</a></li>
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#"><i
+              class="bi bi-file-image me-2"></i> Your activity</a></li>
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#"><i
+              class="bi bi-save me-2"></i> Saved</a></li>
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#"><i
+              class="bi bi-moon me-2"></i> Switch appearance</a></li>
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#"><i
+              class="bi bi-exclamation-diamond me-2"></i> Report a problem</a></li>
+        <span>
+          <hr class="text-white">
+        </span>
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Switch accounts</a></li>
+        <span>
+          <hr class="text-white">
+        </span>
+
+        <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Log out</a></li>
+      </ul>
+    </div>
+  </ul>
+
+
+  <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed " id="myTab2" role="tablist">
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation" (click)="chat.chat = []">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
+        role="tab" aria-controls="home-tab-pane" aria-selected="true"><i class="bi bi-house-door"></i>
+        <p class="par">Home</p>
+      </button>
+    </li>
+    <li (click)="chat.chat = []">
+      <button class="nav-link d-flex align-items-center position-relative" id="Explore-tab" data-bs-toggle="tab" data-bs-target="#Explore-tab-pane" type="button"
+      role="tab" aria-controls="Explore-tab-pane" aria-selected="false"><i
+          class="bi bi-search"></i>
+        <p class="par">Search</p>
+      </button>
+    </li>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation" (click)="chat.chat = []">
+      <button class="nav-link " id="Reels-tab" data-bs-toggle="tab" data-bs-target="#Reels-tab-pane" type="button"
+        role="tab" aria-controls="Reels-tab-pane" aria-selected="true"><i class="bi bi-fast-forward-btn"></i>
+        <p class="par">Reels</p>
+      </button>
+    </li>
+    <li class="" role="presentation" (click)="chat.chat = []">
+      <button id="Message-tab" data-bs-toggle="tab" data-bs-target="#Message-tab-pane" type="button" role="tab"
+        aria-controls="Message-tab-pane" aria-selected="true"
+        class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('message')"><i
+          class="bi bi-chat"></i>
+        <p class="par">Message</p>
+      </button>
+    </li>
+    <li class="nav-item" (click)="closeAllTaps()" role="presentation" (click)="chat.chat = []">
+      <button class="nav-link d-flex" id="Profile-tab" data-bs-toggle="tab" data-bs-target="#Profile-tab-pane"
+        type="button" role="tab" aria-controls="Profile-tab-pane" aria-selected="false">
+        <div class="profileImg"></div>
+        <p class="par">Profile</p>
+      </button>
+    </li>
+  </ul>
+
+  <div class="w-100 position-fixed top-0 bg-black row m-0 p-2 topNav ">
+    <div class="logo col-9">
+      <p class="p-0 m-0">Instagram</p>
+    </div>
+    <div class="col-3 d-flex align-items-center justify-content-between">
+      <i class="fs-3 bi bi-plus-circle" (click)="chat.chat = []"></i>
+      <i  (click)="openSidePage('Notification')" class="fs-3 bi bi-heart" (click)="chat.chat = []"></i>
+    </div>
+  </div>
+
+  <div class="tab-content col-md-10 col-12 offset-0 offset-md-2" id="myTabContent">
+    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+      <app-home></app-home>
+    </div>
+    <div class="tab-pane fade " id="Explore-tab-pane" role="tabpanel" aria-labelledby="Explore-tab"
+      tabindex="0">
+      <app-explore id="app-explore" (EXPLORE)="ExploreData($event)" (SEARCH)="closeTap(false,'search')"></app-explore>
+    </div>
+    <div class="tab-pane fade " id="Reels-tab-pane" role="tabpanel" aria-labelledby="Reels-tab" tabindex="0">
+      <app-reels #reels></app-reels>
+    </div>
+    <div class="tab-pane fade " id="Message-tab-pane" role="tabpanel" aria-labelledby="Message-tab" tabindex="0">
+      <app-chat #chat></app-chat>
+    </div>
+    <div class="tab-pane fade " id="Create-tab-pane" role="tabpanel" aria-labelledby="Create-tab" tabindex="0">
+      <app-create></app-create>
+    </div>
+    <div class="tab-pane fade" id="Profile-tab-pane" role="tabpanel" aria-labelledby="Profile-tab" tabindex="0">
+      <app-profile></app-profile>
+    </div>
+  </div>
+</section>
+
+<div id="search" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 p-5"  [ngClass]=" closeSearch?'close':'open'">
+  <app-search (close)="closeTap($event,'search')"></app-search>
+</div>
+<div id="Notification" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 p-5"
+[ngClass]=" closeNotification?'close':'open'">
+<app-notification (close)="closeTap($event,'notification')"></app-notification>
+</div>
+<div id="message" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 p-5" [ngClass]=" closeMessage?'close':'open'">
+  <app-message (closeChats)="closeAllTaps()" (close)="closeTap($event,'message')"></app-message>
+</div>

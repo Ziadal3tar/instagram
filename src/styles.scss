@@ -1,0 +1,82 @@
+// @import "primeng/resources/themes/lara-light-blue/theme.css";
+// @import "primeng/resources/primeng.css";
+// @import "primeicons/primeicons.css";
+@import 'animate.css';
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Satisfy&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background-color: #000000;
+  font-size: 17px;
+  background-attachment: fixed;
+  font-family: 'Raleway', sans-serif;
+  scroll-behavior: smooth;
+  color: rgb(255, 255, 255);
+
+}
+.logo {
+  p{
+    font-family: Satisfy;
+    font-size: 27px;
+    margin-bottom: 20px;
+  }}
+p,h1,h2,h3,h4,h5,h6{
+color: rgb(255, 255, 255);
+margin: 0;
+}
+
+.transition{
+  transition: .5s;
+}
+.cursorPointer{
+  cursor: pointer !important;
+}
+input{
+  outline: none;
+
+}
+.fs-7{
+font-size: 12px;
+}
+.fadeIn {
+  display: inline-block;
+  margin: 0 0.5rem;
+
+  animation: fadeIn; /* referring directly to the animation's @keyframe declaration */
+  animation-duration: 0.5s; /* don't forget to set a duration! */
+}
+
+.scrollStyle {
+  overflow-y: scroll;
+}
+
+.scrollStyle::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+
+}
+
+
+.centerCenter{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.centerBetween{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.centerEvenly{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.ws-nw{
+  white-space: nowrap;
+}

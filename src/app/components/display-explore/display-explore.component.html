@@ -1,0 +1,149 @@
+<section id="explore" class="row m-0">
+  <div class="owner p-3 d-md-none  justify-content-between d-flex align-items-center ">
+
+    <div class="userDetails d-flex align-items-center ">
+
+      <div class="userImg me-2" >
+        <div class="borderImg bg-danger rounded-5  ">
+          <div class="img "  (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+        </div>
+      </div>
+      <div class="userData">
+        <h6 class="userName">ahmedali458 <span class="follow text-primary cursorPointer"> <i
+              class=" bi bi-dot"></i>Follow</span></h6>
+      </div>
+
+    </div>
+
+    <app-dropdown-btn></app-dropdown-btn>
+  </div>
+
+  <div class="col-md-6 col-12 img p-0">
+    <img *ngIf="exploreData?.type == 'image'" src="{{exploreData.src}}" alt="" srcset="">
+
+    <video controls autoplay *ngIf="exploreData?.type == 'video'">
+      <source src="{{exploreData.src}}" type="video/mp4">
+    </video>
+
+
+  </div>
+
+ <div class="functions d-block d-md-none p-3">
+        <div class="justify-content-between d-flex align-items-center w-100 py-1">
+
+          <div>
+            <i class="bi bi-heart me-2 cursorPointer"></i>
+            <i class="bi bi-chat mx-2 cursorPointer"></i>
+            <i class="bi bi-send mx-2 cursorPointer"></i>
+
+          </div>
+          <i class="bi bi-save cursorPointer"></i>
+
+
+        </div>
+        <div>
+          <p>306 likes</p>
+          <p class="fs-7 opacity-50">3 DAYS AGO</p>
+        </div>
+      </div>
+      <hr class="d-block d-md-none">
+
+  <div class="col-md-6 col-12 position-relative p-0 py-3 half2">
+    <div id="details" class=" position-relative">
+      <div class="owner px-3 justify-content-between d-md-flex d-none align-items-center ">
+
+        <div class="userDetails d-flex align-items-center ">
+
+          <div class="userImg me-2" >
+            <div class="borderImg bg-danger rounded-5  ">
+              <div class="img "  (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+            </div>
+          </div>
+          <div class="userData">
+            <h6 class="userName">ahmedali458 <span class="follow text-primary cursorPointer"> <i
+                  class=" bi bi-dot"></i>Follow</span></h6>
+          </div>
+
+        </div>
+
+        <app-dropdown-btn></app-dropdown-btn>
+      </div>
+      <hr class="d-none d-md-block">
+      <div class="comments px-3">
+        <div class=" w-100 h-100 scrollStyle ">
+          <div class="postInfo d-flex">
+            <div class="userDetails d-flex align-items-start ">
+
+              <div class="userImg me-2">
+                <div class="borderImg  rounded-5  ">
+                  <div class="img"></div>
+                </div>
+              </div>
+              <div class="userData pt-2">
+                <h6 class="userName fw-bolder">ahmedali458: <span class="fw-normal">Lorem ipsum dolor sit, amet
+                    consectetur adipisicing elit. Debitis obcaecati amet voluptatem repellendus maxime hic doloremque
+                    harum esse excepturi quos, in aspernatur consequuntur illo commodi ipsa, natus quasi! Libero,
+                    dolore. Similique molestiae nemo blanditiis placeat accusamus dignissimos mollitia, dolore ipsam,
+                    odit, neque possimus iure temporibus quos enim alias iste quas quibusdam dolorem! Nostrum, facilis.
+                    Eligendi quos nemo id quia? Non deleniti ipsam omnis itaque atque eos illum qui, deserunt dolorem.
+                    <br>
+                    <h6 class="fs-7 my-2 opacity-75">3d</h6>
+                  </span> </h6>
+              </div>
+
+            </div>
+          </div>
+          <div class="postComments mt-2">
+            <div class="userDetails d-flex align-items-start " *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
+              <div class="userImg me-2">
+                <div class="borderImg  rounded-5  ">
+                  <div class="img"  (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+                </div>
+              </div>
+              <div class="userData pt-2">
+                <h6 class="userName fw-bolder">ahmedali458: <span class="fw-normal">Lorem ipsum dolor sit, amet
+                    <br>
+                    <div class=" d-flex">
+                      <h6  class="fs-7 my-2 opacity-75">3d</h6>
+                      <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
+                    </div>
+                  </span> </h6>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="functions px-3">
+        <div class="justify-content-between d-flex align-items-center w-100 py-1">
+
+          <div>
+            <i class="bi bi-heart me-2 cursorPointer"></i>
+            <i class="bi bi-chat mx-2 cursorPointer"></i>
+            <i class="bi bi-send mx-2 cursorPointer"></i>
+
+          </div>
+          <i class="bi bi-save cursorPointer"></i>
+
+
+        </div>
+        <div>
+          <p>306 likes</p>
+          <p class="fs-7 opacity-50">3 DAYS AGO</p>
+        </div>
+      </div>
+      <hr>
+      <div class="addComment px-3 justify-content-between d-flex align-items-center">
+        <i class="bi bi-emoji-smile"></i>
+
+        <input type="text" class=" border-0 bg-black text-white w-100 px-3" placeholder="Add a comment...">
+        <p class="fs-7 cursorPointer">Post</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="dataWhenHover" style="z-index: 9 !important;" class="fadeIn bg-danger  " *ngIf="showDiv" (mouseleave)="showDiv = false"
+  [style.position]="'fixed'" [style.top]="divTop" [style.left]="divLeft">
+  <app-hoverdata [data]="data"></app-hoverdata>
+</div>

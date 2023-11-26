@@ -1,0 +1,30 @@
+.first {
+  width: 30%;
+  height: 75vh;
+  border: solid 0.1px;
+  border-radius: 10px;
+  background-color: rgb(0, 0, 0);
+  transition: 0.5s;
+  filter: blur(5px);
+  &:hover {
+    filter: blur(0px);
+  }
+  >div {
+
+    font-size: 55px;
+    i{
+    }
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    filter: blur(5px);
+    height: 25vh;
+    transition: 0.5s;
+    &:hover {
+      filter: blur(0px);
+    }
+  }
+}

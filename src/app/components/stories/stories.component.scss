@@ -1,0 +1,104 @@
+
+#stories {
+ .story{
+    background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+
+  }
+  .top {
+    height: 12.5%;
+    .userData{
+      .img {
+        width: 35px;
+        height: 35px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        display: flex;
+        background-position: center;
+        background-image: url(../../../assets/imgs/marie.jpg);
+    border-radius: 25px;
+
+      }
+      p{
+        font-size: 15px;
+      }
+    }
+    .line {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 1.5px; /* Adjust the height of the line as needed */
+      background-color: rgb(157, 157, 157); /* Adjust the color of the line as needed */
+      position: relative;
+    }
+
+    .division {
+      flex: 1;
+      height: 100%;
+      border-right: 2px solid #fd1d1d; /* Adjust the color of the divisions as needed */
+      position: relative;
+    }
+
+    .division:last-child {
+      border-right: none; /* Remove the border on the last division to avoid extra lines */
+    }
+
+    .active{
+      background-color: white;
+    }
+    .inLoad::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      background-color: white; /* Adjust the color as needed */
+      animation: fillAnimation calc(var(--time)*1s) forwards; /* Adjust the animation duration as needed */
+    }
+
+    @keyframes fillAnimation {
+      0% {
+        // width: calc(var(--counter)*20%);
+        width: 0;
+      }
+      100% {
+        width: 100%;
+        // width: calc(var(--counter)*20%);
+
+      }
+    }
+  }
+  .img{
+    height: 75%;
+    max-width: 100%;
+    max-height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img,
+    video {
+
+      max-height: 100%;
+      max-width: 100%;
+      min-width: 75%;
+      width: auto;
+      height: auto;
+      margin: 0;
+    }
+  }
+  .bot{
+    height: 12.5%;
+    input{
+      border: solid rgb(255, 255, 255) 1px;
+      font-size: 14px;
+
+    }
+    ::placeholder {
+      color: rgb(255, 255, 255); /* Change the color as needed */
+    }
+
+
+  }
+}

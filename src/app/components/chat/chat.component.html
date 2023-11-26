@@ -1,0 +1,85 @@
+<section *ngIf="chat.length ==0" class="row vh-100 noChat">
+  <div class="col-md-10 col-12 offset-0 offset-md-2 d-flex align-items-center justify-content-center">
+    <div class="d-flex align-items-center justify-content-between flex-column">
+      <div class="icone"><i class="bi bi-messenger"></i></div>
+      <h5>Your messages</h5>
+      <p class="fs-7 opacity-50">Send private photos and messages to a friend or group</p>
+      <button class=" btn btn-primary" (click)="search = true">Send message</button>
+    </div>
+  </div>
+</section>
+<section *ngIf="chat.length !=0" class=" row vh-100 chat">
+  <div style="z-index: 1;" class="col-md-10 col-12 offset-0 offset-md-2 py-md-0 pb-5 border-start flex-column bg-black">
+    <div class="details row m-0 centerBetween">
+      <div class="align-items-center d-flex justify-content-start col-md-3 col-7">
+        <div class="img mx-3">
+          <img src="{{friend.image}}" alt="">
+        </div>
+        <p class="ws-nw">{{friend.name}}</p>
+      </div>
+      <div class="col-md-2 col-5 centerEvenly">
+        <i class="bi bi-telephone fs-4"></i>
+        <i class="bi bi-camera-video fs-4"></i>
+        <i class="bi bi-info-circle fs-4"></i>
+      </div>
+    </div>
+    <div class="messages " >
+      <div #chatContainer class="w-100 h-100 p-3 position-relative scrollStyle ">
+        <div class="message" *ngFor="let item of chat let i = index"
+          [ngClass]="{'sent': item.id ==1,'received': item.id !=1}">
+          <p
+            [ngClass]="{'borderMid':chat[i-1]?.id == chat[i]?.id && chat[i+1]?.id == item.id,'borderTop':chat[i-1]?.id != chat[i]?.id && chat[i+1]?.id == item.id,'borderBot':chat[i-1]?.id == chat[i]?.id && chat[i+1]?.id != item.id,'cc':chat[i-1]?.id == chat[i]?.id}">
+            {{item.text}}<br><span>{{item.time}}</span></p>
+        </div>
+
+      </div>
+    </div>
+    <div class="send p-3 centerCenter ">
+      <div class=" w-100 h-100 position-relative centerBetween">
+        <input type="text" (keyup.enter)="send()" [(ngModel)]="message" class=" w-100 bg-transparent rounded-5 p-2 text-white ps-5" placeholder="Message...">
+        <i class="bi bi-emoji-sunglasses position-absolute ms-3 my-auto fs-5 cursorPointer"></i>
+        <div class="position-absolute end-0 me-3 my-auto">
+          <i class="fs-5 mx-2 cursorPointer bi bi-mic"></i>
+          <i class="fs-5 mx-2 cursorPointer bi bi-image"></i>
+          <i class="fs-5 mx-2 cursorPointer bi bi-heart"></i>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<section class="search position-absolute " *ngIf="search">
+  <div class="position-relative w-100  p-3">
+    <p class=" text-center fw-bolder">New message</p>
+    <i class=" bi bi-x-lg position-absolute end-0 top-0 m-3 cursorPointer" (click)="search = false"></i>
+  </div>
+  <hr class=" mt-0">
+  <div class="position-relative d-flex px-3">
+    <p>To:</p><input [(ngModel)]="researched" type="text" class="w-100 bg-transparent border-0 text-white ps-3"
+      placeholder="Search...">
+  </div>
+  <hr>
+
+
+  <div class="researched scrollStyle ">
+    <p class="fs-7 opacity-75 ps-3" *ngIf="!researched">No account found.</p>
+    <ng-container *ngIf="researched">
+      <div *ngFor="let item of [1,2,3,45,6,58] let i = index"
+        class="userSearched d-flex align-items-center justify-content-between px-3 py-1 my-2 cursorPointer ">
+        <div class="d-flex align-items-center">
+          <div class="img me-3">
+            <img src="../../../assets/imgs/mosalah.jpg" alt="">
+          </div>
+          <div>
+            <h6 class="">Ahmed ali</h6>
+            <h6 class="opacity-75">ahmedali</h6>
+          </div>
+        </div>
+        <input type="checkbox" class="" name="" id="">
+      </div>
+    </ng-container>
+
+  </div>
+</section>

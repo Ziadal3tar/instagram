@@ -1,0 +1,37 @@
+<section id="stories" class="row m-0 w-100 h-100 py-3 d-flex align-items-center justify-content-center">
+  <div class=" col-3 h-100 story  rounded-4">
+    <div class="top py-2">
+      <div class="line ">
+        <!-- *ngFor="let item of storyData let i = index" [ngClass]="{'fill': i == 1,'lineBorder': i !=storyData.length}" -->
+        <!-- <div class="division lineBorder "></div>
+        <div *ngFor="let item of storyData let i = index" class="division lineBorder "></div> -->
+        <div *ngFor="let item of storyData let i = index" [ngClass]="{'active': i<imgId,'inLoad': i==imgId}" class="division " ></div>
+
+      </div>
+      <div class="row m-0 d-flex align-items-center py-3">
+        <div class="userData col-8 d-flex align-items-center">
+          <div class="img"></div>
+          <p class="ms-2">folana ali</p>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-between">
+          <i class="bi bi-stop-circle fs-5 cursorPointer"></i>
+          <i class="bi bi-volume-mute fs-5 cursorPointer"></i>
+          <app-dropdown-btn></app-dropdown-btn>
+        </div>
+      </div>
+    </div>
+    <div class="img" (click)="clear()">
+      <img src="{{storyData[imgId]}}" alt="">
+    </div>
+    <div class="bot w-100 row align-items-center justify-content-between ">
+      <div class="col-9">
+        <input type="text" class="w-100 bg-transparent rounded-5 py-2 ps-2 text-white "
+        placeholder="Reply to dolana ali">
+      </div>
+        <div class="col-3 d-flex align-items-center justify-content-between">
+          <i class="bi bi-heart fs-5 cursorPointer"></i>
+          <i class="bi bi-chat fs-5 cursorPointer"></i>
+        </div>
+    </div>
+  </div>
+</section>

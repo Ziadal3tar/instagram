@@ -1,0 +1,166 @@
+<section id="home" class="container row m-0">
+  <div class="col-md-8 col-12 row m-0 py-3 px-0 px-md-3 mt-5 overflow-hidden ">
+    <div class="col-12 row p-0 position-relative">
+      <div class="moreStory position-absolute col-12 h-100 d-flex align-items-center  "
+        [ngClass]="{'justify-content-between': num != 1 , 'justify-content-end': !ksr}">
+        <div *ngIf="num != 1" (click)="left()"><i class="bi bi-arrow-left-circle-fill cursorPointer"></i> </div>
+        <div *ngIf="!ksr && num != this.divArray.length/widthSize" (click)="right()"><i
+            class="bi bi-arrow-right-circle-fill cursorPointer"></i></div>
+      </div>
+      <div id="story" class="col-12 d-flex align-items-center justify-content-start px-5 transition">
+        <div class="friendStory mx-2 cursorPointer" (click)="openStory(item)" *ngFor="let item of divArray; let i = index">
+          <div class="borderImg bg-danger rounded-5  ">
+            <div class=" img "></div>
+          </div>
+          <p class="name">{{item.name}}</p>
+        </div>
+      </div>
+    </div>
+    <div id="posts" class="col-12 mt-5 px-md-5 px-0 ">
+      <div class="col-12 post">
+        <div class="col-12 d-flex align-items-center justify-content-between header ">
+          <div class="postOwnerDetails d-flex">
+
+            <div class="postOwnerImg me-2">
+              <div class="borderImg bg-danger rounded-5  ">
+                <div (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"
+                  class="img"></div>
+              </div>
+            </div>
+            <div class="postOwnerName d-flex align-items-start flex-column">
+              <p class="name">ahmed ali <span class="time"><i class="bi bi-dot"></i>6h</span></p>
+              <p class="type">Original audio</p>
+            </div>
+          </div>
+          <app-dropdown-btn></app-dropdown-btn>
+        </div>
+        <div class="content">
+          <img src="../../../assets/imgs/team-3.jpg" alt="">
+        </div>
+        <div class="footer col-12">
+          <div class="col-12 d-flex align-items-center justify-content-between mt-2">
+            <div class="d-flex align-items-center justify-content-between col-3">
+              <i class="fs-4 bi-heart cursorPointer"></i>
+              <i class="fs-4 bi-send cursorPointer"></i>
+              <i class="fs-4 bi-chat cursorPointer"></i>
+            </div>
+            <div>
+              <i class="fs-4 bi bi-save cursorPointer"></i>
+            </div>
+          </div>
+          <div class="col-12">
+            <h6>Liked by 13.095 People</h6>
+            <h6 class="my-2"><span class="fw-bold fs-6">ahmed ali: </span>Lorem ipsum dolor, sit amet consectetur
+              adipisicing elit. Cupiditate laboriosam blanditiis harum minima quas, autem dolorum a in expedita
+              voluptas.</h6>
+            <h6 class="opacity-50">View all 155 comments</h6>
+            <div>
+              <input type="text" class="w-100 bg-black text-white border-0 border-bottom py-2"
+                placeholder="Add a comments...">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 post">
+        <div class="col-12 d-flex align-items-center justify-content-between header ">
+          <div class="postOwnerDetails d-flex">
+
+            <div class="postOwnerImg me-2">
+              <div class="borderImg bg-danger rounded-5  ">
+                <div (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"
+                  class="img"></div>
+              </div>
+            </div>
+            <div class="postOwnerName d-flex align-items-start flex-column">
+              <p class="name">ahmed ali <span class="time"><i class="bi bi-dot"></i>6h</span></p>
+              <p class="type">Original audio</p>
+            </div>
+
+          </div>
+
+
+          <app-dropdown-btn></app-dropdown-btn>
+        </div>
+        <div class="content">
+          <video controls>
+            <source src="../../../assets/imgs/WhatsApp Video 2023-10-24 at 21.21.05_182fd982.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="footer col-12">
+          <div class="col-12 d-flex align-items-center justify-content-between mt-2">
+            <div class="d-flex align-items-center justify-content-between col-3">
+              <i class="fs-4 bi-heart cursorPointer"></i>
+              <i class="fs-4 bi-send cursorPointer"></i>
+              <i class="fs-4 bi-chat cursorPointer"></i>
+            </div>
+            <div>
+              <i class="fs-4 bi bi-save cursorPointer"></i>
+            </div>
+          </div>
+          <div class="col-12">
+            <h6>Liked by 13.095 People</h6>
+            <h6 class="my-2"><span class="fw-bold fs-6">ahmed ali: </span>Lorem ipsum dolor, sit amet consectetur
+              adipisicing elit. Cupiditate laboriosam blanditiis harum minima quas, autem dolorum a in expedita
+              voluptas.</h6>
+            <h6 class="opacity-50">View all 155 comments</h6>
+            <div>
+              <input type="text" class="w-100 bg-black text-white border-0 border-bottom py-2"
+                placeholder="Add a comments...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-4 row m-0 p-3 mt-5 px-5 d-md-block d-none">
+    <div id="rightSide" class="col-12 d-flex align-items-start flex-column  ">
+      <div class="d-flex align-items-center justify-content-between w-100 ">
+        <div class="userDetails d-flex ">
+
+          <div class="userImg me-2">
+            <div class="borderImg bg-danger rounded-5  ">
+              <div (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"
+                class="img"></div>
+            </div>
+          </div>
+          <div class="userData d-flex align-items-start justify-content-center flex-column">
+            <p class="userName">ahmedali458 </p>
+            <p class="name">ahmed ali</p>
+          </div>
+
+        </div>
+        <div class=" text-primary cursorPointer">switch</div>
+      </div>
+
+      <div class=" d-flex align-items-center justify-content-between w-100 mt-5 mb-3">
+        <p class="fs-7">Suggested for you</p>
+        <p class="fs-7 cursorPointer">See All</p>
+      </div>
+      <div class="d-flex align-items-center justify-content-between w-100 ">
+        <div class="userDetails d-flex ">
+          <div class="suggestedImg me-2">
+            <div class="borderImg bg-danger rounded-5  ">
+              <div (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"
+                class="img"></div>
+            </div>
+          </div>
+          <div class="userData d-flex align-items-start justify-content-center flex-column">
+            <p class="userName">mohamedkhalid74 </p>
+            <p class="name">Suggested for you</p>
+          </div>
+        </div>
+        <div class=" text-primary cursorPointer">Follow</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div id="dataWhenHover" class="fadeIn bg-danger  " *ngIf="showDiv" (mouseleave)="showDiv = false"
+  [style.position]="'fixed'" [style.top]="divTop" [style.left]="divLeft">
+  <app-hoverdata></app-hoverdata>
+</div>
+<section id="storySec" *ngIf="storyOpened">
+  <i class=" bi bi-x-lg position-absolute end-0 m-3 cursorPointer" (click)="closeStory()"></i>
+  <app-stories [storyData]="storyData"></app-stories>
+</section>

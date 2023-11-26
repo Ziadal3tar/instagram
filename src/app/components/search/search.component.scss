@@ -1,0 +1,62 @@
+#search {
+  .searchInput {
+    color: rgb(255, 255, 255) !important;
+    background-color: #ffffff1f;
+  }
+
+  .userDetails {
+    .userImg {
+      .borderImg {
+        // background-color: linear-gradient(to left, #743ad5, #d53a9d);
+        // padding: 2.5px;
+
+        .img {
+          width: 60px;
+          height: 60px;
+          background-image: url(../../../assets/imgs/team-3.jpg);
+          border-radius: 50%;
+          background-position: center;
+          background-size: contain;
+          border: 3px solid black;
+        }
+      }
+    }
+
+    .suggestedImg {
+      .borderImg {
+        // background-color: linear-gradient(to left, #743ad5, #d53a9d);
+        padding: 2.5px;
+
+        .img {
+          width: 45px;
+          height: 45px;
+          background-image: url('../../../assets/imgs/mosalah.jpg');
+          border-radius: 50%;
+          background-position: center;
+          background-size: contain;
+          border: 3px solid #262626;
+        }
+      }
+    }
+
+
+
+    .userData {
+
+      .userName {
+        font-size: 15px;
+      }
+
+      .name {
+        font-size: 15px;
+        opacity: .5;
+      }
+    }
+  }
+}
+
+::placeholder {
+
+
+  color: rgba(255, 255, 255, 0.616);
+}
