@@ -32,28 +32,28 @@ export class ExploreComponent {
   array: any[] = [
     {
       type: 'video',
-      src: '../../../assets/imgs/WhatsApp Video 2023-10-24 at 21.21.05_182fd982.mp4',
+      src: './assets/imgs/WhatsApp Video 2023-10-24 at 21.21.05_182fd982.mp4',
     },
 
     {
       type: 'image',
-      src: '../../../assets/imgs/anne.jpg',
+      src: './assets/imgs/anne.jpg',
     },
     {
       type: 'image',
-      src: '../../../assets/imgs/me.jpg',
+      src: './assets/imgs/me.jpg',
     },
     {
       type: 'image',
-      src: '../../../assets/imgs/marie.jpg',
+      src: './assets/imgs/marie.jpg',
     },
     {
       type: 'image',
-      src: '../../../assets/imgs/ivana-square.jpg',
+      src: './assets/imgs/ivana-square.jpg',
     },
     {
       type: 'image',
-      src: '../../../assets/imgs/mosalah.jpg',
+      src: './assets/imgs/mosalah.jpg',
     },
   ];
   openSearch(){

@@ -17,35 +17,35 @@ export class ProfileComponent {
   saved: any[] = [
     {
       id: '0',
-      image: '../../../assets/imgs/aboobida.jpg',
+      image: './assets/imgs/aboobida.jpg',
     },
     {
       id: '1',
-      image: '../../../assets/imgs/anne.jpg',
+      image: './assets/imgs/anne.jpg',
     },
     {
       id: '2',
-      image: '../../../assets/imgs/fortune_wheel-removebg-preview.png',
+      image: './assets/imgs/fortune_wheel-removebg-preview.png',
     },
     {
       id: '3',
-      image: '../../../assets/imgs/ivana-square.jpg',
+      image: './assets/imgs/ivana-square.jpg',
     },
     {
       id: '4',
-      image: '../../../assets/imgs/team-4.jpg',
+      image: './assets/imgs/team-4.jpg',
     },
     {
       id: '5',
-      image: '../../../assets/imgs/team-3.jpg',
+      image: './assets/imgs/team-3.jpg',
     },
     {
       id: '6',
-      image: '../../../assets/imgs/Sophie.jpg',
+      image: './assets/imgs/Sophie.jpg',
     },
     {
       id: '7',
-      image: '../../../assets/imgs/marie.jpg',
+      image: './assets/imgs/marie.jpg',
     },
   ];
   collections: any[] = [

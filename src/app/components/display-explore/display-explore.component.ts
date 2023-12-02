@@ -9,7 +9,7 @@ export class DisplayExploreComponent {
   @Input() exploreData:any
   exploreDataa:any = {
     type: 'image',
-    src: '../../../assets/imgs/me.jpg',
+    src: './assets/imgs/me.jpg',
   }
 
 
