@@ -36,9 +36,9 @@ updateChat(data:any,friend:any){
       {
         name: 'Alice',
         stories: [
-          '../../../assets/imgs/me.jpg',
-          '../../../assets/imgs/MAB.jpg',
-          '../../../assets/imgs/anne.jpg',
+          './assets/imgs/anne.jpg',
+          './assets/imgs/MAB.jpg',
+          './assets/imgs/me.jpg',
         ],
       },
       { name: 'Bob', stories: [] },
@@ -90,7 +90,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'ziad almorsy',
-          image: '../../../assets/imgs/team-4.jpg',
+          image: './assets/imgs/team-4.jpg',
         },
         notification: {
           text: 'who you might know, is on instagram',
@@ -100,7 +100,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'nada josef',
-          image: '../../../assets/imgs/anne.jpg',
+          image: './assets/imgs/anne.jpg',
         },
         notification: {
           text: 'Started following you',
@@ -110,7 +110,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'amr khalid',
-          image: '../../../assets/imgs/ivana-square.jpg',
+          image: './assets/imgs/ivana-square.jpg',
         },
         notification: {
           text: 'added new story',
@@ -120,7 +120,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'fares ali',
-          image: '../../../assets/imgs/team-3.jpg',
+          image: './assets/imgs/team-3.jpg',
         },
         notification: {
           text: 'Like your post',
@@ -130,7 +130,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'yasser mohamed',
-          image: '../../../assets/imgs/mosalah.jpg',
+          image: './assets/imgs/mosalah.jpg',
         },
         notification: {
           text: 'Comment on your post',
@@ -140,7 +140,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'Abu Obeida',
-          image: '../../../assets/imgs/aboobida.jpg',
+          image: './assets/imgs/aboobida.jpg',
         },
         notification: {
           text: 'fu*ked Israel',
@@ -150,7 +150,7 @@ updateChat(data:any,friend:any){
       {
         user: {
           name: 'saif adel',
-          image: '../../../assets/imgs/me.jpg',
+          image: './assets/imgs/me.jpg',
         },
         notification: {
           text: 'Started following your friend',
@@ -169,62 +169,62 @@ updateChat(data:any,friend:any){
       {
 
           name: 'ziad almorsy',
-          image: '../../../assets/imgs/team-4.jpg',
+          image: './assets/imgs/team-4.jpg',
 
 
       },
       {
 
           name: 'nada josef',
-          image: '../../../assets/imgs/anne.jpg',
+          image: './assets/imgs/anne.jpg',
 
       },
       {
 
           name: 'amr khalid',
-          image: '../../../assets/imgs/ivana-square.jpg',
+          image: './assets/imgs/ivana-square.jpg',
 
       },
       {
 
           name: 'fares ali',
-          image: '../../../assets/imgs/team-3.jpg',
+          image: './assets/imgs/team-3.jpg',
 
       },
       {
 
           name: 'yasser mohamed',
-          image: '../../../assets/imgs/mosalah.jpg',
+          image: './assets/imgs/mosalah.jpg',
 
       },
       {
 
           name: 'Abu Obeida',
-          image: '../../../assets/imgs/aboobida.jpg',
+          image: './assets/imgs/aboobida.jpg',
 
       },
       {
 
           name: 'saif adel',
-          image: '../../../assets/imgs/me.jpg',
+          image: './assets/imgs/me.jpg',
 
       },
       {
 
         name: 'yasser mohamed',
-        image: '../../../assets/imgs/mosalah.jpg',
+        image: './assets/imgs/mosalah.jpg',
 
     },
     {
 
         name: 'Abu Obeida',
-        image: '../../../assets/imgs/aboobida.jpg',
+        image: './assets/imgs/aboobida.jpg',
 
     },
     {
 
         name: 'saif adel',
-        image: '../../../assets/imgs/me.jpg',
+        image: './assets/imgs/me.jpg',
 
     },
     ];

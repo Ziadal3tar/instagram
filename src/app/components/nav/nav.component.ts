@@ -62,4 +62,20 @@ export class NavComponent {
     this.closeSearch = true;
 
   }
+  openCreate(){
+    let Create:any = document.getElementById('Create-tab-pane')
+    let tap:any =document.getElementById('myTabContent')?.childNodes
+    for (let i = 0; i < tap.length; i++) {
+      const element:any = tap[i];
+      const ifhave = element.classList.contains('active')
+if (ifhave) {
+  element.classList.remove('active')
+  element.classList.remove('show')
+  Create.classList.add('active')
+  Create.classList.add('show')
+
+}
+    }
+
+  }
 }
