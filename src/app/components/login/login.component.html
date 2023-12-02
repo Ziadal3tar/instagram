@@ -1,0 +1,32 @@
+<section class="vh-100 centerCenter " id="login">
+  <div class="col-3 px-5">
+    <div class="logo pt-3 col-12 centerCenter">
+      <p class="cursorPointer" [routerLink]="'/home'">
+        Instagram
+      </p>
+    </div>
+    <p class="fw-bolder opacity-50 text-center ">Login to see photos and videos from your friends.</p>
+    <div class="col-12 centerCenter flex-column my-3">
+
+      <button class="btn btn-primary mb-3 fs-7 px-5 py-1">Login by FACEBOOK</button>
+      <p class="or centerCenter fw-bold opacity-50">OR</p>
+    </div>
+    <div class="col-12">
+      <div class="py-1">
+        <input type="text" class="w-100 px-2 custom1Border py-1 rounded-1" placeholder="Phone Number or Email">
+      </div>
+
+      <div class="py-1">
+        <input type="text" class="w-100 px-2 custom1Border py-1 rounded-1" placeholder="Password">
+      </div>
+    </div>
+    <p class="p-2 fs-7 opacity-75 text-center cursorPointer">Did you forget your password?</p>
+    <div class="col-12 centerCenter py-3">
+
+      <button class=" btn btn-primary w-100 rounded-1 py-1">SignUp</button>
+    </div>
+    <p class="opacity-75 my-3 text-center">
+
+Don't you have an account? <span [routerLink]="'/register'" class="text-primary cursorPointer text-decoration-underline ">Sign up.</span></p>
+  </div>
+</section>

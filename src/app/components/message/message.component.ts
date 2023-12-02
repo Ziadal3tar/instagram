@@ -18,8 +18,6 @@ export class MessageComponent {
     });
   }
   ngOnDestroy(): void {
-    console.log('g');
-
   }
   Close() {
     this.close.emit('true');

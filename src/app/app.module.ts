@@ -20,6 +20,22 @@ import { DropdownBtnComponent } from './buttons/dropdown-btn/dropdown-btn.compon
 import { StoriesComponent } from './components/stories/stories.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { FormsModule } from '@angular/forms';
+import { DisplaypostsComponent } from './repeated/displayposts/displayposts.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { SettingComponent } from './components/setting/setting.component';
+import { EditProfileComponent } from './settingTapComponent/edit-profile/edit-profile.component';
+import { AppsAndWebsitesComponent } from './settingTapComponent/apps-and-websites/apps-and-websites.component';
+import { EmailNotificationsComponent } from './settingTapComponent/email-notifications/email-notifications.component';
+import { PushNotificationsComponent } from './settingTapComponent/push-notifications/push-notifications.component';
+import { WhatYouSeeComponent } from './settingTapComponent/what-you-see/what-you-see.component';
+import { WhoCanSeeYourContentComponent } from './settingTapComponent/who-can-see-your-content/who-can-see-your-content.component';
+import { WhoOthersComponent } from './settingTapComponent/who-others/who-others.component';
+import { SupervisionComponent } from './settingTapComponent/supervision/supervision.component';
+import { SubscriptionsComponent } from './settingTapComponent/subscriptions/subscriptions.component';
+import { HelpComponent } from './settingTapComponent/help/help.component';
+import { QnotificationsComponent } from './repeated/qnotifications/qnotifications.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegesterComponent } from './components/regester/regester.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,6 +55,22 @@ import { FormsModule } from '@angular/forms';
     DropdownBtnComponent,
     StoriesComponent,
     ChatComponent,
+    DisplaypostsComponent,
+    FooterComponent,
+    SettingComponent,
+    EditProfileComponent,
+    AppsAndWebsitesComponent,
+    EmailNotificationsComponent,
+    PushNotificationsComponent,
+    WhatYouSeeComponent,
+    WhoCanSeeYourContentComponent,
+    WhoOthersComponent,
+    SupervisionComponent,
+    SubscriptionsComponent,
+    HelpComponent,
+    QnotificationsComponent,
+    LoginComponent,
+    RegesterComponent,
   ],
   imports: [
     BrowserModule,

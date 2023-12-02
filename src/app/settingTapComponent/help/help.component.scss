@@ -1,0 +1,27 @@
+.description {
+  height: 0px;
+  overflow-y: scroll;
+
+}
+
+.active {
+  height: 100px !important;
+
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+  /* Set the width of the scrollbar */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  /* Set the color of the scrollbar handle */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  /* Set the color of the scrollbar track */
+}

@@ -21,7 +21,6 @@ export class HomeComponent {
     private elementRef: ElementRef,
     private _sharing: SharingService
   ) {
-    console.log(window.innerWidth);
     if (window.innerWidth >= 767) {
       this.marginSize = 80;
       this.widthSize = 8;
@@ -117,7 +116,6 @@ export class HomeComponent {
   }
 
   openStory(data: any) {
-    console.log(data);
 
     if (data.stories.length != 0) {
       this.storyOpened = true;

@@ -1,0 +1,8 @@
+<section class="col-12 row p-4" id="EmailNotifications">
+  <div class="col-12 mb-5">
+    <h4>Email Notifications</h4>
+  </div>
+  <div class="col-12 " *ngFor="let item of Qus let i = index">
+    <app-qnotifications (value)="receiveValue($event,i)" [data]="item"></app-qnotifications>
+  </div>
+</section>
