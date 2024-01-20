@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -10,7 +11,7 @@ export class ProfileComponent {
   nameNewCollection: String = '';
   addNewCollection: Boolean = false;
   SelectionStage: Boolean = false;
-  edit: Boolean = false;
+  edit: Boolean = true;
   setting: Boolean = false;
   openCollection: any;
   selected: any = [];
@@ -60,7 +61,7 @@ export class ProfileComponent {
       ],
     },
   ];
-  constructor() {}
+  constructor(private _Route:Router) {}
   changeProfileTaps(data: any) {}
 
   select(item: any) {
@@ -100,10 +101,14 @@ export class ProfileComponent {
     this.close();
   }
   closeSetting(event: any) {
-    console.log(event);
 
     if (event.target.id == 'close') {
       this.setting = false;
     }
+  }
+  logOut(){
+
+    localStorage.removeItem('userToken')
+    this._Route.navigate(['/register'])
   }
 }

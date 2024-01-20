@@ -25,7 +25,6 @@ export class CreateComponent {
       const reader = new FileReader();
       reader.readAsDataURL(element);
       reader.onload = (event: any) => {
-        console.log(event.target.result);
         if (i == 0) {
           this.mainImgPost = event.target.result;
         }
@@ -44,7 +43,6 @@ export class CreateComponent {
       const reader = new FileReader();
       reader.readAsDataURL(element);
       reader.onload = (event: any) => {
-        console.log(event.target.result);
         if (i == 0) {
           this.imgStory = event.target.result;
         }
@@ -63,7 +61,6 @@ export class CreateComponent {
       const reader = new FileReader();
       reader.readAsDataURL(element);
       reader.onload = (event: any) => {
-        console.log(event.target.result);
         if (i == 0) {
           this.reel = event.target.result;
         }

@@ -1,7 +1,7 @@
 <section *ngIf="chat.length ==0" class="row vh-100 noChat">
   <div class="col-md-10 col-12 offset-0 offset-md-2 d-flex align-items-center justify-content-center">
     <div class="d-flex align-items-center justify-content-between flex-column">
-      <div class="icone"><i class="bi bi-messenger"></i></div>
+      <div class="icon"><i class="bi bi-messenger"></i></div>
       <h5>Your messages</h5>
       <p class="fs-7 opacity-50">Send private photos and messages to a friend or group</p>
       <button class=" btn btn-primary" (click)="search = true">Send message</button>
@@ -9,15 +9,15 @@
   </div>
 </section>
 <section *ngIf="chat.length !=0" class=" row vh-100 chat">
-  <div style="z-index: 1;" class="col-md-10 col-12 offset-0 offset-md-2 py-md-0 pb-5 border-start flex-column bg-black">
+  <div style="z-index: 1;" class="col-md-10 col-12 offset-0 offset-md-2 py-md-0 pb-5 flex-column bg-black">
     <div class="details row m-0 centerBetween">
-      <div class="align-items-center d-flex justify-content-start col-md-3 col-7">
-        <div class="img mx-3">
+      <div class="align-items-center d-flex justify-content-start col-md-3 col-8">
+        <div class="img mx-0 mx-md-3">
           <img src="{{friend.image}}" alt="">
         </div>
         <p class="ws-nw">{{friend.name}}</p>
       </div>
-      <div class="col-md-2 col-5 centerEvenly">
+      <div class="col-md-2 col-4 centerEvenly iconCall">
         <i class="bi bi-telephone fs-4"></i>
         <i class="bi bi-camera-video fs-4"></i>
         <i class="bi bi-info-circle fs-4"></i>

@@ -1,12 +1,15 @@
+import { UserService } from './user.service';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SharingService {
-  constructor() {}
-  private userData = new BehaviorSubject<any>([]);
+  constructor(private _Router :Router,private UserService:UserService) {}
+  private userData:any = new BehaviorSubject<any>([]);
   currentUserData = this.userData.asObservable();
   private userNotification = new BehaviorSubject<any>([]);
   currentUserNotification = this.userNotification.asObservable();
@@ -32,58 +35,29 @@ updateChat(data:any,friend:any){
 }
 
   updateUserData() {
-    const data: any = [
-      {
-        name: 'Alice',
-        stories: [
-          './assets/imgs/anne.jpg',
-          './assets/imgs/MAB.jpg',
-          './assets/imgs/me.jpg',
-        ],
-      },
-      { name: 'Bob', stories: [] },
-      { name: 'Charlie', stories: [] },
-      { name: 'David', stories: [] },
-      { name: 'Emma', stories: [] },
-      { name: 'Frank', stories: [] },
-      { name: 'Grace', stories: [] },
-      { name: 'Henry', stories: [] },
-      { name: 'Ivy', stories: [] },
-      { name: 'Jack', stories: [] },
-      { name: 'Katherine', stories: [] },
-      { name: 'Larry', stories: [] },
-      { name: 'Molly', stories: [] },
-      { name: 'Nancy', stories: [] },
-      { name: 'Oscar', stories: [] },
-      { name: 'Peter', stories: [] },
-      { name: 'Quincy', stories: [] },
-      { name: 'Rachel', stories: [] },
-      { name: 'Sam', stories: [] },
-      { name: 'Tina', stories: [] },
-      { name: 'Ulysses', stories: [] },
-      { name: 'Victor', stories: [] },
-      { name: 'Wendy', stories: [] },
-      { name: 'Xavier', stories: [] },
-      { name: 'Yvonne', stories: [] },
-      { name: 'Zack', stories: [] },
-      { name: 'Andrew', stories: [] },
-      { name: 'Betty', stories: [] },
-      { name: 'Charles', stories: [] },
-      { name: 'Diana', stories: [] },
-      { name: 'Edward', stories: [] },
-      { name: 'Fiona', stories: [] },
-      { name: 'George', stories: [] },
-      { name: 'Helen', stories: [] },
-      { name: 'Isaac', stories: [] },
-      { name: 'Jane', stories: [] },
-      { name: 'Kevin', stories: [] },
-      { name: 'Linda', stories: [] },
-      { name: 'Michael', stories: [] },
-      { name: 'Nina', stories: [] },
-      { name: 'Oliver', stories: [] },
-      { name: 'Pamela', stories: [] },
-    ];
-    this.userData.next(data);
+
+    if (localStorage.getItem('userToken')) {
+      this.UserService.getUserData(localStorage.getItem('userToken')).subscribe(
+        (data: any) => {
+          this.userData.next(data.userData);
+        },
+        (err: HttpErrorResponse) => {
+          if (
+            err.error.message == 'jwt expired' ||
+            err.error.message == 'jwt malformed'
+          ) {
+            localStorage.removeItem('userToken');
+            this._Router.navigate([`/login`]);
+          } else {
+            localStorage.removeItem('userToken');
+            this._Router.navigate(['/login']);
+          }
+        }
+      );
+    }else{
+      this.userData.next(undefined);
+    }
+    // this.userData.next(data);
   }
   updateUserNotification() {
     const notification: any[] = [

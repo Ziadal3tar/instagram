@@ -1,7 +1,7 @@
 #login {
   >div {
     border: solid 1px rgba(255, 255, 255, 0.2);
-    height: 70vh;
+    height: auto;
 
     .logo {
       p {
@@ -14,18 +14,18 @@
       width: 100%;
       &::after{
         content: '';
-        width: 45%;
+        width: 40%;
         position: absolute;
-        right: -5%;
+        right: 0%;
         top: 50%;
         height: 1px;
         background-color: rgba(255, 255, 255, 0.397);
       }
       &::before{
         content: '';
-        width: 45%;
+        width: 40%;
         position: absolute;
-        left: -5%;
+        left: -0%;
         top: 50%;
         height: 1px;
         background-color: rgba(255, 255, 255, 0.397);

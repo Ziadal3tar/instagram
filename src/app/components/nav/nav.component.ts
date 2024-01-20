@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-nav',
@@ -14,6 +15,7 @@ export class NavComponent {
   closeMessage: Boolean = true;
   closeNotification: Boolean = true;
   tapId: any;
+
   onDropdownItemClick(event: any) {
     event.stopPropagation();
   }

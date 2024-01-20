@@ -12,7 +12,7 @@
 <section class=" row m-0">
   <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed" id="myTab" role="tablist">
     <div class="logo">
-      <p class=" p-3">Instagram</p>
+      <p class=" px-3 mt-3">Instagram</p>
       <i class="bi bi-instagram"></i>
     </div>
     <li class="nav-item" (click)="closeAllTaps()" role="presentation">
@@ -26,9 +26,9 @@
           class="bi bi-search"></i>
         <p class="par">Search</p>
       </button>
-      <div id="search" class="transition  rounded-3 text-white mx-3 p-3 " [ngClass]=" closeSearch?'close':'open'">
+      <!-- <div id="search" class="transition  rounded-3 text-white mx-3 p-3 " [ngClass]=" closeSearch?'close':'open'">
         <app-search (close)="closeTap($event,'search')"></app-search>
-      </div>
+      </div> -->
     </div>
     <li class="nav-item" (click)="closeAllTaps()" role="presentation">
       <button class="nav-link " id="Explore-tab" data-bs-toggle="tab" data-bs-target="#Explore-tab-pane" type="button"
@@ -49,19 +49,14 @@
           class="bi bi-chat"></i>
         <p class="par">Message</p>
       </button>
-      <div id="message" class="transition rounded-3 text-white mx-3 p-3" [ngClass]=" closeMessage?'close':'open'">
-        <app-message (close)="closeTap($event,'message')"></app-message>
-      </div>
+
     </div>
     <div class="">
       <button class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('Notification')"><i
           class="bi bi-bell"></i>
         <p class="par">Notification</p>
       </button>
-      <div id="Notification" class="transition rounded-3 text-white mx-3 p-3"
-        [ngClass]=" closeNotification?'close':'open'">
-        <app-notification (close)="closeTap($event,'notification')"></app-notification>
-      </div>
+
     </div>
     <li class="nav-item" (click)="closeAllTaps()" role="presentation">
       <button class="nav-link d-flex align-items-center justify-content-center" id="Create-tab" data-bs-toggle="tab"
@@ -77,7 +72,7 @@
         <p class="par">Profile</p>
       </button>
     </li>
-    <div class="dropdown-center" style="margin-top: 64px;">
+    <div class="dropdown-center" style="bottom: 40px; position: absolute; width: 90%;">
       <button class="nav-link d-flex align-items-center" id="Create-tab" type="button" data-bs-toggle="dropdown"
         aria-expanded="false" role="tab" aria-controls="Create-tab-pane" aria-selected="true"><i
           class="bi bi-three-dots-vertical"></i>
@@ -150,13 +145,13 @@
       <p class="p-0 m-0">Instagram</p>
     </div>
     <div class="col-3 d-flex align-items-center justify-content-between">
-      <i class="fs-3 bi bi-plus-circle" (click)="openCreate()"  (click)="chat.chat = []"></i>
+      <i class="fs-3 bi bi-plus-circle" (click)="openCreate()" (click)="chat.chat = []"></i>
       <i (click)="openSidePage('Notification')" class="fs-3 bi bi-heart" (click)="chat.chat = []"></i>
     </div>
   </div>
 
   <div class="tab-content col-md-10 col-12 offset-0 offset-md-2" id="myTabContent">
-    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+    <div class="tab-pane fade " id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
       <app-home></app-home>
     </div>
     <div class="tab-pane fade " id="Explore-tab-pane" role="tabpanel" aria-labelledby="Explore-tab" tabindex="0">
@@ -171,21 +166,36 @@
     <div class="tab-pane fade " id="Create-tab-pane" role="tabpanel" aria-labelledby="Create-tab" tabindex="0">
       <app-create></app-create>
     </div>
-    <div class="tab-pane fade " id="Profile-tab-pane" role="tabpanel" aria-labelledby="Profile-tab" tabindex="0">
+    <div class="tab-pane fade show active" id="Profile-tab-pane" role="tabpanel" aria-labelledby="Profile-tab" tabindex="0">
       <app-profile></app-profile>
     </div>
   </div>
 </section>
 
-<div id="search" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 p-5"
+<div id="search2" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeSearch?'close':'open'">
   <app-search (close)="closeTap($event,'search')"></app-search>
 </div>
-<div id="Notification" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 p-5"
+<div id="Notification2"
+  class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeNotification?'close':'open'">
   <app-notification (close)="closeTap($event,'notification')"></app-notification>
 </div>
-<div id="message" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 p-5"
+<div id="message2" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeMessage?'close':'open'">
   <app-message (closeChats)="closeAllTaps()" (close)="closeTap($event,'message')"></app-message>
+</div>
+
+
+
+
+
+<div id="search" class="transition  rounded-3 text-white mx-3 p-3  d-none d-md-block" [ngClass]=" closeSearch?'close':'open'">
+  <app-search (close)="closeTap($event,'search')"></app-search>
+</div>
+<div id="message" class="transition rounded-3 text-white mx-3 p-3 d-none d-md-block" [ngClass]=" closeMessage?'close':'open'">
+  <app-message (close)="closeTap($event,'message')"></app-message>
+</div>
+<div id="Notification" class="transition rounded-3 text-white mx-3 p-3 d-none d-md-block" [ngClass]=" closeNotification?'close':'open'">
+  <app-notification (close)="closeTap($event,'notification')"></app-notification>
 </div>

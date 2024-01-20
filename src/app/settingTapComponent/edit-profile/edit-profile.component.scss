@@ -1,11 +1,11 @@
 #EditProfile {
   .part1 {
-    .img {
+    #userImage {
       width: 40px;
       height: 40px;
       background-image: url('../../../assets/imgs/MAB.jpg');
       background-position: center;
-      background-size: contain;
+      background-size: cover;
       border-radius: 50%;
     }
 

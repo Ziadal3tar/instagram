@@ -36,6 +36,12 @@ import { HelpComponent } from './settingTapComponent/help/help.component';
 import { QnotificationsComponent } from './repeated/qnotifications/qnotifications.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegesterComponent } from './components/regester/regester.component';
+import { CarouselModule } from 'ngx-owl-carousel-o';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { LoadingComponent } from './components/loading/loading.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -71,11 +77,16 @@ import { RegesterComponent } from './components/regester/regester.component';
     QnotificationsComponent,
     LoginComponent,
     RegesterComponent,
+    LoadingComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    CarouselModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

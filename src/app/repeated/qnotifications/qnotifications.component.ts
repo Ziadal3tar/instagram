@@ -28,7 +28,6 @@ export class QnotificationsComponent {
           }
         }else{
           var wordsArray = this.Value.split(' ');
-          console.log(wordsArray[1]);
 
           if (elementX == wordsArray[1]) {
             ifIt = true;

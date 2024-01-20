@@ -4,18 +4,25 @@
   </div>
   <div class="col-12 centerCenter row m-0 py-4">
 
-    <div class="col-10 startStart mb-5 part1">
+    <div class="col-12 col-md-10 startStart mb-5 part1">
       <div class="col-4 p-0">
 
-        <div class="img me-5"></div>
+        <div id="userImage" [style.background-image]="'url(' + url + ')'" class="img me-5"></div>
       </div>
       <div class="col-8 p-0 ">
-        <p>ziadalmorsy22</p>
-        <p class="text-primary change">change profile photo</p>
+        <p>{{userData.fullName}}</p>
+        <label for="changeImgInput" class="text-primary change" *ngIf="!changed">change profile photo</label>
+        <div *ngIf="changed" class=" w-100 centerBetween">
+          <i class="bi bi-check text-success fw-bolder fs-3 cursorPointer" (click)="save()"></i>
+          <i class="bi bi-x text-danger fw-bolder fs-3 cursorPointer" (click)="cancel()"></i>
+        </div>
+
+
+        <input type="file" class="d-none" name="changeImgInput" id="changeImgInput" (change)="upload($event)">
       </div>
     </div>
     <!-- === -->
-    <div class="col-10 row startStart  mb-5 part2">
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
       <p class="col-4 p-0 ">Website</p>
       <div class=" col-8 p-0">
         <input disabled="false" type="text" class=" w-100 bg-gray rounded-1 border-0 px-3 py-1 mb-2"
@@ -25,7 +32,7 @@
       </div>
     </div>
     <!-- === -->
-    <div class="col-10 row startStart  mb-5 part2">
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
       <p class="col-4 p-0">Bio</p>
       <div class=" col-8 p-0">
         <textarea name="" [(ngModel)]="bio" maxlength="150"
@@ -34,7 +41,7 @@
       </div>
     </div>
     <!-- === -->
-    <div class="col-10 row startStart  mb-5 part2">
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
       <p class="col-4 p-0">Gender</p>
       <div class=" col-8 p-0">
         <p class="border rounded-2 p-1 ps-2 mb-2">Male</p>
@@ -42,8 +49,8 @@
       </div>
     </div>
     <!-- === -->
-    <div class="col-10 row startStart  mb-5 part2">
-      <p class="col-4 p-0">Show account suggestions on profiles</p>
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
+      <p class="col-4 p-0 fs-7">Show account suggestions on profiles</p>
       <div class=" col-8 p-0 d-flex centerCenter">
         <div class="checkbox-container">
           <label [ngClass]="{'checked': checked}" for="dynamicLength" class=" centerCenter">
@@ -56,8 +63,9 @@
           account can be suggested on other profiles.</p>
       </div>
     </div>
-    <div class="col-10">
+    <div class="col-12 col-md-10 ">
       <button class="offset-4 btn btn-primary">Submit</button>
     </div>
   </div>
 </section>
+<app-loading *ngIf="loading"></app-loading>

@@ -25,7 +25,6 @@ export class HelpComponent {
     },
   ]
   active(i: Number, event: any) {
-    console.log(event.target.childNodes[1].classList);
     if (event.target.childNodes[1].classList.contains('bi-chevron-right')) {
       event.target.childNodes[1].classList.replace(
         'bi-chevron-right',

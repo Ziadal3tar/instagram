@@ -3,9 +3,10 @@
 
     <div class="userDetails d-flex align-items-center ">
 
-      <div class="userImg me-2" >
+      <div class="userImg me-2">
         <div class="borderImg bg-danger rounded-5  ">
-          <div class="img "  (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+          <div class="img " (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true"
+            (mouseenter)="onMouseMove($event)"></div>
         </div>
       </div>
       <div class="userData">
@@ -28,25 +29,25 @@
 
   </div>
 
- <div class="functions d-block d-md-none p-3">
-        <div class="justify-content-between d-flex align-items-center w-100 py-1">
+  <div class="functions d-block d-md-none p-3">
+    <div class="justify-content-between d-flex align-items-center w-100 py-1">
 
-          <div>
-            <i class="bi bi-heart me-2 cursorPointer"></i>
-            <i class="bi bi-chat mx-2 cursorPointer"></i>
-            <i class="bi bi-send mx-2 cursorPointer"></i>
+      <div>
+        <i class="bi bi-heart me-2 cursorPointer"></i>
+        <i class="bi bi-chat mx-2 cursorPointer"></i>
+        <i class="bi bi-send mx-2 cursorPointer"></i>
 
-          </div>
-          <i class="bi bi-save cursorPointer"></i>
-
-
-        </div>
-        <div>
-          <p>306 likes</p>
-          <p class="fs-7 opacity-50">3 DAYS AGO</p>
-        </div>
       </div>
-      <hr class="d-block d-md-none">
+      <i class="bi bi-save cursorPointer"></i>
+
+
+    </div>
+    <div>
+      <p>306 likes</p>
+      <p class="fs-7 opacity-50">3 DAYS AGO</p>
+    </div>
+  </div>
+  <hr class="d-block d-md-none">
 
   <div class="col-md-6 col-12 position-relative p-0 py-3 half2">
     <div id="details" class=" position-relative">
@@ -54,9 +55,10 @@
 
         <div class="userDetails d-flex align-items-center ">
 
-          <div class="userImg me-2" >
+          <div class="userImg me-2">
             <div class="borderImg bg-danger rounded-5  ">
-              <div class="img "  (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+              <div class="img " (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true"
+                (mouseenter)="onMouseMove($event)"></div>
             </div>
           </div>
           <div class="userData">
@@ -94,17 +96,19 @@
             </div>
           </div>
           <div class="postComments mt-2">
-            <div class="userDetails d-flex align-items-start " *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
+            <div class="userDetails d-flex align-items-start "
+              *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
               <div class="userImg me-2">
                 <div class="borderImg  rounded-5  ">
-                  <div class="img"  (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+                  <div class="img" (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true"
+                    (mouseenter)="onMouseMove($event)"></div>
                 </div>
               </div>
               <div class="userData pt-2">
                 <h6 class="userName fw-bolder">ahmedali458: <span class="fw-normal">Lorem ipsum dolor sit, amet
                     <br>
                     <div class=" d-flex">
-                      <h6  class="fs-7 my-2 opacity-75">3d</h6>
+                      <h6 class="fs-7 my-2 opacity-75">3d</h6>
                       <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
                     </div>
                   </span> </h6>
@@ -143,7 +147,11 @@
     </div>
   </div>
 </section>
-<div id="dataWhenHover" style="z-index: 9 !important;" class="fadeIn bg-danger  " *ngIf="showDiv" (mouseleave)="showDiv = false"
-  [style.position]="'fixed'" [style.top]="divTop" [style.left]="divLeft">
+
+
+
+
+<div id="dataWhenHover" style="z-index: 9 !important;" class="fadeIn bg-danger  " *ngIf="showDiv"
+  (mouseleave)="showDiv = false" [style.position]="'fixed'" [style.top]="divTop" [style.left]="divLeft">
   <app-hoverdata [data]="data"></app-hoverdata>
 </div>

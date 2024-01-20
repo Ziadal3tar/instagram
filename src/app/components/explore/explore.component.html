@@ -2,26 +2,30 @@
   <div class=" w-100 px-3 py-5 d-md-none" style="padding-top: 65px !important;">
 
     <input type="text" (click)="openSearch()" class=" text-danger p-2 w-100 bg-white bg-opacity-25 border-0 rounded-3"
-    placeholder="Search...">
+      placeholder="Search...">
   </div>
   <div class="column column1">
-    <div *ngFor="let item of array let i = index" [ngClass]="{'d-none':(i+1)%n1 !=q1}">
+    <div *ngFor="let item of array let i = index"
+      [ngClass]="{'d-none': (screen == 'md' && (i+1)%2==0)||screen == 'lg' && (i+1)%3!=1}">
+
       <video (click)="openEX(item)" [ngClass]="{'d-none': item.type == 'image' }">
         <source src="{{item.src}}" type="video/mp4">
       </video>
       <img (click)="openEX(item)" [ngClass]="{'d-none':item.type == 'video' }" src="{{item.src}}">
     </div>
   </div>
-  <div class="column column2">
-    <div *ngFor="let item of array let i = index" [ngClass]="{'d-none':(i+1)%n2 !=q2}">
+  <div class="column column2" [ngClass]="{'d-none':screen == 'sm'}">
+    <div *ngFor="let item of array let i = index"
+      [ngClass]="{'d-none': (screen == 'md' && (i+1)%2==1)||screen == 'lg' && (i+1)%3!=2}">
+
       <video (click)="openEX(item)" [ngClass]="{'d-none': item.type == 'image' }">
         <source src="{{item.src}}" type="video/mp4">
       </video>
       <img (click)="openEX(item)" [ngClass]="{'d-none':item.type == 'video' }" src="{{item.src}}">
     </div>
   </div>
-  <div class="column column3">
-    <div *ngFor="let item of array let i = index" [ngClass]="{'d-none':(i+1)%3 !=0   }">
+  <div class="column column3" [ngClass]="{'d-none':screen != 'lg' }">
+    <div *ngFor="let item of array let i = index" [ngClass]="{'d-none': (screen == 'lg' && (i+1)%3!=0)}">
       <video (click)="openEX(item)" [ngClass]="{'d-none': item.type == 'image' }">
         <source src="{{item.src}}" type="video/mp4">
       </video>

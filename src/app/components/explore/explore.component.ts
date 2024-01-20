@@ -6,27 +6,26 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./explore.component.scss'],
 })
 export class ExploreComponent {
-  n1: any;
-  n2: any;
+  a1: any;
+  a2: any;
+  a3: any;
   q1: any;
   q2: any;
+  q3: any;
+  screen:any
   @Output() EXPLORE : EventEmitter<any> = new EventEmitter<any>();
   @Output() SEARCH : EventEmitter<any> = new EventEmitter<any>();
+constructor(){
+
+}
 
   ngOnInit(): void {
     if (window.innerWidth > 900) {
-      this.n1 = 3;
-      this.n2 = 3;
-      this.q1 = 1;
-      this.q2 = 2;
+      this.screen = 'lg'
     } else if (window.innerWidth < 900 && window.innerWidth > 600) {
-      this.n1 = 2;
-      this.q1 = 1;
-      this.n2 = 2;
-      this.q2 = 0;
+      this.screen = 'md'
     } else if (window.innerWidth < 600) {
-      this.n1 = 1;
-      this.q1 = 0;
+      this.screen = 'sm'
     }
   }
   array: any[] = [
