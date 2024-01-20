@@ -11,7 +11,7 @@ export class ProfileComponent {
   nameNewCollection: String = '';
   addNewCollection: Boolean = false;
   SelectionStage: Boolean = false;
-  edit: Boolean = true;
+  edit: Boolean = false;
   setting: Boolean = false;
   openCollection: any;
   selected: any = [];

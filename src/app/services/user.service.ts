@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 })
 export class UserService {
 
-  private baseUrl = 'https://insta-be.vercel.app/user';
-  // private baseUrl = 'http://localhost:3000/user';
+  // private baseUrl = 'https://insta-be.vercel.app/user';
+  private baseUrl = 'http://localhost:3000/user';
 
   constructor(private http: HttpClient) {}
   getUserData(data:any): any {
