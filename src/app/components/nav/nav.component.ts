@@ -76,6 +76,13 @@ export class NavComponent {
       }
     }
   }
+  closeCreate(){
+    let Create: any = document.getElementById('Create-tab-pane');
+
+    Create.classList.remove('active');
+    Create.classList.remove('show');
+
+  }
   hideNavs(){
     console.log('g');
 
