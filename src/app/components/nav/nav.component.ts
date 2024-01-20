@@ -4,10 +4,9 @@ import { OnInit } from '@angular/core';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.scss']
+  styleUrls: ['./nav.component.scss'],
 })
 export class NavComponent {
-
   title = 'insta';
   exploreData: any;
   open: Boolean = false;
@@ -39,12 +38,10 @@ export class NavComponent {
       this.closeSearch = true;
       this.closeMessage = false;
       this.closeNotification = true;
-
     } else if (data == 'Notification') {
       this.closeSearch = true;
       this.closeMessage = true;
       this.closeNotification = false;
-
     }
   }
   closeTap(data: any, id: any) {
@@ -57,27 +54,25 @@ export class NavComponent {
     }
   }
 
-  closeAllTaps(){
+  closeAllTaps() {
+
 
     this.closeNotification = true;
     this.closeMessage = true;
     this.closeSearch = true;
-
   }
-  openCreate(){
-    let Create:any = document.getElementById('Create-tab-pane')
-    let tap:any =document.getElementById('myTabContent')?.childNodes
+  openCreate() {
+    let Create: any = document.getElementById('Create-tab-pane');
+    let tap: any = document.getElementById('myTabContent')?.childNodes;
     for (let i = 0; i < tap.length; i++) {
-      const element:any = tap[i];
-      const ifhave = element.classList.contains('active')
-if (ifhave) {
-  element.classList.remove('active')
-  element.classList.remove('show')
-  Create.classList.add('active')
-  Create.classList.add('show')
-
-}
+      const element: any = tap[i];
+      const ifhave = element.classList.contains('active');
+      if (ifhave) {
+        element.classList.remove('active');
+        element.classList.remove('show');
+        Create.classList.add('active');
+        Create.classList.add('show');
+      }
     }
-
   }
 }

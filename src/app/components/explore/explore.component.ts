@@ -60,6 +60,8 @@ constructor(){
 
   }
   openEX(item:any){
+    console.log(this.array);
+
     this.EXPLORE.emit(item);
     let theDiv:NodeListOf<ChildNode>|any = document.getElementById('app-explore')?.childNodes[0];
     theDiv.classList.add('vh-100')

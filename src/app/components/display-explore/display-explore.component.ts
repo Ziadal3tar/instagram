@@ -14,6 +14,7 @@ export class DisplayExploreComponent {
 
 
   @Output() open : EventEmitter<any> = new EventEmitter<any>() ;
+
   showDiv: boolean = false;
   mouseX: number = 0;
   mouseY: number = 0;
