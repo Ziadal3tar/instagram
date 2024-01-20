@@ -56,8 +56,6 @@ export class NavComponent {
   }
 
   closeAllTaps() {
-
-
     this.closeNotification = true;
     this.closeMessage = true;
     this.closeSearch = true;
@@ -73,19 +71,59 @@ export class NavComponent {
         element.classList.remove('show');
         Create.classList.add('active');
         Create.classList.add('show');
+        // ---------------
+        let lis: HTMLCollection | any =
+          document.getElementById('myTab2')?.children;
+
+        // if (lis) {
+        for (let i = 0; i < lis.length; i++) {
+          const element = lis[i] as HTMLElement | any;
+          console.log(element);
+
+          if (element.children[0].classList.contains('active')) {
+            element.children[0].tabIndex = -1;
+            element.children[0].setAttribute('aria-selected', 'false');
+            element.children[0].classList.remove('active');
+          }
+        }
       }
     }
   }
-  closeCreate(){
+  closeCreate() {
     let Create: any = document.getElementById('Create-tab-pane');
 
     Create.classList.remove('active');
     Create.classList.remove('show');
-
   }
-  hideNavs(){
-    console.log('g');
-
-    this.hide = true
+  hideNavs() {
+    this.hide = true;
+  }
+  tapClick(tapName: String) {
+    if (tapName == 'home') {
+      this.closeAllTaps();
+      this.closeEX();
+      this.closeCreate();
+    } else if (tapName == 'search') {
+      this.closeAllTaps();
+      this.closeEX();
+      this.closeCreate();
+    } else if (tapName == 'reel') {
+      this.closeAllTaps();
+      this.closeEX();
+      this.closeCreate();
+    } else if (tapName == 'profile') {
+      this.closeAllTaps();
+      this.closeEX();
+      this.closeCreate();
+    } else if (tapName == 'message') {
+      this.closeEX();
+    }
+  }
+  handelActive() {
+    //     let lis:any = document.getElementById('myTap2')?.childNodes
+    //     for (let i = 0; i < lis.length; i++) {
+    //       const element = lis[i];
+    // element.childNodes[0].classList.remove('active')
+    //     }
   }
 }

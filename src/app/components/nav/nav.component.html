@@ -38,13 +38,13 @@
     </li>
     <li class="nav-item" (click)="closeAllTaps()" role="presentation">
       <button class="nav-link " id="Reels-tab" data-bs-toggle="tab" data-bs-target="#Reels-tab-pane" type="button"
-        role="tab" aria-controls="Reels-tab-pane" aria-selected="true"><i class="bi bi-fast-forward-btn"></i>
+        role="tab" aria-controls="Reels-tab-pane" aria-selected="false"><i class="bi bi-fast-forward-btn"></i>
         <p class="par">Reels</p>
       </button>
     </li>
     <div class="" role="presentation">
       <button id="Message-tab" data-bs-toggle="tab" data-bs-target="#Message-tab-pane" type="button" role="tab"
-        aria-controls="Message-tab-pane" aria-selected="true"
+        aria-controls="Message-tab-pane" aria-selected="false"
         class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('message')"><i
           class="bi bi-chat"></i>
         <p class="par">Message</p>
@@ -61,7 +61,7 @@
     <li class="nav-item" (click)="closeAllTaps()" role="presentation">
       <button class="nav-link d-flex align-items-center justify-content-center" id="Create-tab" data-bs-toggle="tab"
         data-bs-target="#Create-tab-pane" type="button" role="tab" aria-controls="Create-tab-pane"
-        aria-selected="true"><i class="bi bi-plus-circle"></i>
+        aria-selected="false"><i class="bi bi-plus-circle"></i>
         <p class="par">Create</p>
       </button>
     </li>
@@ -74,7 +74,7 @@
     </li>
     <div class="dropdown-center" style="bottom: 40px; position: absolute; width: 90%;">
       <button class="nav-link d-flex align-items-center" id="Create-tab" type="button" data-bs-toggle="dropdown"
-        aria-expanded="false" role="tab" aria-controls="Create-tab-pane" aria-selected="true"><i
+        aria-expanded="false" role="tab" aria-controls="Create-tab-pane" aria-selected="false"><i
           class="bi bi-three-dots-vertical"></i>
         <div class="par">More</div>
       </button>
@@ -104,40 +104,35 @@
 
 
   <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed " id="myTab2" *ngIf="!hide" role="tablist">
-    <!-- <li class="nav-item" (click)="closeAllTaps()" (click)="closeCreate()" role="presentation" (click)="chat.chat = []" (click)="closeEX()">
+
+    <li class="nav-item " role="presentation" (click)="chat.chat = []" (click)="tapClick('home')" (click)="home.storyOpened = false">
       <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
-      role="tab" aria-controls="home-tab-pane" aria-selected="true"><i class="bi bi-house-door"></i>
-        <p class="par">Home</p>
-      </button>
-    </li> -->
-    <li class="nav-item" (click)="closeAllTaps()" (click)="closeCreate()" role="presentation" (click)="chat.chat = []" (click)="closeEX()">
-      <button class="nav-link " id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
-      role="tab" aria-controls="home-tab-pane" aria-selected="true"><i class="bi bi-house-door"></i>
+      role="tab" aria-controls="home-tab-pane" aria-selected="false"><i class="bi bi-house-door"></i>
         <p class="par">Home</p>
       </button>
     </li>
-    <li (click)="chat.chat = []" (click)="closeAllTaps()" (click)="closeCreate()" (click)="closeEX()">
+    <li (click)="chat.chat = []" (click)="tapClick('search')" >
       <button class="nav-link d-flex align-items-center position-relative" id="Explore-tab" data-bs-toggle="tab"
         data-bs-target="#Explore-tab-pane" type="button" role="tab" aria-controls="Explore-tab-pane"
         aria-selected="false"><i class="bi bi-search"></i>
         <p class="par">Search</p>
       </button>
     </li>
-    <li class="nav-item" (click)="closeAllTaps()" (click)="closeCreate()" role="presentation" (click)="chat.chat = []" (click)="closeEX()">
+    <li class="nav-item"  role="presentation" (click)="chat.chat = []" (click)="tapClick('reel')">
       <button class="nav-link " id="Reels-tab" data-bs-toggle="tab" data-bs-target="#Reels-tab-pane" type="button"
-        role="tab" aria-controls="Reels-tab-pane" aria-selected="true"><i class="bi bi-fast-forward-btn"></i>
+        role="tab" aria-controls="Reels-tab-pane" aria-selected="false"><i class="bi bi-fast-forward-btn"></i>
         <p class="par">Reels</p>
       </button>
     </li>
-    <li class="" role="presentation" (click)="chat.chat = []" (click)="closeEX()">
+    <li class="" role="presentation" (click)="chat.chat = []" (click)="tapClick('message')">
       <button id="Message-tab" data-bs-toggle="tab" data-bs-target="#Message-tab-pane" type="button" role="tab"
-        aria-controls="Message-tab-pane" aria-selected="true"
+        aria-controls="Message-tab-pane" aria-selected="false"
         class="nav-link d-flex align-items-center position-relative" (click)="openSidePage('message')"><i
           class="bi bi-chat"></i>
         <p class="par">Message</p>
       </button>
     </li>
-    <li class="nav-item" (click)="closeAllTaps()" (click)="closeCreate()" role="presentation" (click)="chat.chat = []" (click)="closeEX()">
+    <li class="nav-item" role="presentation" (click)="chat.chat = []" (click)="tapClick('profile')">
       <button class="nav-link d-flex" id="Profile-tab" data-bs-toggle="tab" data-bs-target="#Profile-tab-pane"
         type="button" role="tab" aria-controls="Profile-tab-pane" aria-selected="false">
         <div class="profileImg"></div>
@@ -158,7 +153,7 @@
 
   <div class="tab-content col-md-10 col-12 offset-0 offset-md-2" id="myTabContent">
     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-      <app-home></app-home>
+      <app-home #home></app-home>
     </div>
     <div class="tab-pane fade " id="Explore-tab-pane" role="tabpanel" aria-labelledby="Explore-tab" tabindex="0">
       <app-explore id="app-explore" (EXPLORE)="ExploreData($event)" (SEARCH)="closeTap(false,'search')"></app-explore>
