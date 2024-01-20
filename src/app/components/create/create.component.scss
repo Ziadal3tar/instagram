@@ -10,7 +10,10 @@
   border-radius: 5px;
   margin-top: 10vh;
   border: 1px solid rgba(255, 255, 255, 0.397) !important;
-
+@media (max-width:768px) {
+margin-left: 0;
+margin-right: 0;
+}
   .pages {
     height: 70vh;
 

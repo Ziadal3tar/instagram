@@ -9,6 +9,8 @@ import { SharingService } from 'src/app/services/sharing.service';
 export class MessageComponent {
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   @Output() closeChats: EventEmitter<any> = new EventEmitter<any>();
+  @Output() hideNavs : EventEmitter<any> = new EventEmitter<any>() ;
+
   chats: any[] = [];
   friendData: any;
   constructor(private _sharing: SharingService) {
@@ -22,8 +24,12 @@ export class MessageComponent {
   Close() {
     this.close.emit('true');
   }
+  hide() {
+    this.hideNavs.emit('true');
+  }
   openSearch() {
     this._sharing.updateSearch();
+    this.Close()
   }
   openChat(item: any) {
     let chat = [
@@ -142,6 +148,7 @@ export class MessageComponent {
     if (window.innerWidth <=767) {
       this.closeChats.emit('true');
 
+      this.hide()
     }
   }
 }

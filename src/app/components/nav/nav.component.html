@@ -103,7 +103,7 @@
   </ul>
 
 
-  <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed " id="myTab2" role="tablist">
+  <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed " id="myTab2" *ngIf="!hide" role="tablist">
     <li class="nav-item" (click)="closeAllTaps()" role="presentation" (click)="chat.chat = []" (click)="closeEX()">
       <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
         role="tab" aria-controls="home-tab-pane" aria-selected="true"><i class="bi bi-house-door"></i>
@@ -140,7 +140,7 @@
     </li>
   </ul>
 
-  <div class="w-100 position-fixed top-0 bg-black row m-0 p-2 topNav ">
+  <div class="w-100 position-fixed top-0 bg-black row m-0 p-2 topNav " *ngIf="!hide">
     <div class="logo col-9">
       <p class="p-0 m-0">Instagram</p>
     </div>
@@ -188,7 +188,7 @@
 </div>
 <div id="message2" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeMessage?'close':'open'">
-  <app-message (closeChats)="closeAllTaps()" (close)="closeTap($event,'message')"></app-message>
+  <app-message (closeChats)="closeAllTaps()" (hideNavs)="hideNavs()" (close)="closeTap($event,'message')"></app-message>
 </div>
 
 

@@ -10,6 +10,7 @@ export class NavComponent {
   title = 'insta';
   exploreData: any;
   open: Boolean = false;
+  hide: Boolean = false;
   closeSearch: Boolean = true;
   closeMessage: Boolean = true;
   closeNotification: Boolean = true;
@@ -74,5 +75,10 @@ export class NavComponent {
         Create.classList.add('show');
       }
     }
+  }
+  hideNavs(){
+    console.log('g');
+
+    this.hide = true
   }
 }

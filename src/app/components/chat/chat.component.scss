@@ -167,7 +167,11 @@
   width: 550px !important;
   height: 400px !important;
   border-radius: 20px;
+@media (max-width:768px){
+  left: 10% !important;
+  width: 80% !important;
 
+}
   .researched {
     height: 65%;
 
