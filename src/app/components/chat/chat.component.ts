@@ -38,4 +38,7 @@ export class ChatComponent {
     if (this.message && this.message != '') {
     }
   }
+  closeChat(){
+    this.chat = []
+  }
 }

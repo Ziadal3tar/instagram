@@ -5,8 +5,8 @@
 
       <div class="userImg me-2">
         <div class="borderImg bg-danger rounded-5  ">
-          <div class="img " (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true"
-            (mouseenter)="onMouseMove($event)"></div>
+          <div class="img " style="background-image: url({{exploreData?.createdBy?.profilePic}});"
+            (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
         </div>
       </div>
       <div class="userData">
@@ -19,21 +19,24 @@
     <app-dropdown-btn></app-dropdown-btn>
   </div>
 
-  <div class="col-md-6 col-12 img p-0">
-    <img *ngIf="exploreData?.type == 'image'" src="{{exploreData.src}}" alt="" srcset="">
+  <div class="col-md-6 col-12 postImg p-0">
+    <img (click)="ifDoubleClick()" *ngIf="exploreData?.postsImgAndVideos[0]?.type == 'image'"
+      src="{{exploreData?.postsImgAndVideos[0].url}}" alt="" srcset="">
 
-    <video controls autoplay *ngIf="exploreData?.type == 'video'">
-      <source src="{{exploreData.src}}" type="video/mp4">
+    <video (click)="ifDoubleClick()" controls autoplay *ngIf="exploreData?.postsImgAndVideos[0]?.type == 'video'">
+      <source src="{{exploreData?.postsImgAndVideos[0].url}}" type="video/mp4">
     </video>
 
-
+    <i [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+      class="bi bgHeart like"></i>
   </div>
 
   <div class="functions d-block d-md-none p-3">
     <div class="justify-content-between d-flex align-items-center w-100 py-1">
 
       <div>
-        <i class="bi bi-heart me-2 cursorPointer"></i>
+        <i (click)="like()" [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+          class="bi bi-heart me-2 cursorPointer like"></i>
         <i class="bi bi-chat mx-2 cursorPointer"></i>
         <i class="bi bi-send mx-2 cursorPointer"></i>
 
@@ -43,7 +46,7 @@
 
     </div>
     <div>
-      <p>306 likes</p>
+      <p>{{exploreData?.likes?.length}} likes</p>
       <p class="fs-7 opacity-50">3 DAYS AGO</p>
     </div>
   </div>
@@ -57,12 +60,13 @@
 
           <div class="userImg me-2">
             <div class="borderImg bg-danger rounded-5  ">
-              <div class="img " (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true"
-                (mouseenter)="onMouseMove($event)"></div>
+              <div class="img " style="background-image: url({{exploreData.createdBy.profilePic}});"
+                (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
+              </div>
             </div>
           </div>
           <div class="userData">
-            <h6 class="userName">ahmedali458 <span class="follow text-primary cursorPointer"> <i
+            <h6 class="userName">{{exploreData.createdBy.fullName}} <span class="follow text-primary cursorPointer"> <i
                   class=" bi bi-dot"></i>Follow</span></h6>
           </div>
 
@@ -78,16 +82,12 @@
 
               <div class="userImg me-2">
                 <div class="borderImg  rounded-5  ">
-                  <div class="img"></div>
+                  <div class="img" style="background-image: url({{exploreData.createdBy.profilePic}});"></div>
                 </div>
               </div>
               <div class="userData pt-2">
-                <h6 class="userName fw-bolder">ahmedali458: <span class="fw-normal">Lorem ipsum dolor sit, amet
-                    consectetur adipisicing elit. Debitis obcaecati amet voluptatem repellendus maxime hic doloremque
-                    harum esse excepturi quos, in aspernatur consequuntur illo commodi ipsa, natus quasi! Libero,
-                    dolore. Similique molestiae nemo blanditiis placeat accusamus dignissimos mollitia, dolore ipsam,
-                    odit, neque possimus iure temporibus quos enim alias iste quas quibusdam dolorem! Nostrum, facilis.
-                    Eligendi quos nemo id quia? Non deleniti ipsam omnis itaque atque eos illum qui, deserunt dolorem.
+                <h6 class="userName fw-bolder">{{exploreData.createdBy.fullName}}: <span
+                    class="fw-normal">{{exploreData.caption}}
                     <br>
                     <h6 class="fs-7 my-2 opacity-75">3d</h6>
                   </span> </h6>
@@ -96,24 +96,24 @@
             </div>
           </div>
           <div class="postComments mt-2">
-            <div class="userDetails d-flex align-items-start "
-              *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
-              <div class="userImg me-2">
+            <div class="userDetails d-flex align-items-start " *ngFor="let item of exploreData.comments">
+              <!-- <div class="userImg me-2">
                 <div class="borderImg  rounded-5  ">
-                  <div class="img" (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true"
-                    (mouseenter)="onMouseMove($event)"></div>
+                  <div class="img" style="background-image: url({{item.userId.profilePic}});"
+                    (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
+                  </div>
                 </div>
               </div>
               <div class="userData pt-2">
-                <h6 class="userName fw-bolder">ahmedali458: <span class="fw-normal">Lorem ipsum dolor sit, amet
+                <h6 class="userName fw-bolder">{{item.userId.userName}}: <span class="fw-normal">{{item.comment}}
                     <br>
                     <div class=" d-flex">
                       <h6 class="fs-7 my-2 opacity-75">3d</h6>
                       <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
                     </div>
                   </span> </h6>
-              </div>
-
+              </div> -->
+<app-comments [size] = 30 [commentDetails]='item' ></app-comments>
             </div>
           </div>
         </div>
@@ -123,7 +123,9 @@
         <div class="justify-content-between d-flex align-items-center w-100 py-1">
 
           <div>
-            <i class="bi bi-heart me-2 cursorPointer"></i>
+            <i (click)="like()"
+              [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+              class="bi me-2 cursorPointer like"></i>
             <i class="bi bi-chat mx-2 cursorPointer"></i>
             <i class="bi bi-send mx-2 cursorPointer"></i>
 
@@ -133,7 +135,7 @@
 
         </div>
         <div>
-          <p>306 likes</p>
+          <p>{{exploreData?.likes?.length}} likes</p>
           <p class="fs-7 opacity-50">3 DAYS AGO</p>
         </div>
       </div>
@@ -141,8 +143,9 @@
       <div class="addComment px-3 justify-content-between d-flex align-items-center">
         <i class="bi bi-emoji-smile"></i>
 
-        <input type="text" class=" border-0 bg-black text-white w-100 px-3" placeholder="Add a comment...">
-        <p class="fs-7 cursorPointer">Post</p>
+        <input type="text" class=" border-0 bg-black text-white w-100 px-3" [(ngModel)]="comment"
+          placeholder="Add a comment...">
+        <p class="fs-7 cursorPointer" (click)="addComment()">Post</p>
       </div>
     </div>
   </div>

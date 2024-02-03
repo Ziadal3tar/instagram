@@ -21,7 +21,8 @@ body {
   font-family: 'Raleway', sans-serif;
   scroll-behavior: smooth;
   color: rgb(255, 255, 255);
-
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 .logo {
@@ -114,6 +115,11 @@ input {
 .centerEvenly {
   display: flex;
   align-items: center;
+  justify-content: space-evenly;
+}
+.startEvenly {
+  display: flex;
+  align-items: start;
   justify-content: space-evenly;
 }
 

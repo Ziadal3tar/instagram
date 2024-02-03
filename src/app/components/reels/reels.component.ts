@@ -1,4 +1,14 @@
-import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Output,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
+
+import { SharingService } from 'src/app/services/sharing.service';
 
 @Component({
   selector: 'app-reels',
@@ -6,101 +16,31 @@ import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
   styleUrls: ['./reels.component.scss'],
 })
 export class ReelsComponent {
+  displayComments: any;
+  reels: any[] = [];
+  page = 0;
 
-  startY: number = 0;
-  startX: number = 0;
-  constructor(private elementRef: ElementRef) {}
-
-
-
-  // @HostListener('touchstart', ['$event'])
-  // onTouchStart(event: TouchEvent) {
-  //   this.startY = event.touches[0].clientY;
-  //   this.startX = event.touches[0].clientX;
-  // }
-
-  // @HostListener('touchmove', ['$event'])
-  // onTouchMove(event: TouchEvent) {
-  //   const currentY = event.touches[0].clientY;
-  //   const currentX = event.touches[0].clientX;
-  //   const yDiff = this.startY - currentY;
-  //   const xDiff = this.startX - currentX;
-
-  //   if (Math.abs(yDiff) > Math.abs(xDiff)) {
-  //     if (yDiff > 0) {
-  //       this.scrollToNextSection();
-  //     } else {
-  //       this.scrollToPreviousSection();
-  //     }
-  //   } else {
-  //     if (xDiff > 0) {
-  //     } else {
-  //     }
-  //   }
-  // }
-
-  scrollToNextSection(): void {
-    const currentScroll = window.pageYOffset;
-    const windowHeight = window.innerHeight;
-    window.scrollTo({ top: currentScroll + windowHeight, behavior: 'smooth' });
+  visibleItemIndex = 0;
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+    private _sharing: SharingService
+  ) {}
+  ngOnInit(): void {
+    this._sharing.updateReel(this.page);
+    this._sharing.currentReels.subscribe((data: any) => {
+      this.reels = this.reels.concat(data);
+    });
   }
 
-  scrollToPreviousSection(): void {
-    const currentScroll = window.pageYOffset;
-    const windowHeight = window.innerHeight;
-    window.scrollTo({ top: currentScroll - windowHeight, behavior: 'smooth' });
-  }
-
-
-  @HostListener('window:wheel', ['$event'])
-
-  onWindowScroll(event: WheelEvent) {
-    let target:any = event.target
-
-    if (target?.id == 'reels') {
-      if (event.deltaY > 0) {
-        this.scrollToNextSection1();
-      } else if (event.deltaY < 0) {
-        this.scrollToPreviousSection2();
-      }
-
+  handleScroll() {
+    const container = document.querySelector('.reelsContainer');
+    const scrollTop = container?.scrollTop || 0;
+    const itemHeight = container?.clientHeight || 1;
+    this.visibleItemIndex = Math.floor(scrollTop / itemHeight) + 2;
+    if (this.visibleItemIndex == this.reels.length - 1 * 5 + 3) {
+      this.page += 1;
+      this._sharing.updateReel(this.page);
     }
-  }
-
-  scrollToNextSection1(): void {
-    const currentScroll = window.pageYOffset;
-    const windowHeight = window.innerHeight;
-    window.scrollTo({ top: currentScroll + windowHeight, behavior: 'smooth' });
-  }
-
-  scrollToPreviousSection2(): void {
-    const currentScroll = window.pageYOffset;
-    const windowHeight = window.innerHeight;
-    window.scrollTo({ top: currentScroll - windowHeight, behavior: 'smooth' });
-  }
-
-  ngAfterViewInit() {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.5
-    };
-
-    const video = this.elementRef.nativeElement.querySelector('video');
-
-
-
-    const callback = (entries:any) => {
-      entries.forEach((entry:any) => {
-        if (entry.isIntersecting) {
-          video.play();
-        } else {
-          video.pause();
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(video);
   }
 }

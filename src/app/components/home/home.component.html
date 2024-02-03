@@ -85,7 +85,7 @@
           <div class="userImg me-2">
             <div class="borderImg bg-danger rounded-5  ">
               <div (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"
-                class="img"></div>
+                class="img" [style.background-image]="'url(' + userData.profilePic + ')'"></div>
             </div>
           </div>
           <div class="userData d-flex align-items-start justify-content-center flex-column">

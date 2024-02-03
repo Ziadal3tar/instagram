@@ -6,13 +6,15 @@ import { NavComponent } from './components/nav/nav.component';
 import { LoginComponent } from './components/login/login.component';
 import { loginGuard } from './services/login.guard';
 import { logoutGuard } from './services/logout.guard';
+import { ProfileComponent } from './components/profile/profile.component';
 
 
 const routes: Routes = [
-  {path:'',redirectTo:"home",pathMatch:'full'},
-  {path: 'home',canActivate:[loginGuard], component:NavComponent},
+  {path:'',redirectTo:`userProfile/${localStorage.getItem('id')}`,pathMatch:'full'},
+  // {path: 'home',canActivate:[loginGuard], component:NavComponent},
   {path: 'register',canActivate:[logoutGuard], component:RegesterComponent},
   {path: 'login',canActivate:[logoutGuard], component:LoginComponent},
+  {path: 'userProfile/:id',canActivate:[loginGuard], component:NavComponent},
 
 ];
 @NgModule({

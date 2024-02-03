@@ -1,4 +1,5 @@
 #search {
+  transition: 0.5s !important;
   .searchInput {
     color: rgb(255, 255, 255) !important;
     background-color: #ffffff1f;
@@ -7,13 +8,10 @@
   .userDetails {
     .userImg {
       .borderImg {
-        // background-color: linear-gradient(to left, #743ad5, #d53a9d);
-        // padding: 2.5px;
 
         .img {
           width: 60px;
           height: 60px;
-          background-image: url(../../../assets/imgs/team-3.jpg);
           border-radius: 50%;
           background-position: center;
           background-size: contain;
@@ -24,9 +22,7 @@
 
     .suggestedImg {
       .borderImg {
-        // background-color: linear-gradient(to left, #743ad5, #d53a9d);
         padding: 2.5px;
-
         .img {
           width: 45px;
           height: 45px;

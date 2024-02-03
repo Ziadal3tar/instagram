@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -41,6 +41,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoadingComponent } from './components/loading/loading.component';
+import { SocialLoginModule, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import {
+  GoogleLoginProvider,
+  FacebookLoginProvider
+} from '@abacritt/angularx-social-login';
+import { LoadingBTNComponent } from './repeated/loading-btn/loading-btn.component';
+import { ReelsCommentsComponent } from './components/reels-comments/reels-comments.component';
+import { UserImageComponent } from './repeated/user-image/user-image.component';
+import { CommentsComponent } from './repeated/comments/comments.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +87,13 @@ import { LoadingComponent } from './components/loading/loading.component';
     LoginComponent,
     RegesterComponent,
     LoadingComponent,
+    LoadingBTNComponent,
+    ReelsCommentsComponent,
+    UserImageComponent,
+    CommentsComponent,
+
+
+
   ],
   imports: [
     BrowserModule,
@@ -86,9 +102,33 @@ import { LoadingComponent } from './components/loading/loading.component';
     CarouselModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SocialLoginModule,
+    BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '1098782159208-4afkg7i8tv5e0btbk5emsk5lhre7fmaj.apps.googleusercontent.com'
+            )
+          },
+          {
+            id: FacebookLoginProvider.PROVIDER_ID,
+            provider: new FacebookLoginProvider('7123911704362891')
+          }
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

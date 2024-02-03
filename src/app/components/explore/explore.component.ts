@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-explore',
@@ -15,6 +15,12 @@ export class ExploreComponent {
   screen:any
   @Output() EXPLORE : EventEmitter<any> = new EventEmitter<any>();
   @Output() SEARCH : EventEmitter<any> = new EventEmitter<any>();
+  @Input() userData:any
+
+
+
+   allSearch:Boolean = false
+
 constructor(){
 
 }
@@ -60,7 +66,6 @@ constructor(){
 
   }
   openEX(item:any){
-    console.log(this.array);
 
     this.EXPLORE.emit(item);
     let theDiv:NodeListOf<ChildNode>|any = document.getElementById('app-explore')?.childNodes[0];

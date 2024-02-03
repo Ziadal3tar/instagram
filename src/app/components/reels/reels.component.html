@@ -1,32 +1,38 @@
-<section id="reels" class="col-12 row m-0 centerCenter flex-column">
-  <div class="reel col-11 col-md-8 col-lg-8 row mx-2" *ngFor="let item of [1,2,3,4,5,6,7,8]">
-
-    <div class="videos h-100 col-11 col-md-10  p-0">
-      <video controls>
-        <source src="./assets/imgs/WhatsApp Video 2023-10-24 at 21.21.05_182fd982.mp4" type="video/mp4">
-      </video>
-    </div>
-    <div class=" col-1 btns p-0 d-flex flex-column align-items-center justify-content-end pb-3">
-      <div class=" d-flex flex-column align-items-center">
-        <i class=" fs-5 bi bi-heart"></i>
-        <p class="fs-7">456</p>
-      </div>
-      <div class=" d-flex flex-column align-items-center">
-        <i class=" fs-5 bi bi-chat"></i>
-        <p class="fs-7">35</p>
-      </div>
-      <div>
-        <i class=" fs-5 bi bi-send"></i>
-      </div>
-      <div>
-        <i class=" fs-5 bi bi-save"></i>
-      </div>
-      <div>
-        <app-dropdown-btn></app-dropdown-btn>
-      </div>
-      <div class="img m-0">
-        <img src="./assets/imgs/anne.jpg" alt="">
+<div class="d-flex justify-content-center">
+  <div class="reelsContainer" #reelsContainer (scroll)="handleScroll()">
+    <div class="row m-0 col-12" *ngFor="let item of reels let i = index ">
+      <div id="reel{{i}}" class="reel row m-0 col-12 position-relative">
+        <div class="videos h-100 col-12 col-md1-1 col-md-10 p-0">
+          <video controls>
+            <source src="{{item?.url}}" type="video/mp4">
+          </video>
+        </div>
+        <div class="  btns p-0 d-flex flex-column align-items-center justify-content-end pb-3">
+          <div class=" d-flex flex-column align-items-center">
+            <i class=" fs-5 bi bi-heart"></i>
+            <p class="fs-7">{{item?.likes.length}}</p>
+          </div>
+          <div class=" d-flex flex-column align-items-center position-relative">
+            <i (click)="displayComments = i" class=" fs-5 bi bi-chat"></i>
+            <p class="fs-7">{{item?.comments.length}}</p>
+          </div>
+          <div>
+            <i class=" fs-5 bi bi-send"></i>
+          </div>
+          <div>
+            <i class=" fs-5 bi bi-save"></i>
+          </div>
+          <div>
+            <app-dropdown-btn></app-dropdown-btn>
+          </div>
+          <div class="img m-0">
+            <img src="{{item.createdBy.profilePic}}" alt="">
+          </div>
+        </div>
+        <div id="reelComments" class="w-100 px-0" [ngClass]="i == displayComments ?'open':'close'">
+          <app-reels-comments (closeComments)="displayComments=-1" [reel]="item"></app-reels-comments>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div>

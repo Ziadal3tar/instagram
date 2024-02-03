@@ -1,12 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { OnInit } from '@angular/core';
-
+import { NavigationEnd, Router } from '@angular/router';
+import { ChatComponent } from '../chat/chat.component';
+import { HomeComponent } from '../home/home.component';
+import { SharingService } from 'src/app/services/sharing.service';
+import { UserService } from 'src/app/services/user.service';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss'],
 })
 export class NavComponent {
+  constructor(
+    private _Route: Router,
+    private _sharing: SharingService,
+    private _UserService: UserService
+  ) {
+    this._Route.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // this._sharing.updateUserData()
+
+          this.handelProfileData();
+
+      }
+    });
+  }
+  @ViewChild(ChatComponent) ChatComponent: ChatComponent | any;
+  @ViewChild(HomeComponent) HomeComponent: ChatComponent | any;
+
   title = 'insta';
   exploreData: any;
   open: Boolean = false;
@@ -14,28 +35,83 @@ export class NavComponent {
   closeSearch: Boolean = true;
   closeMessage: Boolean = true;
   closeNotification: Boolean = true;
+  userData: any;
   tapId: any;
+  tap: any = 'Reels';
+toprofile: Boolean = false
+  ngOnInit() {
+this.toprofile = true
+  }
+
+  handelProfileData() {
+
+
+    let url = this._Route.url.split('/').filter((item: any) => item != '');
+
+
+    this._sharing.currentUserData.subscribe((data:any)=>{
+      this.userData = data
+
+      if (data?._id != url[1] && url[1] != undefined) {
+        if (this.toprofile) {
+
+          this.tap = 'Profile';
+        }
+
+        this._UserService.getProfilesData({ _id: url[1] }).subscribe((data1: any) => {
+            this._sharing.updateProfileDataDisplay();
+          });
+
+      }else{
+        this._sharing.updateProfileDataDisplay();
+
+      }
+    })
+
+  //   let url = this._Route.url.split('/').filter((item: any) => item != '');
+  //   this._sharing.currentUserData.subscribe((data: any) => {
+  //     this.userData = data;
+
+  //     if (data?._id != url[1] && data?._id != undefined) {
+
+
+  //       console.log('g');
+
+  //       this.tap = 'Profile';
+  //       this._UserService.getProfilesData({ _id: url[1] }).subscribe((data1: any) => {
+  //           this._sharing.updateProfileDataDisplay(data1.profile);
+  //         });
+  //     } else {
+  //       console.log('g1');
+
+  //       this._sharing.updateProfileDataDisplay(data);
+  //     }
+  //   });
+  }
 
   onDropdownItemClick(event: any) {
     event.stopPropagation();
   }
+
   ExploreData(data: any) {
     this.exploreData = data;
     this.open = true;
   }
+
   closeEX() {
     this.open = false;
     let theDiv: NodeListOf<ChildNode> | any =
       document.getElementById('app-explore')?.childNodes[0];
-    theDiv.classList.remove('vh-100');
-    theDiv.classList.remove('overflow-hidden');
+    theDiv?.classList?.remove('vh-100');
+    theDiv?.classList?.remove('overflow-hidden');
   }
+
   openSidePage(data: any) {
-    if (data == 'search') {
+    if (data == 'Search') {
       this.closeSearch = false;
       this.closeMessage = true;
       this.closeNotification = true;
-    } else if (data == 'message') {
+    } else if (data == 'Message') {
       this.closeSearch = true;
       this.closeMessage = false;
       this.closeNotification = true;
@@ -45,6 +121,7 @@ export class NavComponent {
       this.closeNotification = false;
     }
   }
+
   closeTap(data: any, id: any) {
     if (id == 'search') {
       this.closeSearch = data;
@@ -55,75 +132,48 @@ export class NavComponent {
     }
   }
 
-  closeAllTaps() {
+  closeAllTaps(tap: any) {
+    this._Route.navigate([`/userProfile/${this.userData._id}`]);
+
+    this.tap = tap;
     this.closeNotification = true;
     this.closeMessage = true;
     this.closeSearch = true;
   }
-  openCreate() {
-    let Create: any = document.getElementById('Create-tab-pane');
-    let tap: any = document.getElementById('myTabContent')?.childNodes;
-    for (let i = 0; i < tap.length; i++) {
-      const element: any = tap[i];
-      const ifhave = element.classList.contains('active');
-      if (ifhave) {
-        element.classList.remove('active');
-        element.classList.remove('show');
-        Create.classList.add('active');
-        Create.classList.add('show');
-        // ---------------
-        let lis: HTMLCollection | any =
-          document.getElementById('myTab2')?.children;
 
-        // if (lis) {
-        for (let i = 0; i < lis.length; i++) {
-          const element = lis[i] as HTMLElement | any;
-          console.log(element);
-
-          if (element.children[0].classList.contains('active')) {
-            element.children[0].tabIndex = -1;
-            element.children[0].setAttribute('aria-selected', 'false');
-            element.children[0].classList.remove('active');
-          }
-        }
-      }
-    }
-  }
-  closeCreate() {
-    let Create: any = document.getElementById('Create-tab-pane');
-
-    Create.classList.remove('active');
-    Create.classList.remove('show');
-  }
   hideNavs() {
     this.hide = true;
   }
+
   tapClick(tapName: String) {
-    if (tapName == 'home') {
-      this.closeAllTaps();
+    if (tapName == 'Home') {
+      this.closeAllTaps(tapName);
       this.closeEX();
-      this.closeCreate();
-    } else if (tapName == 'search') {
-      this.closeAllTaps();
+    } else if (tapName == 'Explore') {
+      this.closeAllTaps(tapName);
       this.closeEX();
-      this.closeCreate();
-    } else if (tapName == 'reel') {
-      this.closeAllTaps();
+    } else if (tapName == 'Reels') {
+      this.closeAllTaps(tapName);
       this.closeEX();
-      this.closeCreate();
-    } else if (tapName == 'profile') {
-      this.closeAllTaps();
+    } else if (tapName == 'Profile') {
+      this.closeAllTaps(tapName);
       this.closeEX();
-      this.closeCreate();
-    } else if (tapName == 'message') {
+    } else if (tapName == 'Message') {
+      this.openSidePage(tapName);
       this.closeEX();
     }
   }
-  handelActive() {
-    //     let lis:any = document.getElementById('myTap2')?.childNodes
-    //     for (let i = 0; i < lis.length; i++) {
-    //       const element = lis[i];
-    // element.childNodes[0].classList.remove('active')
-    //     }
+
+  openChat() {
+    this.tap = 'Message';
+  }
+
+  logOut() {
+    localStorage.removeItem('userToken');
+    this._Route.navigate(['/register']);
+  }
+  toProfile(id: any) {
+    // this.tap = 'Profile';
+    // this._Route.navigate([`/userProfile/${id}`]);
   }
 }

@@ -19,7 +19,7 @@
   <div class="col-12 pages">
     <div *ngIf="activeTap == 'Posts'" class="col-12 h-100">
 
-      <div *ngIf="postsSrc.length !=0" class="imgPost centerEvenly flex-column position-relative">
+      <div *ngIf="postsSrc.length !=0" class="imgPost startEvenly flex-column position-relative">
         <i style="z-index: 99;" class="bi bi-x-lg text-black bg-white bg-opacity-50 position-absolute top-0 end-0 m-2 cursorPointer"
           (click)="postsSrc.length = 0"></i>
         <div class="col-12  imgs row" >
@@ -38,13 +38,14 @@
 
 
 
-
         </div>
         <div  class="col-12 row m-0 input d-flex align-items-end ">
 
-          <input type="text" class="col-8 bg-transparent border-0 border-bottom text-white ps-3" placeholder="Caption">
-          <button class="col-3 offset-1 btn btn-primary py-1 ">POST</button>
+          <input type="text" class="col-8 bg-transparent border-0 border-bottom text-white ps-3"  [(ngModel)]="captionPost" placeholder="Caption">
+          <button class="col-3 offset-1 btn btn-primary py-1  " (click)="addPost()">POST<app-loading-btn *ngIf="loading"></app-loading-btn></button>
         </div>
+    <p class="text-danger" *ngIf="ErrorResponse !=''">{{ErrorResponse}}</p>
+
       </div>
 
       <div *ngIf="postsSrc.length ==0" class="col-12 centerCenter flex-column h-100">
@@ -69,21 +70,6 @@
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <div *ngIf="activeTap == 'Reels'" class="col-12 centerCenter flex-column h-100">
       <div *ngIf="reel" class="imgStory position-relative">
         <i style="z-index: 99;" class="bi bi-x-lg text-black bg-white bg-opacity-50 position-absolute top-0 end-0 m-2 cursorPointer"
@@ -93,10 +79,10 @@
           <source src="{{reel}}" type="video/mp4">
         </video>
 
-        <div class="col-12 row m-0 input d-flex align-items-end ">
+        <div class="col-12 row m-0 input d-flex align-items-end pb-2 ">
 
-          <input type="text" class="col-8 bg-transparent border-0 border-bottom text-white ps-3" placeholder="Caption">
-          <button class="col-3 offset-1 btn btn-primary py-1 ">POST</button>
+          <input type="text" class="col-8 bg-transparent border-0 border-bottom text-white ps-3" [(ngModel)]="captionReel" placeholder="Caption">
+          <button class="col-3 offset-1 btn btn-primary py-1  " (click)="addReel()">POST<app-loading-btn *ngIf="loading"></app-loading-btn></button>
         </div>
       </div>
       <div *ngIf="!reel" class="col-12 centerCenter flex-column h-100">
@@ -114,38 +100,12 @@
             fill="currentColor"></path>
         </svg>
         <p class="my-2 fw-bolder text-center">Drag videos here</p>
-        <input type="file" id="selectReel" class="d-none" (change)="uploadReel($event)">
+        <input type="file" id="selectReel" class="d-none" accept="video/*" (change)="uploadReel($event)">
         <label for="selectReel" class="btn btn-primary px-4">select from device</label>
       </div>
 
 
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <div *ngIf="activeTap == 'Stories'" class="col-12 centerCenter flex-column h-100 pt-3">
@@ -155,8 +115,8 @@
         <div class="col-12 img" style="background-image: url({{imgStory}});"></div>
         <div class="col-12 row m-0 input d-flex align-items-end ">
 
-          <input type="text" class="col-8 bg-transparent border-0 border-bottom text-white ps-3" placeholder="Caption">
-          <button class="col-3 offset-1 btn btn-primary py-1 ">POST</button>
+          <input type="text" class="col-8 bg-transparent border-0 border-bottom text-white ps-3" [(ngModel)]="captionStory" placeholder="Caption">
+          <button class="col-3 offset-1 btn btn-primary py-1 " >POST<app-loading-btn *ngIf="loading"></app-loading-btn></button>
         </div>
       </div>
       <div *ngIf="!imgStory" class="col-12 centerCenter flex-column h-100">
@@ -180,5 +140,6 @@
 
 
     </div>
+
   </div>
 </section>

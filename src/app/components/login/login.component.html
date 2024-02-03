@@ -8,13 +8,21 @@
     <p class="fw-bolder opacity-50 text-center ">Login to see photos and videos from your friends.</p>
     <div class="col-12 centerCenter flex-column my-3">
 
-      <button class="btn btn-primary mb-3 fs-7 px-5 py-1">Login by FACEBOOK</button>
+      <button class="btn btn-primary mb-3 fs-7 px-5 py-1" (click)="logInWithFB()">Login by FACEBOOK</button>
+      <div id="g_id_onload" data-client_id="1098782159208-4afkg7i8tv5e0btbk5emsk5lhre7fmaj.apps.googleusercontent.com"
+      data-callback="handleCredentialResponse">
+    </div>
+
+
+    <div class="g_id_signin mb-3" data-type="standard" data-shape="rectangular" data-theme="outline"
+      data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="163">
+    </div>
       <p class="or centerCenter fw-bold opacity-50">OR</p>
     </div>
     <form [formGroup]="logInForm" class="col-12">
       <p class="text-danger" *ngIf="ErrorResponse !=''">{{ErrorResponse}}</p>
       <div class="py-1">
-        <input type="email" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="email" name="email" placeholder="Phone Number or Email">
+        <input type="email" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="email" name="email" placeholder="Email">
       </div>
 
       <div class="py-1">

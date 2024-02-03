@@ -42,14 +42,13 @@ export class EditProfileComponent {
   }
   save() {
 this.loading = !this.loading
-
-    // this.loading=true
     const formdata = new FormData();
     formdata.append('image', this.image);
     this._userService.changeUserImage(formdata).subscribe((data: any) => {
       if (data.success) {
         this.changed = !this.changed
         this.loading = !this.loading
+        this._sharing.updateUserData()
       }
     });
   }

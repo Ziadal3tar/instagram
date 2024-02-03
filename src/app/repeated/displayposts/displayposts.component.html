@@ -1,7 +1,21 @@
 <div class="col-12 row m-0">
-  <div class="col-12 col-md-8 col-lg-4 m-0 p-2 " *ngFor="let item of data">
-    <div class="col-12 parent rounded-3 overflow-hidden">
-      <div class="img" style="background-image: url({{item.image}});"></div>
+  <div class="col-6 col-sm-4  m-0 p-2 cursorPointer" (click)="openPost(item)" *ngFor="let item of data"  >
+    <div class="col-12 parent rounded-3 overflow-hidden" [ngClass]="item?.postsImgAndVideos[0]?.type">
+      <div *ngIf="item?.postsImgAndVideos[0]?.type == 'image'" class="img" style="background-image: url({{item.postsImgAndVideos[0].url}});"></div>
+      <video  *ngIf="item?.postsImgAndVideos[0]?.type == 'video'">
+        <source src="{{item?.postsImgAndVideos[0].url}}" type="video/mp4">
+      </video>
     </div>
   </div>
 </div>
+<section id="display_Post" *ngIf="open">
+  <i style="z-index: 9;"
+    class="bi bi-x-lg position-fixed top-0 end-0 m-3 cursorPointer fw-bolder px-5 pt-3 fs-5 d-md-block d-none"
+    (click)="closePost()"></i>
+  <div class="d-block row d-md-none p-2 pt-3 bg-black d-flex position-relative mt-5">
+    <i (click)="closePost()" class="bi bi-arrow-left text-start position-absolute start-0 ms-3 cursorPointer"></i>
+    <p class=" text-center">EXPLORE</p>
+  </div>
+  <app-display-explore #appDisplayExplore id="display-explore1" (open)="open = $event"
+    [exploreData]="displayPost"></app-display-explore>
+</section>

@@ -1,7 +1,7 @@
 <section id="profile" class=" row  centerCenter" *ngIf="!openCollection && !edit">
   <div class=" col-11 col-lg-10 d-flex row m-0 py-5 centerCenter mt-3 mt-md-0">
     <div class="col-4 centerCenter">
-      <div class="userImg">
+      <div class="userImg" [style.background-image]="'url(' + displayData?.profilePic + ')'">
       </div>
     </div>
     <div class="col-8 col-lg-6 offset-lg-1">
@@ -9,26 +9,61 @@
         <button class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white d-block d-md-none" (click)="edit = true"><i class="bi bi-pen-fill"></i></button>
       </div>
       <div class="col-12 centerBetween ">
-        <p class="userName">Ziadalmorsr22</p>
-        <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-none d-md-block" (click)="edit = true">Edit
-          profile</button>
+        <p class="userName">{{displayData?.userName}}</p>
+
+
+
+
+
+
+
+
+
+        <button *ngIf="userId == displayData?._id; else elseBlock" class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-none d-md-block" (click)="edit = true" >Edit profile</button>
+        <ng-template #elseBlock>
+          <button (click)="follow()"
+
+          [ngClass]="{
+            'bg-gray': (follower && following)||(!follower && following),
+            'bg-success': follower && !following,
+            'bg-primary': !follower && !following
+          }"
+
+
+          class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-none d-md-block" >
+
+          {{ (follower && following) ? 'UnFollow' :
+          (!follower && following) ? 'UnFollow' :
+          (follower && !following) ? 'Follow Back' :
+          'Follow' }}
+
+
+
+
+        </button>
+        </ng-template>
+
+
+
+
+
         <i class="bi bi-gear-fill fs-5 cursorPointer" (click)="setting = true"></i>
       </div>
       <div class="col-12 d-md-flex d-none centerBetween my-3">
-        <p><span>0</span> posts</p>
-        <p><span>45</span> followers</p>
-        <p><span>91</span> following</p>
+        <p><span>{{displayData?.posts?.length}}</span> posts</p>
+        <p><span>{{displayData?.followers?.length}}</span> followers</p>
+        <p><span>{{displayData?.following?.length}}</span> following</p>
       </div>
       <div class="col-12">
-        <p>Ziad Almorsy</p>
+        <p>{{displayData?.fullName}}</p>
       </div>
 
     </div>
     <div class="col-12 d-flex d-md-none align-items-center justify-content-around mt-4">
 
-        <p class="ws-nw fs-7 "><span>0</span> posts</p>
-        <p class="ws-nw fs-7 "><span>45</span> followers</p>
-        <p class="ws-nw fs-7 "><span>91</span> following</p>
+        <p class="ws-nw fs-7 "><span>{{displayData?.posts?.length}}</span> posts</p>
+        <p class="ws-nw fs-7 "><span>{{displayData?.followers?.length}}</span> followers</p>
+        <p class="ws-nw fs-7 "><span>{{displayData?.following?.length}}</span> following</p>
     </div>
   </div>
 
@@ -70,7 +105,9 @@
 
 
   <section *ngIf="tap == 'posts'" id="posts" class="col-9">
-    <div class="col-12 ifNoPhoto centerCenter flex-column py-5">
+    <app-displayposts [data]="displayData?.posts" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
+
+    <div class="col-12 ifNoPhoto centerCenter flex-column py-5" *ngIf="displayData?.posts?.length ==0">
       <div class="icon centerCenter"><i class="bi bi-camera fs-1 opacity-50"></i></div>
       <h1 class=" fw-bolder">Share Photos</h1>
       <p class="text-center">When you share photos, they will appear on your profile.</p>
@@ -141,7 +178,7 @@
     </div>
   </section>
   <section *ngIf="tap =='tagged'" id="tagged" class="col-9">
-    <app-displayposts [data]="saved"></app-displayposts>
+    <app-displayposts [data]="displayData?.posts"></app-displayposts>
   </section>
 </section>
 

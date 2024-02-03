@@ -123,7 +123,6 @@ export class HomeComponent {
   @Input() storyData: any;
 
   ngOnInit(): void {
-    this._sharing.updateUserData()
 
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
