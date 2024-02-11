@@ -1,33 +1,35 @@
 <section id="home" *ngIf="!storyOpened" class=" row m-0" >
   <div class="col-md-8 col-12 row m-0 py-3 px-0 px-md-3 mt-5 overflow-hidden ">
-    <div id="story" class="col-12 row p-0 position-relative" *ngIf="!storyOpened">
-
-      <!-- <div class="moreStory position-absolute col-12 h-100 d-flex align-items-center  "
-        [ngClass]="{'justify-content-between': num != 1 , 'justify-content-end': !ksr}">
-        <div *ngIf="num != 1" (click)="left()"><i class="bi bi-arrow-left-circle-fill cursorPointer"></i> </div>
-        <div *ngIf="!ksr && num != this.divArray.length/widthSize" (click)="right()"><i
-            class="bi bi-arrow-right-circle-fill cursorPointer"></i></div>
-      </div> -->
-
+    <div id="story" class="col-10 row p-0 position-relative" *ngIf="!storyOpened">
 
 
       <owl-carousel-o [options]="customOptions" >
 
-        <ng-container *ngFor="let slide of divArray">
-          <ng-template carouselSlide>
-            <div class="friendStory" (click)="openStory(slide)">
+        <ng-container *ngFor="let slide of userData.following">
+          <ng-template carouselSlide >
+            <div class="friendStory centerCenter" (click)="openStory(slide)" >
 
               <div class="borderImg bg-danger rounded-5  ">
-                <div class=" img "></div>
+                <div class=" img " [style.background-image]="'url(' + slide.profilePic + ')'"></div>
               </div>
-            </div>
-            <div class=" w-100 text-center">
-              <p class="name">{{slide.name}}</p>
+              <div class=" w-100 text-center">
+                <p class="name">{{slide.userName}}</p>
+              </div>
             </div>
           </ng-template>
         </ng-container>
       </owl-carousel-o>
     </div>
+    <div class="col-2 addStoryBtn centerCenter flex-column" >
+      <input type="file" id="uploadStory" class="d-none" (change)="uploadStory($event)" >
+
+      <label (click)="option = !option" >
+        <app-user-image [story]="true" [data]="userData"></app-user-image> </label>
+
+
+        <div [ngClass]="!option?'openOption':'closeOption'" class="option row m-0 "><label (click)="openStory(userData)">My Stories</label><label for="uploadStory">Add story</label> </div>
+      </div>
+
     <div id="posts" class="col-12 mt-2 px-md-5 px-0 ">
       <div class="col-12 post">
         <div class="col-12 d-flex align-items-center justify-content-between header ">
@@ -125,7 +127,7 @@
   [style.top]="divTop" [style.left]="divLeft">
   <app-hoverdata></app-hoverdata>
 </div>
-<section id="storySec" *ngIf="storyOpened">
+<section id="storySec" *ngIf="storyOpened" [ngClass]="{'d-none': !storyOpened}">
   <i class=" bi bi-x-lg position-absolute end-0 m-3 cursorPointer" (click)="closeStory()"></i>
-  <app-stories [storyData]="storyData"></app-stories>
+  <app-stories (visitProfile)="toProfile($event)" [uploadFiles]="uploadFilesData" [uploadStoryData]="uploadStoryData" [storyData]="storyData" (closeStory)="storyOpened=false"></app-stories>
 </section>

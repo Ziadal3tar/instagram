@@ -144,23 +144,27 @@
     align-items: center;
     transition: 0.5s;
 
-    &:hover{
-    img {
-      filter: grayscale(100%);
-    }
-    .bgHeart {
+    &:hover {
+      img {
+        filter: grayscale(100%);
+      }
 
-      opacity: 1;
-  }
-  }
+      .bgHeart {
+
+        opacity: 1;
+      }
+    }
+
     .bgHeart {
       position: absolute;
       top: calc(50% - 35px);
-      left:calc(50% - 35px);;
+      left: calc(50% - 35px);
+      ;
       font-size: 70px;
       opacity: 0;
       transition: 0.5s;
-  }
+    }
+
     img,
     video {
       vertical-align: middle;
@@ -233,3 +237,4 @@
     }
   }
 }
+

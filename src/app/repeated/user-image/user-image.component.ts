@@ -8,4 +8,7 @@ import { Component, Input } from '@angular/core';
 export class UserImageComponent {
   @Input() story:Boolean= false
   @Input() data:any
+  @Input() size:any
+  ngOnInit(): void {
+  }
 }

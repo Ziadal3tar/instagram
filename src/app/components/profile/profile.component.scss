@@ -9,9 +9,10 @@
       // background-image: url(../../../assets/imgs/me.jpg);
       background-size: cover;
       background-position: center;
+
       @media screen and (max-width : 767px) {
         width: 60px !important;
-      height: 60px !important;
+        height: 60px !important;
       }
 
 
@@ -46,36 +47,7 @@
   }
 
   #saved {
-    .collection {
-      width: 280px;
-      height: 280px;
-      cursor: pointer;
-      border-radius: 10px !important;
-      overflow: hidden;
 
-      .img {
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-      }
-
-      &:hover {
-        .title {
-          background-color: rgba(0, 0, 0, 0.486) !important;
-
-          h4 {
-            display: block;
-
-          }
-        }
-      }
-
-      .title {
-        h4 {
-          display: none;
-        }
-      }
-    }
 
     .saved {
       z-index: 10;
@@ -86,7 +58,9 @@
 }
 
 
-#displayCollection,#tagged,#posts {
+#displayCollection,
+#tagged,
+#posts {
   .parent {
     position: relative;
 
@@ -113,20 +87,21 @@
 
 .vh12vw {
 
-// width: 250px;
+  // width: 250px;
   height: 250px;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
 }
-#edit{
+
+#edit {
   height: 55%;
   background-color: #262626;
   border-radius: 20px;
   z-index: 99;
 
-  ul{
+  ul {
     z-index: 999;
     height: 100%;
     display: flex;
@@ -135,16 +110,64 @@
     flex-direction: column;
     padding: 0;
     margin: 0;
-    li{
-      &:not(:last-child){
+
+    li {
+      &:not(:last-child) {
         border-bottom: 1px solid rgba(255, 255, 255, 0.235);
       }
+
       cursor: pointer;
       font-size: 15px;
       list-style: none;
       padding: 10px 0 11px 0;
       width: 100%;
       text-align: center;
+    }
+  }
+}
+
+
+.defaultCollection {
+  width: 200px;
+  height: 200px;
+  filter: blur(2px);
+  background: #0b0b0b;
+  cursor: pointer;
+  border-radius: 10px !important;
+  overflow: hidden;
+  transition: 0.5s;
+  .img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  video {
+    vertical-align: middle;
+    height: 100%;
+    width: 100%;
+
+
+  }
+  &:hover {
+    filter: blur(1px);
+    .title {
+      background-color: rgba(0, 0, 0, 0.486) !important;
+      h4 {
+        opacity: 1;
+      }
+    }
+  }
+  .title {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: end;
+    transition: 0.5s;
+    h4 {
+      opacity: 0;
+      transition: 0.5s;
     }
   }
 }

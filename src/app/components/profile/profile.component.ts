@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SharingService } from 'src/app/services/sharing.service';
 import { UserService } from 'src/app/services/user.service';
@@ -21,81 +21,31 @@ export class ProfileComponent {
   selected: any = [];
   displayData: any;
   userId: any;
-  saved: any[] = [
-    {
-      id: '0',
-      image: './assets/imgs/aboobida.jpg',
-    },
-    {
-      id: '1',
-      image: './assets/imgs/anne.jpg',
-    },
-    {
-      id: '2',
-      image: './assets/imgs/fortune_wheel-removebg-preview.png',
-    },
-    {
-      id: '3',
-      image: './assets/imgs/ivana-square.jpg',
-    },
-    {
-      id: '4',
-      image: './assets/imgs/team-4.jpg',
-    },
-    {
-      id: '5',
-      image: './assets/imgs/team-3.jpg',
-    },
-    {
-      id: '6',
-      image: './assets/imgs/Sophie.jpg',
-    },
-    {
-      id: '7',
-      image: './assets/imgs/marie.jpg',
-    },
-  ];
-  collections: any[] = [
-    {
-      name: 'favorite',
-      items: [
-        this.saved[5],
-        this.saved[3],
-        this.saved[1],
-        this.saved[6],
-        this.saved[0],
-      ],
-    },
-  ];
+  collectionName: any;
+@Output() OpenChat: EventEmitter<any>= new EventEmitter<any>()
   constructor(
     private _Route: Router,
     private _sharing: SharingService,
     private _userServices: UserService
-  ) {
-
-  }
+  ) {}
   ngOnInit(): void {
     let url = this._Route.url.split('/').filter((item: any) => item != '');
 
     this.userId = localStorage.getItem('id');
+
     this._sharing.currentProfileDataDisplay.subscribe((data: any) => {
-
-
-
-
-
-  this.displayData = data;
-  if (this.displayData?.followers?.includes(this.userId)) {
-    this.following = true;
-  } else if (this.displayData?.following?.includes(this.userId)) {
-    this.follower = true;
-  }else{
-    this.following = false;
-    this.follower = false;
-
-  }
-})
-
+      this.displayData = data;
+      let to={to:this.displayData._id}
+      this._sharing.updateChatData(to)
+      if (this.displayData?.followers?.includes(this.userId)) {
+        this.following = true;
+      } else if (this.displayData?.following?.includes(this.userId)) {
+        this.follower = true;
+      } else {
+        this.following = false;
+        this.follower = false;
+      }
+    });
   }
   changeProfileTaps(data: any) {}
 
@@ -121,20 +71,20 @@ export class ProfileComponent {
   back() {
     this.SelectionStage = false;
   }
-  addCollection() {
-    let items = [];
-    for (let i = 0; i < this.selected.length; i++) {
-      const element = this.selected[i];
-      const elementSelected = this.saved.find((item) => item.id === element);
-      items.push(elementSelected);
-    }
-    let collection = {
-      name: this.nameNewCollection,
-      items: items,
-    };
-    this.collections.push(collection);
-    this.close();
-  }
+  // addCollection() {
+  //   let items = [];
+  //   for (let i = 0; i < this.selected.length; i++) {
+  //     const element = this.selected[i];
+  //     const elementSelected = this.saved.find((item) => item.id === element);
+  //     items.push(elementSelected);
+  //   }
+  //   let collection = {
+  //     name: this.nameNewCollection,
+  //     items: items,
+  //   };
+  //   this.collections.push(collection);
+  //   this.close();
+  // }
   closeSetting(event: any) {
     if (event.target.id == 'close') {
       this.setting = false;
@@ -147,10 +97,22 @@ export class ProfileComponent {
   follow() {
     this._userServices.follow(this.displayData._id).subscribe((data: any) => {
       if (data.success) {
-
         this._sharing.updateProfileDataDisplay();
-
       }
     });
+  }
+  newCollection() {
+    let data = {
+      collectionName: this.collectionName,
+    };
+    this._userServices.newCollection(data).subscribe((data: any) => {
+      if (data.success) {
+        this._sharing.updateProfileDataDisplay();
+      }
+    });
+  }
+  openChat(){
+
+    this.OpenChat.emit('')
   }
 }

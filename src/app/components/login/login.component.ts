@@ -38,7 +38,7 @@ export class LoginComponent {
 
     private authService: SocialAuthService) {}
   ngOnInit(): void {
-
+localStorage.clear()
     this.logInForm.value.registerType = 'default';
 
     (window as any).handleCredentialResponse =

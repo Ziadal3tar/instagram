@@ -1,10 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { ChatComponent } from '../chat/chat.component';
 import { HomeComponent } from '../home/home.component';
 import { SharingService } from 'src/app/services/sharing.service';
 import { UserService } from 'src/app/services/user.service';
+import { SocketService } from 'src/app/services/socket.service';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
@@ -14,14 +15,12 @@ export class NavComponent {
   constructor(
     private _Route: Router,
     private _sharing: SharingService,
-    private _UserService: UserService
-  ) {
+    private _UserService: UserService,
+    private _Socket: SocketService,
+    ) {
     this._Route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        // this._sharing.updateUserData()
-
-          this.handelProfileData();
-
+        this._sharing.updateProfileDataDisplay();
       }
     });
   }
@@ -37,56 +36,20 @@ export class NavComponent {
   closeNotification: Boolean = true;
   userData: any;
   tapId: any;
-  tap: any = 'Reels';
-toprofile: Boolean = false
+  tap: any = 'Home';
   ngOnInit() {
-this.toprofile = true
-  }
 
-  handelProfileData() {
+    this._sharing.currentUserData.subscribe((data: any) => {
+      this.userData = data;
+      console.log(data);
 
+      this._Socket.emit('updateSocketId', data._id);
 
-    let url = this._Route.url.split('/').filter((item: any) => item != '');
-
-
-    this._sharing.currentUserData.subscribe((data:any)=>{
-      this.userData = data
-
-      if (data?._id != url[1] && url[1] != undefined) {
-        if (this.toprofile) {
-
-          this.tap = 'Profile';
-        }
-
-        this._UserService.getProfilesData({ _id: url[1] }).subscribe((data1: any) => {
-            this._sharing.updateProfileDataDisplay();
-          });
-
-      }else{
-        this._sharing.updateProfileDataDisplay();
-
+      let url = this._Route.url.split('/').filter((item: any) => item != '');
+      if (localStorage.getItem('id') != url[1]) {
+        this.tap = 'Profile';
       }
-    })
-
-  //   let url = this._Route.url.split('/').filter((item: any) => item != '');
-  //   this._sharing.currentUserData.subscribe((data: any) => {
-  //     this.userData = data;
-
-  //     if (data?._id != url[1] && data?._id != undefined) {
-
-
-  //       console.log('g');
-
-  //       this.tap = 'Profile';
-  //       this._UserService.getProfilesData({ _id: url[1] }).subscribe((data1: any) => {
-  //           this._sharing.updateProfileDataDisplay(data1.profile);
-  //         });
-  //     } else {
-  //       console.log('g1');
-
-  //       this._sharing.updateProfileDataDisplay(data);
-  //     }
-  //   });
+    });
   }
 
   onDropdownItemClick(event: any) {
@@ -164,16 +127,26 @@ this.toprofile = true
     }
   }
 
-  openChat() {
+  openChat(data:any) {
+    console.log(data);
+    this.closeAllTaps('')
     this.tap = 'Message';
+    if (data == 'closeTaps') {
+    this.ChatComponent.chat = null
+
+    }
+
   }
 
   logOut() {
     localStorage.removeItem('userToken');
     this._Route.navigate(['/register']);
   }
-  toProfile(id: any) {
-    // this.tap = 'Profile';
-    // this._Route.navigate([`/userProfile/${id}`]);
+  toProfile() {
+    this.tap = 'Profile';
+
+    this.closeNotification = true;
+    this.closeMessage = true;
+    this.closeSearch = true;
   }
 }

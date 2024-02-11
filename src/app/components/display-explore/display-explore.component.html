@@ -24,7 +24,7 @@
       src="{{exploreData?.postsImgAndVideos[0].url}}" alt="" srcset="">
 
     <video (click)="ifDoubleClick()" controls autoplay *ngIf="exploreData?.postsImgAndVideos[0]?.type == 'video'">
-      <source src="{{exploreData?.postsImgAndVideos[0].url}}" type="video/mp4">
+      <source src="{{exploreData?.postsImgAndVideos[0].url}}" >
     </video>
 
     <i [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
@@ -41,7 +41,7 @@
         <i class="bi bi-send mx-2 cursorPointer"></i>
 
       </div>
-      <i class="bi bi-save cursorPointer"></i>
+      <i class="bi bi-save cursorPointer" (click)="savePost(exploreData._id)"></i>
 
 
     </div>
@@ -113,7 +113,7 @@
                     </div>
                   </span> </h6>
               </div> -->
-<app-comments [size] = 30 [commentDetails]='item' ></app-comments>
+              <app-comments [size]=30 [commentDetails]='item'></app-comments>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@
             <i class="bi bi-send mx-2 cursorPointer"></i>
 
           </div>
-          <i class="bi bi-save cursorPointer"></i>
+          <i class="bi bi-save cursorPointer " [ngClass]="idSaved ? 'text-warning' : ''" (click)="savePost(exploreData._id)"></i>
 
 
         </div>
@@ -152,6 +152,11 @@
 </section>
 
 
+
+
+
+
+<app-your-collections *ngIf="yourCollections" [ref]="'Post'" [collections]="userData.collections" [post]="exploreData" (close)="yourCollections = false"></app-your-collections>
 
 
 <div id="dataWhenHover" style="z-index: 9 !important;" class="fadeIn bg-danger  " *ngIf="showDiv"

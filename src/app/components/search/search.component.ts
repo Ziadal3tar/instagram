@@ -33,8 +33,8 @@ export class SearchComponent {
 
     }
 
-    if (this.userData.visited.length != 0) {
-      this.searched = this.userData.visited;
+    if (this.userData?.visited.length != 0) {
+      this.searched = this.userData?.visited;
       this.recent = true;
     }
   }
@@ -108,7 +108,7 @@ if (this.closeSearch) {
     this._user.visited(data._id).subscribe((x: any) => {
       if (x.success) {
         this._sharing.updateUserData()
-
+this.toProfile.emit('')
       }
     });
   }

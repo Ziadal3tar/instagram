@@ -9,13 +9,13 @@
     *ngFor="let item of chats" (click)="openChat(item)">
     <div class="col-2">
       <div class="img ">
-        <img src="{{item.image}}" alt="">
+        <img src="{{item.profilePic}}" alt="">
       </div>
 
     </div>
     <div class="text col-8">
-      <h6 style="font-size: 14px;" class=" w-100">{{item.name}}</h6>
-      <p class="fs-7 w-100 opacity-75 ">Lorem ipsum dolor sit amet consectetur adipisicing erty j.</p>
+      <h6 style="font-size: 14px;" class=" w-100">{{item.userName}}</h6>
+      <p class="fs-7 w-100 opacity-75 ">{{item.lastMessage.message}}</p>
     </div>
     <div class="col-2 d-flex align-items-start">
       <i class="bi bi-dot fs-1 text-primary"></i>

@@ -5,6 +5,8 @@ import {
   Renderer2,
   Directive,
   Input,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { SharingService } from 'src/app/services/sharing.service';
 import { OwlOptions } from 'ngx-owl-carousel-o';
@@ -15,7 +17,6 @@ import { OwlOptions } from 'ngx-owl-carousel-o';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
-
   customOptions: OwlOptions = {
     loop: false,
     mouseDrag: true,
@@ -26,83 +27,31 @@ export class HomeComponent {
     navText: ['', ''],
     responsive: {
       0: {
-        items: 5
+        items: 5,
       },
       400: {
-        items: 6
+        items: 6,
       },
       740: {
-        items: 7
+        items: 7,
       },
       940: {
-        items: 9
-      }
-    },
-    nav: false
-  }
-
-
-
-
-
-
-  divArray: any[] =  [
-      {
-        name: 'Alice',
-        stories: [
-          './assets/imgs/anne.jpg',
-          './assets/imgs/MAB.jpg',
-          './assets/imgs/me.jpg',
-        ],
+        items: 9,
       },
-      { name: 'Bob', stories: [] },
-      { name: 'Charlie', stories: [] },
-      { name: 'David', stories: [] },
-      { name: 'Emma', stories: [] },
-      { name: 'Frank', stories: [] },
-      { name: 'Grace', stories: [] },
-      { name: 'Henry', stories: [] },
-      { name: 'Ivy', stories: [] },
-      { name: 'Jack', stories: [] },
-      { name: 'Katherine', stories: [] },
-      { name: 'Larry', stories: [] },
-      { name: 'Molly', stories: [] },
-      { name: 'Nancy', stories: [] },
-      { name: 'Oscar', stories: [] },
-      { name: 'Peter', stories: [] },
-      { name: 'Quincy', stories: [] },
-      { name: 'Rachel', stories: [] },
-      { name: 'Sam', stories: [] },
-      { name: 'Tina', stories: [] },
-      { name: 'Ulysses', stories: [] },
-      { name: 'Victor', stories: [] },
-      { name: 'Wendy', stories: [] },
-      { name: 'Xavier', stories: [] },
-      { name: 'Yvonne', stories: [] },
-      { name: 'Zack', stories: [] },
-      { name: 'Andrew', stories: [] },
-      { name: 'Betty', stories: [] },
-      { name: 'Charles', stories: [] },
-      { name: 'Diana', stories: [] },
-      { name: 'Edward', stories: [] },
-      { name: 'Fiona', stories: [] },
-      { name: 'George', stories: [] },
-      { name: 'Helen', stories: [] },
-      { name: 'Isaac', stories: [] },
-      { name: 'Jane', stories: [] },
-      { name: 'Kevin', stories: [] },
-      { name: 'Linda', stories: [] },
-      { name: 'Michael', stories: [] },
-      { name: 'Nina', stories: [] },
-      { name: 'Oliver', stories: [] },
-      { name: 'Pamela', stories: [] },
-    ];
+    },
+    nav: false,
+  };
+  @Output() visitProfile: EventEmitter<any> = new EventEmitter<any>();
+
   num: any = 1;
-  userData: any
-  ksr: Boolean = false;
+  userData: any;
+  uploadFilesData: any;
+  uploadStoryData: any;
+  ifUploadStory: Boolean = false;
+  option: Boolean = false;
   constructor(
     private elementRef: ElementRef,
-    private _sharing: SharingService,
+    private _sharing: SharingService
   ) {
     if (window.innerWidth >= 767) {
       this.marginSize = 80;
@@ -120,10 +69,9 @@ export class HomeComponent {
   storyOpened: Boolean = false;
   widthSize: any;
   marginSize: any;
-  @Input() storyData: any;
+  storyData: any;
 
   ngOnInit(): void {
-
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
     });
@@ -170,47 +118,81 @@ export class HomeComponent {
       console.error('Video element not found.');
     }
   }
-  right() {
-    const element: any = document.getElementById('story');
-    if (this.divArray.length > this.num * this.widthSize) {
-      if (
-        this.divArray.length - this.num * this.widthSize >
-        this.widthSize - 1
-      ) {
-        element.style.marginLeft = -this.marginSize * this.num + '%';
-        this.num += 1;
-      } else {
-        let margin =
-          (this.divArray.length - this.num * this.widthSize) *
-          (100 / this.widthSize);
-        element.style.marginLeft =
-          -(margin + (this.num - 1) * this.marginSize) + '%';
-        this.ksr = !this.ksr;
-      }
-    }
-  }
-  left() {
-    const element: any = document.getElementById('story');
-    if (this.divArray.length % this.widthSize != 0 && this.ksr) {
-      element.style.marginLeft = -(this.num - 1) * this.marginSize + '%';
-      this.ksr = !this.ksr;
-    } else {
-      if (this.num >= 2) {
-        this.num -= 1;
-      }
-      element.style.marginLeft = -(this.num - 1) * this.marginSize + '%';
-    }
-  }
 
   openStory(data: any) {
-
     if (data.stories.length != 0) {
       this.storyOpened = true;
-      this.storyData = data.stories;
+      this.storyData = data;
     }
   }
   closeStory() {
     this.storyOpened = false;
     this.storyData = null;
+  }
+
+  uploadStory(event: any) {
+    const file = event.target.files[0];
+    this.uploadFilesData = file;
+
+    if (file.type.startsWith('video/')) {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+
+      video.onloadedmetadata = () => {
+        let duration = video.duration;
+
+        // Limit the video duration to 30 seconds
+        if (duration > 30) {
+          console.log(
+            `Video ${file.name} is longer than 30 seconds. Truncating to 30 seconds.`
+          );
+          duration = 30;
+        }
+
+        const story: any = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          duration: duration,
+        };
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event: any) => {
+          let data = {
+            Src: event.target.result,
+            type: file.type.split('/')[0],
+            duration: duration,
+          };
+          this.uploadStoryData = data;
+          this.storyOpened = !this.storyOpened;
+        };
+      };
+
+      video.src = URL.createObjectURL(file);
+    } else if (file.type.startsWith('image/')) {
+      const story: any = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      };
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event: any) => {
+        let data = {
+          Src: event.target.result,
+          type: file.type.split('/')[0],
+        };
+        this.uploadStoryData = data;
+
+        this.storyOpened = !this.storyOpened;
+      };
+    }
+  }
+  toProfile(data:any){
+    this.visitProfile.emit(data)
+
+
   }
 }

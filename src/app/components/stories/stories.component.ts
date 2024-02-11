@@ -1,4 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { SharingService } from 'src/app/services/sharing.service';
+import { StoriesService } from 'src/app/services/stories.service';
 
 @Component({
   selector: 'app-stories',
@@ -6,72 +16,144 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./stories.component.scss'],
 })
 export class StoriesComponent {
-  @Input() storyData: any[] = [];
-  yourNumber: any = 0;
+  @Input() storyData: any;
   stop: Boolean = false;
+  loading: Boolean = false;
   imgId: number = 0;
-  counter: any = 5;
-  timeoutId: any;
-  time = 6;
-  constructor() {}
+  timeout: any = 0;
+  captionStory: any;
+  captionColor: any;
+
+  @Input() uploadFiles: any;
+  @Input() uploadStoryData: any;
+  @Output() closeStory: EventEmitter<any> = new EventEmitter<any>();
+  @Output() visitProfile: EventEmitter<any> = new EventEmitter<any>();
+  private isDragging: boolean = false;
+  private offsetX: any = 0;
+  private offsetY: any = 0;
+  private target: HTMLElement | null = null; // Store reference to the target element
+  constructor(
+    private _story: StoriesService,
+    private _sharing: SharingService,
+    private Router: Router
+  ) {}
+  ngOnInit(): void {}
   ngAfterViewInit(): void {
-    // document.documentElement.style.setProperty(
-    //   '--storyLength',
-    //   this.storyData.length.toString()
-    // );
-    document.documentElement.style.setProperty('--time', this.time.toString());
-    // document.documentElement.style.setProperty(
-    //   '--counter',
-    //   this.counter.toString()
-    // );
-    this.startStory();
+    if (this.storyData) {
+      // this.startStory();
+    }
   }
-
+  ngOnDestroy(): void {}
   startStory() {
-    for (let i = 0; i < this.storyData.length; i++) {
-      const NextStory = setTimeout(() => {
-        if (i != 0) {
-          this.imgId++;
-        }
-        for (let c = 1; c < 6; c++) {
-          const counter = setTimeout(() => {
-            // if (this.stop) {
-            //   let count = c + 1;
-            //   this.time = 0;
-            //   document.documentElement.style.setProperty(
-            //     '--time',
-            //     this.time.toString()
-            //   );
-            //   document.documentElement.style.setProperty(
-            //     '--counter',
-            //     count.toString()
-            //   );
-            //   this.stopCounter();
-            // }
-          }, c * 1000);
-          this.timeoutArray.push(counter);
-        }
-      }, i * 5100);
-      this.timeoutArray.push(NextStory);
+    document.documentElement.style.setProperty(
+      '--time',
+      this.storyData.stories[this.imgId].duration
+    );
+
+    this.timeout = setTimeout(() => {
+      if (this.imgId === this.storyData.stories.length - 1) {
+        this.close();
+      } else {
+        this.imgId++;
+        this.startStory();
+      }
+    }, this.storyData.stories[this.imgId].duration * 1000);
+  }
+
+  prev() {
+    clearTimeout(this.timeout);
+    document.documentElement.style.setProperty('--time', '0');
+
+    if (this.imgId === 0) {
+      this.imgId = 0;
+      this.startStory();
+    } else {
+      this.imgId--;
+
+      this.startStory();
     }
   }
 
-  timeoutArray: any[] = [];
-
-  Counter(): void {
-    for (let i = 1; i <= 5; i++) {
-      const timeout = setTimeout(() => {
-      }, i * 1000);
-      this.timeoutArray.push(timeout);
+  next() {
+    clearTimeout(this.timeout);
+    document.documentElement.style.setProperty('--time', '0');
+    if (this.imgId === this.storyData.stories.length - 1) {
+      this.close();
+    } else {
+      this.imgId++;
+      this.startStory();
     }
   }
 
-  stopCounter(): void {
-    this.timeoutArray.forEach((timeout) => clearTimeout(timeout));
-    this.timeoutArray = [];
+  close() {
+    this.storyData = undefined;
+    this.closeStory.emit('');
   }
 
-  clear(): void {
-    this.stop = true;
+  onMouseDown(event: MouseEvent) {
+    this.target = event.target as HTMLElement; // Cast target to HTMLElement
+    if (this.target.classList.contains('draggable')) {
+      // Check if the target has the draggable class
+      this.isDragging = true;
+
+    }
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if (this.isDragging && this.target) {
+
+      const left = event.clientX - 790;
+
+      const top = event.clientY - 230;
+      this.target.style.left = left + 'px';
+      this.target.style.top = top + 'px';
+    }
+  }
+
+  @HostListener('document:mouseup')
+  onMouseUp() {
+    let position = document.getElementById('draggable');
+    this.offsetX = position?.style.left;
+    this.offsetY = position?.style.top;
+    console.log(this.offsetX, this.offsetY);
+
+    this.isDragging = false;
+    this.target = null; // Reset the target element
+  }
+
+  addStory() {
+    this.loading = !this.loading;
+    const formData = new FormData();
+    if (this.uploadStoryData?.duration) {
+      formData.append('duration', this.uploadStoryData.duration);
+    }
+    formData.append('story', this.uploadFiles);
+    formData.append('left', this.offsetX);
+    formData.append('top', this.offsetY);
+    formData.append('color', this.captionColor);
+    formData.append('caption', this.captionStory);
+    this._story.addStory(formData).subscribe(
+      (data: any) => {
+        console.log(data);
+
+        if (data.success) {
+          this._sharing.updateUserData();
+          this.loading = !this.loading;
+          this.close()
+        }
+      },
+      (err: HttpErrorResponse) => {
+        this.loading = !this.loading;
+
+        // this.ErrorResponse = err.error.message;
+      }
+    );
+  }
+  toProfile(){
+    this.Router.navigate([`/userProfile/${this.storyData._id}`]);
+
+    this.visitProfile.emit('Profile')
+    this.close()
   }
 }

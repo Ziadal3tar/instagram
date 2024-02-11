@@ -19,5 +19,9 @@ constructor(private _sharing : SharingService){
   }
 
 }
+ngOnInit(): void {
+  // localStorage.clear()
+
+}
 }
 

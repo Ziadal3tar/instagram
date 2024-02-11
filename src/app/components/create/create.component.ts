@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { PostsService } from 'src/app/services/posts.service';
 import { ReelService } from 'src/app/services/reel.service';
 import { SharingService } from 'src/app/services/sharing.service';
+import { StoriesService } from 'src/app/services/stories.service';
 
 @Component({
   selector: 'app-create',
@@ -10,22 +11,26 @@ import { SharingService } from 'src/app/services/sharing.service';
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent {
-  activeTap: String = 'Posts';
+  activeTap: String = 'Stories';
   hide: any;
   captionPost: any;
   captionReel: any;
-  captionStory: any;
   postsFiles: any;
-  storyFiles: any;
   reelFiles: any;
-  imgStory: any;
+  storyData: any;
   mainImgPost: any;
   reel: any;
   postsSrc: any[] = [];
   loading: Boolean = false;
   ErrorResponse: any;
 
-  constructor(private _posts: PostsService, private _sharing: SharingService,private _reels: ReelService) {}
+  constructor(
+    private _posts: PostsService,
+    private _sharing: SharingService,
+    private _reels: ReelService,
+
+  ) {}
+
   uploadPost(event: any) {
     this.hide = '';
     const { files } = event.target;
@@ -44,41 +49,16 @@ export class CreateComponent {
     }
     this.postsSrc = imgs;
   }
-  uploadStory(event: any) {
-    this.hide = '';
-    const { files } = event.target;
-    this.storyFiles = files;
-    const imgs: any[] = [];
-    for (let i = 0; i < this.storyFiles.length; i++) {
-      const element = this.storyFiles[i];
-      const reader = new FileReader();
-      reader.readAsDataURL(element);
-      reader.onload = (event: any) => {
-        if (i == 0) {
-          this.imgStory = event.target.result;
-        }
-        imgs.push(event.target.result);
-      };
-    }
-    // this.productImg = imgs;
-  }
+
+
   uploadReel(event: any) {
-    // this.hide = '';
     const { files } = event.target;
     this.reelFiles = files;
-    // console.log(this.reelFiles);
 
-    // const imgs: any[] = [];
-    // for (let i = 0; i < this.reelFiles.length; i++) {
-    // const element = this.reelFiles[i];
     const reader = new FileReader();
     reader.readAsDataURL(this.reelFiles[0]);
     reader.onload = (event: any) => {
-      // if (i == 0) {
       this.reel = event.target.result;
-      // }
-      // imgs.push(event.target.result);
-      // };
     };
   }
 
@@ -106,6 +86,7 @@ export class CreateComponent {
       }
     );
   }
+
   addReel() {
     this.loading = !this.loading;
 
@@ -130,4 +111,12 @@ export class CreateComponent {
       }
     );
   }
+
+
+
+
+
+
+
+
 }

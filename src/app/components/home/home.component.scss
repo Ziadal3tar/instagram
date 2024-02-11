@@ -11,15 +11,18 @@
       .owl-nav {
         display: none !important;
       }
+
     }
 
     .friendStory {
       // z-index: 0;
+      cursor: pointer;
+
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-
+      width: 100%;
       .borderImg {
         padding: 2.5px;
 
@@ -61,6 +64,45 @@
         font-size: 10px;
         margin-top: 7px;
       }
+    }
+  }
+  .addStoryBtn{
+    position: relative;
+    .option{
+      transition: 0.5s;
+      overflow: hidden;
+      background-color: #743ad5;
+      position: absolute;
+      top: 80px;
+      width: 100px;
+      border-radius: 5px;
+      text-align: center;
+      label{
+      transition: 0.5s;
+
+        height: 20px;
+        margin: 0;
+        padding: 4px;
+font-size: 15px;
+white-space: nowrap;
+height: 50%;
+cursor: pointer;
+&:hover{
+  background-color: #8d6fc2;
+
+}
+      }
+    }
+    .closeOption{
+
+    }
+    .openOption{
+      height: 0px;
+
+    }
+    div{
+      width: 60px;
+      height: 60px;
     }
   }
 
@@ -110,7 +152,6 @@
               .img {
                 width: 40px;
                 height: 40px;
-                background-image: url(../../../assets/imgs/team-3.jpg);
                 border-radius: 50%;
                 background-position: center;
                 background-size: contain;
@@ -227,3 +268,4 @@
   left: 0;
 
 }
+

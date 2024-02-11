@@ -4,12 +4,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ReelService } from './reel.service';
+import { ChatComponent } from '../components/chat/chat.component';
+import { ChatService } from './chat.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SharingService {
-  constructor(private _Router: Router, private UserService: UserService,private _reel:ReelService) {}
+  constructor(private _Router: Router, private UserService: UserService,private _reel:ReelService,private _Chat:ChatService) {}
   private userData: any = new BehaviorSubject<any>([]);
   currentUserData = this.userData.asObservable();
   updateUserData() {
@@ -60,63 +62,17 @@ this.UserService.getProfilesData({_id:url[1]}).subscribe((data:any)=>{
   }
 
 
-  private chat = new BehaviorSubject<any>([]);
-  currentChat = this.chat.asObservable();
-updateChat(data: any, friend: any) {
-    this.chat.next(data);
-    this.friend.next(friend);
-  }
-  private friend = new BehaviorSubject<any>([]);
-  currentFriend = this.friend.asObservable();
+//   private chat = new BehaviorSubject<any>([]);
+//   currentChat = this.chat.asObservable();
+// updateChat(data: any, friend: any) {
+//     this.chat.next(data);
+//     this.friend.next(friend);
+//   }
+//   private friend = new BehaviorSubject<any>([]);
+//   currentFriend = this.friend.asObservable();
 
 
-  private friendsChats = new BehaviorSubject<any>([]);
-  currentFriendChats = this.friendsChats.asObservable();
-  updateFriendsChats() {
-    const friendChats: any[] = [
-      {
-        name: 'ziad almorsy',
-        image: './assets/imgs/team-4.jpg',
-      },
-      {
-        name: 'nada josef',
-        image: './assets/imgs/anne.jpg',
-      },
-      {
-        name: 'amr khalid',
-        image: './assets/imgs/ivana-square.jpg',
-      },
-      {
-        name: 'fares ali',
-        image: './assets/imgs/team-3.jpg',
-      },
-      {
-        name: 'yasser mohamed',
-        image: './assets/imgs/mosalah.jpg',
-      },
-      {
-        name: 'Abu Obeida',
-        image: './assets/imgs/aboobida.jpg',
-      },
-      {
-        name: 'saif adel',
-        image: './assets/imgs/me.jpg',
-      },
-      {
-        name: 'yasser mohamed',
-        image: './assets/imgs/mosalah.jpg',
-      },
-      {
-        name: 'Abu Obeida',
-        image: './assets/imgs/aboobida.jpg',
-      },
-      {
-        name: 'saif adel',
-        image: './assets/imgs/me.jpg',
-      },
-    ];
-    this.friendsChats.next(friendChats);
-  }
+
 
   private userNotification = new BehaviorSubject<any>([]);
   currentUserNotification = this.userNotification.asObservable();
@@ -205,6 +161,14 @@ updateChat(data: any, friend: any) {
   updateSearch() {
     this.search.next(true);
   }
+  private chatData = new BehaviorSubject<any>([]);
+  currentChatData = this.chatData.asObservable();
+  updateChatData(data:any) {
+    this._Chat.getChat(data).subscribe((data:any)=>{
+      this.chatData.next(data);
+
+    })
+  }
 
 
   private reels = new BehaviorSubject<any>([]);
@@ -214,10 +178,7 @@ updateChat(data: any, friend: any) {
       page
     }
    this._reel.getAllReels(data).subscribe((data:any)=>{
-    // console.log(data);
-
     this.reels.next(data.reels);
-
    })
   }
 }

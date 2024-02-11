@@ -9,17 +9,30 @@ import { SharingService } from 'src/app/services/sharing.service';
 export class MessageComponent {
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   @Output() ifOpen: EventEmitter<any> = new EventEmitter<any>();
-  @Output() hideNavs : EventEmitter<any> = new EventEmitter<any>() ;
+  @Output() hideNavs: EventEmitter<any> = new EventEmitter<any>();
 
   chats: any[] = [];
   friendData: any;
-  constructor(private _sharing: SharingService) {
-    this._sharing.updateFriendsChats();
-    this._sharing.currentFriendChats.subscribe((data: any) => {
-      this.chats = data;
+  constructor(private _sharing: SharingService) {}
+  ngOnInit(): void {
+    this._sharing.currentUserData.subscribe((data: any) => {
+      for (let i = 0; i < data?.chats?.length; i++) {
+        const element = data.chats[i];
+        let userData = element.userIds.filter(
+          (item: any) => item._id != localStorage.getItem('id')
+        );
+
+        let user = {
+          lastMessage: element.messages[0],
+          profilePic: userData[0].profilePic,
+          userName: userData[0].fullName,
+          _id: userData[0]._id,
+        };
+        this.chats.push(user);
+      }
+      console.log(this.chats);
+
     });
-  }
-  ngOnDestroy(): void {
   }
   Close() {
     this.close.emit('true');
@@ -28,126 +41,13 @@ export class MessageComponent {
     this.hideNavs.emit('true');
   }
   openSearch() {
-    this._sharing.updateSearch();
-    this.Close()
+    this.ifOpen.emit('closeTaps');
   }
   openChat(item: any) {
-    let chat = [
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop wsetgwert iwep',
-        time: '1.26',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg er ',
-        time: '1.28',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg er gerth rsth rty hj',
-        time: '1.29',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg ertu epwort eji',
-        time: '1.30',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uwwe t ru e6ui eop',
-        time: '1.32',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrw eftge yrwawer hq3wuirt qipuwty oqhhbvuh igh h wepo uweop wsetgwert iwep',
-        time: '1.33',
-      },
-      {
-        id: '2',
-        text: 'lorem! wrwepo uweop',
-        time: '1.33',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq  ertyioqt yheerg rwepo uweop wsetgwert iwep',
-        time: '1.34',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-      {
-        id: '1',
-        text: 'lorem! sdkg hierg dkrgh drgh sei',
-        time: '1.23',
-      },
-      {
-        id: '2',
-        text: 'lorem! sdkq wrwepo uweop',
-        time: '1.25',
-      },
-    ];
-    this._sharing.updateChat(chat, item);
+this._sharing.updateChatData({to:item._id})
+    // this._sharing.updateChat(chat, item);
     this.ifOpen.emit('true');
     if (window.innerWidth <=767) {
-
       this.hide()
     }
   }

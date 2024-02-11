@@ -50,6 +50,9 @@ import { LoadingBTNComponent } from './repeated/loading-btn/loading-btn.componen
 import { ReelsCommentsComponent } from './components/reels-comments/reels-comments.component';
 import { UserImageComponent } from './repeated/user-image/user-image.component';
 import { CommentsComponent } from './repeated/comments/comments.component';
+import { DisplayCollectionComponent } from './components/display-collection/display-collection.component';
+import { YourCollectionsComponent } from './repeated/your-collections/your-collections.component';
+import { AddStoryComponent } from './components/add-story/add-story.component';
 
 @NgModule({
   declarations: [
@@ -91,6 +94,9 @@ import { CommentsComponent } from './repeated/comments/comments.component';
     ReelsCommentsComponent,
     UserImageComponent,
     CommentsComponent,
+    DisplayCollectionComponent,
+    YourCollectionsComponent,
+    AddStoryComponent,
 
 
 

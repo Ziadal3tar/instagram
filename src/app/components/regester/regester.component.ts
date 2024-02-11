@@ -41,7 +41,7 @@ export class RegesterComponent {
 
   ngOnInit(): void {
 
-      // this.authService.signOut();
+      this.authService.signOut();
 
 
     (window as any).handleCredentialResponse =

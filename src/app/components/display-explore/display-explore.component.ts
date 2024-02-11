@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { PostsService } from 'src/app/services/posts.service';
 import { SharingService } from 'src/app/services/sharing.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-display-explore',
@@ -18,9 +19,11 @@ export class DisplayExploreComponent {
   userData: any;
   comment: any;
   doubleClick: boolean = false;
+  yourCollections: boolean = false;
   @Output() open: EventEmitter<any> = new EventEmitter<any>();
 
   showDiv: boolean = false;
+  idSaved: boolean = false;
   mouseX: number = 0;
   mouseY: number = 0;
   divTop: string = '0';
@@ -28,10 +31,16 @@ export class DisplayExploreComponent {
   data = {
     name: 'ksdujfghv',
   };
-  constructor(private _post: PostsService, private _sharing: SharingService) {}
+  constructor(
+    private _post: PostsService,
+    private _sharing: SharingService,
+    private _UserService: UserService
+  ) {}
   ngOnInit(): void {
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
+
+      this.isItemSaved()
     });
   }
   onMouseMove(event: MouseEvent) {
@@ -91,6 +100,27 @@ export class DisplayExploreComponent {
         this._post.getPostById(this.exploreData._id).subscribe((data: any) => {
           this.exploreData = data.post;
         });
+      }
+    });
+  }
+  isItemSaved() {
+    let arr = this.userData.saved.filter((savedItem:any) => savedItem._id === this.exploreData._id);
+    if (arr.length==0) {
+      this.idSaved = false
+    }else{
+      this.idSaved = true
+    }
+  }
+  savePost(id: any) {
+    let data = {
+      postId: id,
+      ref: 'Post',
+    };
+    this._UserService.savePost(data).subscribe((data: any) => {
+      if (data.success) {
+        this._sharing.updateUserData();
+      this.isItemSaved()
+
       }
     });
   }

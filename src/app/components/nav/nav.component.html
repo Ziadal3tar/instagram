@@ -88,36 +88,36 @@
       <p class="p-0 m-0">Instagram</p>
     </div>
     <div class="col-3 d-flex align-items-center justify-content-between">
-      <i class="fs-3 bi bi-plus-circle" (click)="closeAllTaps('Create')" (click)="ChatComponent.chat = []"></i>
-      <i (click)="openSidePage('Notification')" class="fs-3 bi bi-heart" (click)="ChatComponent.chat = []"></i>
+      <i class="fs-3 bi bi-plus-circle" (click)="closeAllTaps('Create')" (click)="ChatComponent.chat = null"></i>
+      <i (click)="openSidePage('Notification')" class="fs-3 bi bi-heart" (click)="ChatComponent.chat = null"></i>
     </div>
   </div>
 
 
   <ul class="nav nav-tabs col-2 d-flex flex-column p-2 vh-100 position-fixed " id="myTab2" *ngIf="!hide" role="tablist">
-    <li class="nav-item " role="presentation" (click)="ChatComponent.chat = []" (click)="tapClick('Home')"
+    <li class="nav-item " role="presentation" (click)="ChatComponent.chat = null" (click)="tapClick('Home')"
       (click)="HomeComponent.storyOpened = false">
       <button class="nav-link active" id="home-tab"><i class="bi bi-house-door"></i>
         <p class="par">Home</p>
       </button>
     </li>
-    <li (click)="ChatComponent.chat = []" (click)="tapClick('Explore')">
+    <li (click)="ChatComponent.chat = null" (click)="tapClick('Explore')">
       <button class="nav-link d-flex align-items-center position-relative" id="Explore-tab"><i class="bi bi-search"></i>
         <p class="par">Search</p>
       </button>
     </li>
-    <li class="nav-item" role="presentation" (click)="ChatComponent.chat = []" (click)="tapClick('Reels')">
+    <li class="nav-item" role="presentation" (click)="ChatComponent.chat = null" (click)="tapClick('Reels')">
       <button class="nav-link " id="Reels-tab"><i class="bi bi-fast-forward-btn"></i>
         <p class="par">Reels</p>
       </button>
     </li>
-    <li class="" role="presentation" (click)="ChatComponent.chat = []" (click)="tapClick('Message')">
+    <li class="" role="presentation" (click)="ChatComponent.chat = null" (click)="tapClick('Message')">
       <button id="Message-tab" class="nav-link d-flex align-items-center position-relative"
         (click)="openSidePage('Message')"><i class="bi bi-chat"></i>
         <p class="par">Message</p>
       </button>
     </li>
-    <li class="nav-item" role="presentation" (click)="ChatComponent.chat = []" (click)="tapClick('Profile')">
+    <li class="nav-item" role="presentation" (click)="ChatComponent.chat = null" (click)="tapClick('Profile')">
       <button class="nav-link d-flex" id="Profile-tab">
         <div class="profileImg"></div>
         <p class="par">Profile</p>
@@ -128,7 +128,7 @@
   <div class="tab-content col-md-10 col-12 offset-0 offset-md-2" id="myTabContent">
 
     <div id="home-tab-pane" *ngIf="tap == 'Home'">
-      <app-home #home></app-home>
+      <app-home (visitProfile)="tap = $event" #home></app-home>
     </div>
     <div id="Explore-tab-pane" *ngIf="tap == 'Explore'">
       <app-explore id="app-explore" [userData]="userData" (EXPLORE)="ExploreData($event)" (SEARCH)="closeTap(false,'search')"></app-explore>
@@ -143,7 +143,7 @@
       <app-create></app-create>
     </div>
     <div id="Profile-tab-pane" *ngIf="tap == 'Profile'">
-      <app-profile></app-profile>
+      <app-profile (OpenChat)="tap = 'Message'"></app-profile>
     </div>
   </div>
 </section>
@@ -156,18 +156,18 @@
 </div>
 <div id="message2" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeMessage?'close':'open'">
-  <app-message (ifOpen)="openChat()" (click)="closeAllTaps('Message')" (hideNavs)="hideNavs()"
+  <app-message (ifOpen)="openChat($event)" (click)="closeAllTaps('Message')" (hideNavs)="hideNavs()"
     (close)="closeTap($event,'Message')"></app-message>
 </div>
 
 
 <div id="search" class="transition  rounded-3 text-white mx-3 p-3  d-none d-md-block"
   [ngClass]=" closeSearch?'close':'open'">
-  <app-search *ngIf="!closeSearch" [userData]="userData"  (close)="closeTap($event,'search')" (toProfile)="toProfile($event)"></app-search>
+  <app-search *ngIf="!closeSearch" [userData]="userData"  (close)="closeTap($event,'search')" (toProfile)="toProfile()"></app-search>
 </div>
 <div id="message" class="transition rounded-3 text-white mx-3 p-3 d-none d-md-block"
   [ngClass]=" closeMessage?'close':'open'">
-  <app-message *ngIf="!closeMessage" (close)="closeTap($event,'message')" (ifOpen)="openChat()"></app-message>
+  <app-message *ngIf="!closeMessage" (close)="closeTap($event,'message')" (ifOpen)="openChat($event)"></app-message>
 </div>
 <div id="Notification" class="transition rounded-3 text-white mx-3 p-3 d-none d-md-block"
   [ngClass]=" closeNotification?'close':'open'">

@@ -7,6 +7,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { PostsService } from 'src/app/services/posts.service';
 
 import { SharingService } from 'src/app/services/sharing.service';
 
@@ -19,14 +20,18 @@ export class ReelsComponent {
   displayComments: any;
   reels: any[] = [];
   page = 0;
-
+userData:any
   visibleItemIndex = 0;
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private _sharing: SharingService
+    private _sharing: SharingService,
+    private _post: PostsService
   ) {}
   ngOnInit(): void {
+    this._sharing.currentUserData.subscribe((data:any)=>{
+      this.userData = data
+    })
     this._sharing.updateReel(this.page);
     this._sharing.currentReels.subscribe((data: any) => {
       this.reels = this.reels.concat(data);
@@ -42,5 +47,23 @@ export class ReelsComponent {
       this.page += 1;
       this._sharing.updateReel(this.page);
     }
+  }
+
+  addReelLike(item:any,index:any) {
+    if (!this.reels[index].likes.includes(this.userData._id)) {
+      this.reels[index].likes.push(this.userData._id)
+    }else{
+      this.reels[index].likes = this.reels[index].likes.filter((userId:any) => userId !== this.userData._id);
+
+    }
+    let data = {
+      _id: item._id,
+      type: 'reel',
+    };
+    this._post.like(data).subscribe((data: any) => {
+      if (data.success) {
+        this.reels[index].likes = data.newItem.likes;
+      }
+    });
   }
 }
