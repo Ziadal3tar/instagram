@@ -1,13 +1,13 @@
-<section id="home" *ngIf="!storyOpened" class=" row m-0" >
+<section id="home" *ngIf="!storyOpened" class=" row m-0">
   <div class="col-md-8 col-12 row m-0 py-3 px-0 px-md-3 mt-5 overflow-hidden ">
     <div id="story" class="col-10 row p-0 position-relative" *ngIf="!storyOpened">
 
 
-      <owl-carousel-o [options]="customOptions" >
+      <owl-carousel-o [options]="customOptions">
 
         <ng-container *ngFor="let slide of userData.following">
-          <ng-template carouselSlide >
-            <div class="friendStory centerCenter" (click)="openStory(slide)" >
+          <ng-template carouselSlide>
+            <div class="friendStory centerCenter" (click)="openStory(slide)">
 
               <div class="borderImg bg-danger rounded-5  ">
                 <div class=" img " [style.background-image]="'url(' + slide.profilePic + ')'"></div>
@@ -20,57 +20,76 @@
         </ng-container>
       </owl-carousel-o>
     </div>
-    <div class="col-2 addStoryBtn centerCenter flex-column" >
-      <input type="file" id="uploadStory" class="d-none" (change)="uploadStory($event)" >
+    <div class="col-2 addStoryBtn centerCenter flex-column">
+      <input type="file" id="uploadStory" class="d-none" (change)="uploadStory($event)">
 
-      <label (click)="option = !option" >
-        <app-user-image [story]="true" [data]="userData"></app-user-image> </label>
+      <label (click)="option = !option">
+        <app-user-image [story]="true"[size]="60" [data]="userData"></app-user-image> </label>
 
 
-        <div [ngClass]="!option?'openOption':'closeOption'" class="option row m-0 "><label (click)="openStory(userData)">My Stories</label><label for="uploadStory">Add story</label> </div>
-      </div>
+      <div [ngClass]="!option?'openOption':'closeOption'" class="option row m-0 "><label
+          (click)="openStory(userData)">My Stories</label><label for="uploadStory">Add story</label> </div>
+    </div>
 
     <div id="posts" class="col-12 mt-2 px-md-5 px-0 ">
-      <div class="col-12 post">
+      <div class="col-12 post" *ngFor="let post of posts let i = index">
         <div class="col-12 d-flex align-items-center justify-content-between header ">
           <div class="postOwnerDetails d-flex">
 
             <div class="postOwnerImg me-2">
               <div class="borderImg bg-danger rounded-5  ">
-                <div (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"
-                  class="img"></div>
+                <div (mouseleave)="mouseleave($event)" (mouseenter)="mouseEnter(post.createdBy)" (mouseenter)="onMouseMove($event)"
+                  class="img" [style.background-image]="'url(' + post?.createdBy?.profilePic + ')'"></div>
               </div>
             </div>
             <div class="postOwnerName d-flex align-items-start flex-column">
-              <p class="name">ahmed ali <span class="time"><i class="bi bi-dot"></i>6h</span></p>
+              <p class="name">{{post?.createdBy.userName}}<span class="time"><i class="bi bi-dot"></i>{{ post?.createdAt
+                  | postTime }}</span></p>
               <p class="type">Original audio</p>
             </div>
           </div>
-          <app-dropdown-btn></app-dropdown-btn>
+          <app-dropdown-btn
+            [lis]="['UnFollow', 'Add to', 'Go to post', 'Share to...', 'Copy link', 'Embed', 'About this account', 'cancel']"></app-dropdown-btn>
         </div>
-        <div class="content">
-          <img src="./assets/imgs/team-3.jpg" alt="">
+
+        <div class="content" *ngIf="!post?.url" >
+          <img *ngIf="post?.postsImgAndVideos[0]?.type == 'image' " src="{{post?.postsImgAndVideos[0].url}}" class="cursorPointer" (click)="displayPost = post"
+            srcset="">
+          <video controls  *ngIf="post?.postsImgAndVideos[0]?.type == 'video'">
+            <source src="{{post?.postsImgAndVideos[0].url}}">
+          </video>
         </div>
+
+        <div class="content" *ngIf="post?.url" >
+          <video controls  *ngIf="post?.url">
+            <source src="{{post?.url}}">
+          </video>
+        </div>
+
         <div class="footer col-12">
           <div class="col-12 d-flex align-items-center justify-content-between mt-2">
-            <div class="d-flex align-items-center justify-content-between col-4 col-md-3 icons">
-              <i class="fs-4 bi-heart cursorPointer"></i>
-              <i class="fs-4 bi-send cursorPointer"></i>
-              <i class="fs-4 bi-chat cursorPointer"></i>
+            <div class="d-flex align-items-center justify-content-between col-4 col-md-3 col-lg-2 icons">
+              <i class="fs-5 cursorPointer"
+                [ngClass]="post.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+                (click)="like(post,i)"></i>
+              <i class="fs-5 bi-send cursorPointer"></i>
+              <i class="fs-5 bi-chat cursorPointer"></i>
             </div>
             <div>
-              <i class="fs-4 bi bi-save cursorPointer"></i>
+              <i class="fs-5 bi  cursorPointer" (click)="savePost(post,i)"
+                [ngClass]="isPostSaved(post._id) ? 'text-warning bi-save-fill' : 'text-white bi-save'"></i>
             </div>
           </div>
           <div class="col-12">
-            <h6>Liked by 13.095 People</h6>
-            <h6 class="my-2"><span class="fw-bold fs-6">ahmed ali: </span>Lorem ipsum dolor, sit amet consectetur
-              adipisicing elit. Cupiditate laboriosam blanditiis harum minima quas, autem dolorum a in expedita
-              voluptas.</h6>
-            <h6 class="opacity-50">View all 155 comments</h6>
-            <div>
-              <input type="text" class="w-100 bg-black text-white border-0 border-bottom py-2"
-                placeholder="Add a comments...">
+            <h6>Liked by {{post?.likes.length}} People</h6>
+            <h6 class="my-2"><span class="fw-bold fs-6">{{post?.createdBy.userName}}: </span>{{post?.caption}}</h6>
+            <h6 class="opacity-50 cursorPointer" (click)="openPost(post)">View all {{post?.comments.length}}
+              comments</h6>
+            <div class="position-relative centerEnd">
+              <input type="text" class="w-100  bg-black text-white border-0 border-bottom py-2"
+                (keyup.enter)="addComment(post,i)" [(ngModel)]="comment" placeholder="Add a comments...">
+              <p class="position-absolute end-0 text-primary fs-7 cursorPointer" (click)="addComment(post,i)"
+                *ngIf="comment !=''">post</p>
             </div>
           </div>
         </div>
@@ -125,9 +144,21 @@
 
 <div id="dataWhenHover" class="fadeIn   " *ngIf="showDiv" (mouseleave)="showDiv = false" [style.position]="'fixed'"
   [style.top]="divTop" [style.left]="divLeft">
-  <app-hoverdata></app-hoverdata>
+  <app-hoverdata [data]="hoverData"></app-hoverdata>
 </div>
+
+
 <section id="storySec" *ngIf="storyOpened" [ngClass]="{'d-none': !storyOpened}">
   <i class=" bi bi-x-lg position-absolute end-0 m-3 cursorPointer" (click)="closeStory()"></i>
-  <app-stories (visitProfile)="toProfile($event)" [uploadFiles]="uploadFilesData" [uploadStoryData]="uploadStoryData" [storyData]="storyData" (closeStory)="storyOpened=false"></app-stories>
+  <app-stories (visitProfile)="toProfile($event)" [uploadFiles]="uploadFilesData" [uploadStoryData]="uploadStoryData"
+    [storyData]="storyData" (closeStory)="storyOpened=false"></app-stories>
+</section>
+<app-insta-loading *ngIf="instaLoading"></app-insta-loading>
+
+
+<section class="w-100 h-100" *ngIf="displayPost!=undefined">
+  <i style="z-index: 9;"
+    class="bi bi-x-lg position-fixed top-0 end-0 m-3 cursorPointer fw-bolder px-5 pt-3 fs-5 d-md-block d-none"
+    (click)="displayPost = undefined"></i>
+  <app-display-explore [exploreData]="displayPost"></app-display-explore>
 </section>

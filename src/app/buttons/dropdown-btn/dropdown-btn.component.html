@@ -3,18 +3,7 @@
     data-bs-toggle="dropdown" aria-expanded="false" role="tab" aria-controls="Create-tab-pane"
     aria-selected="true"><i class="bi bi-three-dots"></i></button>
   <ul class="dropdown-menu rounded-3 mx-3 p-3 position-absolute">
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Report</a></li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Unfollow</a></li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Add to
-        favorites</a></li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Go to post</a>
-    </li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Share to...</a>
-    </li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Copy link</a></li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">Embed</a></li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">About this
-        account</a></li>
-    <li><a class=" list-unstyled text-decoration-none text-center text-white ps-2" href="#">cancel</a></li>
+    <li *ngFor="let li of lis let i = index" (click)="onclick(li)"><a [ngClass]="indexes.includes(i)?'text-danger': 'text-white'" class=" list-unstyled text-decoration-none text-center  ps-2" href="#">{{li}}</a></li>
+
   </ul>
 </div>

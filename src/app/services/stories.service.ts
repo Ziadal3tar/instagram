@@ -6,8 +6,8 @@ import { Injectable } from '@angular/core';
 })
 export class StoriesService {
 
-  private baseUrl = 'https://insta-be.vercel.app/stories';
-  // private baseUrl = 'https://insta-be.vercel.app/stories';
+  private baseUrl = 'http://localhost:3000/stories';
+  // private baseUrl = 'http://localhost:3000/stories';
 
   constructor(private http: HttpClient) {}
   addStory(data: any): any {

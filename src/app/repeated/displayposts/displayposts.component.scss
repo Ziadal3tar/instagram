@@ -1,6 +1,7 @@
 .parent {
   position: relative;
 height: 45vh;
+position: relative;
 @media (min-width : 1000px) and (max-width : 1300px) {
   height: 30vh;
 
@@ -22,6 +23,7 @@ height: 45vh;
   height: 15vh;
 
 }
+
   &::before {
     content: '';
     display: block;
@@ -41,6 +43,7 @@ height: 45vh;
     overflow: hidden;
   }
 }
+
 .parent.video{
   &::before {
     content: '';

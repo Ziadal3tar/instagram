@@ -9,38 +9,40 @@
 
 
 
-<!--
+        <!--
         <button class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white d-block d-md-none"
           (click)="edit = true"><i class="bi bi-pen-fill"></i></button> -->
 
 
-<div class="d-flex d-block d-md-none">
+        <div class="d-flex d-block d-md-none">
 
 
-  <button *ngIf="userId == displayData?._id; else elseBlock2" class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white"
-  (click)="edit = true"><i class="bi bi-pen-fill"></i></button>
+          <button *ngIf="userId == displayData?._id; else elseBlock2"
+            class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white" (click)="edit = true"><i
+              class="bi bi-pen-fill"></i></button>
 
-<ng-template #elseBlock2>
-  <button (click)="follow()" [ngClass]="{
+          <ng-template #elseBlock2>
+            <button (click)="follow()" [ngClass]="{
     'bg-gray': (follower && following)||(!follower && following),
     'bg-success': follower && !following,
     'bg-primary': !follower && !following
   }" class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-block d-md-none">
 
-    {{ (follower && following) ? 'UnFollow' :
-    (!follower && following) ? 'UnFollow' :
-    (follower && !following) ? 'Follow Back' :
-    'Follow' }}
+              {{ (follower && following) ? 'UnFollow' :
+              (!follower && following) ? 'UnFollow' :
+              (follower && !following) ? 'Follow Back' :
+              'Follow' }}
 
 
 
 
-  </button>
-</ng-template>
+            </button>
+          </ng-template>
 
-<button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1" *ngIf="userId != displayData?._id" (click)="openChat()">Chat</button>
+          <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1"
+            *ngIf="userId != displayData?._id" (click)="openChat()">Chat</button>
 
-</div>
+        </div>
 
 
 
@@ -57,31 +59,32 @@
 
 
 
-<div class=" d-none d-md-flex">
-  <button *ngIf="userId == displayData?._id; else elseBlock"
-  class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 "
-  (click)="edit = true">Edit profile</button>
-<ng-template #elseBlock>
-  <button (click)="follow()" [ngClass]="{
+        <div class=" d-none d-md-flex">
+          <button *ngIf="userId == displayData?._id; else elseBlock"
+            class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 " (click)="edit = true">Edit
+            profile</button>
+          <ng-template #elseBlock>
+            <button (click)="follow()" [ngClass]="{
     'bg-gray': (follower && following)||(!follower && following),
     'bg-success': follower && !following,
     'bg-primary': !follower && !following
   }" class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-none d-md-block">
 
-    {{ (follower && following) ? 'UnFollow' :
-    (!follower && following) ? 'UnFollow' :
-    (follower && !following) ? 'Follow Back' :
-    'Follow' }}
+              {{ (follower && following) ? 'UnFollow' :
+              (!follower && following) ? 'UnFollow' :
+              (follower && !following) ? 'Follow Back' :
+              'Follow' }}
 
 
 
 
-  </button>
-</ng-template>
+            </button>
+          </ng-template>
 
-<button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1" (click)="openChat()" *ngIf="userId != displayData?._id">Chat</button>
+          <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1" (click)="openChat()"
+            *ngIf="userId != displayData?._id">Chat</button>
 
-</div>
+        </div>
 
 
         <i class="bi bi-gear-fill fs-5 cursorPointer" (click)="setting = true"></i>
@@ -92,7 +95,7 @@
         <p><span>{{displayData?.following?.length}}</span> following</p>
       </div>
       <div class="col-12">
-        <p>{{displayData?.fullName}}</p>
+        <p>{{displayData?.fullName}}</p><p class="fs-7" *ngIf="displayData?.bio">{{displayData?.bio}}</p>
       </div>
 
     </div>
@@ -158,7 +161,7 @@
         <h6 class="text-primary cursorPointer" (click)="addNewCollection = !addNewCollection">+ New Collection</h6>
       </div>
       <div class="col-12 col-md-5 mt-3 position-relative " *ngIf="addNewCollection">
-        <input [(ngModel)]="nameNewCollection" type="text"
+        <input type="text"
           class=" w-100 p-2 rounded-0 text-white bg-transparent border-0 border-bottom" [(ngModel)]="collectionName"
           placeholder="Collection Name">
         <div class=" position-absolute end-0 top-0 h-100 centerCenter">
@@ -207,7 +210,8 @@
 
     </div>
     <div class=" d-flex align-items-center justify-content-start pt-5 row">
-      <div class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center">
+      <div class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center"
+        (click)="openCollection = displayData.saved">
         <div class="defaultCollection row m-0 p-0">
           <div class=" w-50 h-50 p-0 overflow-hidden" *ngFor="let item of displayData.saved let i = index"
             [ngClass]="{'d-none': i>=4}">
@@ -227,7 +231,7 @@
         </div>
 
       </div>
-      <div *ngFor="let item of displayData.collections"
+      <div *ngFor="let item of displayData.collections" (click)="openCollection = item"
         class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center">
         <app-display-collection [collections]='item'></app-display-collection>
       </div>
@@ -247,14 +251,27 @@
 </section>
 
 <section id="displayCollection" class="row container d-flex justify-content-center pt-3" *ngIf="openCollection">
+  <!--when open collection-->
   <div class="col-9 d-flex">
     <p class="cursorPointer" (click)="openCollection = undefined"><i class="bi bi-chevron-left me-2"></i>Saved</p>
   </div>
   <div class="col-9 pt-3">
-    <p class="fs-5 text-capitalize">{{openCollection?.name}}</p>
+    <div class="centerBetween">
+      <p class="fs-5 text-capitalize">{{openCollection?.collectionName || 'All'}}</p>
+      <app-dropdown-btn *ngIf="openCollection?.collectionName" (toAddToCollection)="toAddToCollection = $event"
+        [lis]="['Delete collection', 'Add from saved', 'Edit collection', 'Cancel']" [indexes]="[0]"></app-dropdown-btn>
+
+    </div>
   </div>
-  <div class="col-9">
-    <app-displayposts [data]="openCollection.items"></app-displayposts>
+  <div class="col-9 displayed">
+    <div *ngIf="openCollection?.saved?.length ==0" class="w-100 centerBetween flex-column ifEmpty">
+      <div class="centerCenter opacity-25"><i class="bi bi-save"></i></div>
+      <h2>Start Saving</h2>
+      <h5>Save photos and videos to your collection.</h5>
+      <p class="text-primary cursorPointer" (click)="toAddToCollection = true">Add to collection</p>
+    </div>
+    <app-displayposts *ngIf="openCollection?.saved?.length !=0" [data]="openCollection.saved"></app-displayposts>
+    <app-displayposts *ngIf="!openCollection?.saved" [data]="openCollection"></app-displayposts>
   </div>
 </section>
 
@@ -272,5 +289,27 @@
       <li (click)="logOut()">Log Out</li>
       <li>Cancel</li>
     </ul>
+  </div>
+</div>
+
+
+
+<div class="toAddToCollection centerBetween flex-column" *ngIf="toAddToCollection">
+  <div class="close centerStart w-100 ps-3 "> <i class=" bi bi-x-lg cursorPointer"
+      (click)="toAddToCollection = false"></i></div>
+  <!-- <app-displayposts [data]="displayData.saved" [select]="true"></app-displayposts> -->
+  <div class="mid w-100 row m-0 scrollStyle">
+    <div class="h-auto p-0 col-12 row m-0">
+      <div class="col-4 " *ngFor="let item of displayData.saved"
+      [style.background-image]="'url(' + item.postsImgAndVideos[0].url + ')'" (click)="select(item)">
+      <div class="ifSelect centerCenter" *ngIf="selected.includes(item._id)"> <i class="bi bi-check fs-1"></i></div>
+
+    </div>
+    </div>
+
+  </div>
+  <div class="done cursorPointer centerCenter border-top border-opacity-25" (click)="select('add')">ADD
+    <!-- <button class="btn btn-primary my-2 rounded-5"
+    (click)="select('add')">ADD</button> -->
   </div>
 </div>

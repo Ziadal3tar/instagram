@@ -57,6 +57,22 @@
 
 }
 
+#displayCollection {
+  .displayed {
+    .ifEmpty {
+      padding: 170px 0 !important;
+
+      div {
+        width: 60px;
+        height: 60px;
+        border: 1px solid white;
+        border-radius: 50%;
+      }
+
+      height: 70vh !important;
+    }
+  }
+}
 
 #displayCollection,
 #tagged,
@@ -128,19 +144,21 @@
 
 
 .defaultCollection {
-  width: 200px;
-  height: 200px;
-  filter: blur(2px);
+  width: 250px;
+  height: 250px;
+  // filter: blur(2px);
   background: #0b0b0b;
   cursor: pointer;
   border-radius: 10px !important;
   overflow: hidden;
   transition: 0.5s;
+
   .img {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
   }
+
   video {
     vertical-align: middle;
     height: 100%;
@@ -148,15 +166,19 @@
 
 
   }
+
   &:hover {
     filter: blur(1px);
+
     .title {
       background-color: rgba(0, 0, 0, 0.486) !important;
+
       h4 {
         opacity: 1;
       }
     }
   }
+
   .title {
     width: 100%;
     height: 100%;
@@ -165,9 +187,47 @@
     display: flex;
     align-items: end;
     transition: 0.5s;
+
     h4 {
       opacity: 0;
       transition: 0.5s;
     }
   }
+}
+.toAddToCollection{
+  .close{
+    height: 7%;
+  }
+position: fixed;
+width: 350px;
+height: 90vh;
+top: 5%;
+background-color: #0b0b0be7;
+border-radius: 20px;
+margin: 0 29%;
+.mid{
+  height: 85%;
+  div{
+    height: calc(350px / 3) !important;
+    background-position: center;
+    background-size:  cover;
+    position: relative;
+    cursor: pointer;
+    .ifSelect{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #000000cf;
+      z-index: 9;
+
+      }
+  }
+}
+.done{
+  height: 8%;
+  border-top: 1px solid rgb(255 255 255 / 11%) !important;
+    width: 100%;
+}
 }

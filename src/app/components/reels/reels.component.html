@@ -20,7 +20,7 @@
             <i class=" fs-5 bi bi-send"></i>
           </div>
           <div>
-            <i class=" fs-5 bi bi-save"></i>
+            <i class=" fs-5 bi  " (click)="saveReel(item._id)" [ngClass]="ifSaved(item._id)?'text-warning bi-save-fill':'text-white bi-save'"></i>
           </div>
           <div>
             <app-dropdown-btn></app-dropdown-btn>
@@ -36,3 +36,4 @@
     </div>
   </div>
 </div>
+<app-insta-loading *ngIf="loading"></app-insta-loading>

@@ -37,7 +37,7 @@
         <p class="par">Message</p>
       </button></li>
     <li (click)="openSidePage('Notification')"><button class="nav-link d-flex align-items-center justify-content-center"
-         id="Create-tab"><i class="bi bi-bell"></i>
+         id="Create-tab"><i class="bi bi-bell position-relative"><span class="numberOfNotifications" *ngIf="numberOfNotifications !=0">{{numberOfNotifications}}</span></i>
         <p class="par">Notification</p>
       </button></li>
     <li (click)="closeAllTaps('Create')"><button class="nav-link d-flex align-items-center justify-content-center"
@@ -152,8 +152,9 @@
 <div id="Notification2"
   class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeNotification?'close':'open'">
-  <app-notification (close)="closeTap($event,'notification')"></app-notification>
+  <app-notification (close)="closeTap($event,'notification')" (goHome)="tap = $event"></app-notification>
 </div>
+
 <div id="message2" class="transition d-md-none d-block rounded-3 text-white position-fixed bg-black w-100 h-100 pt-5"
   [ngClass]=" closeMessage?'close':'open'">
   <app-message (ifOpen)="openChat($event)" (click)="closeAllTaps('Message')" (hideNavs)="hideNavs()"
@@ -165,11 +166,13 @@
   [ngClass]=" closeSearch?'close':'open'">
   <app-search *ngIf="!closeSearch" [userData]="userData"  (close)="closeTap($event,'search')" (toProfile)="toProfile()"></app-search>
 </div>
+
 <div id="message" class="transition rounded-3 text-white mx-3 p-3 d-none d-md-block"
   [ngClass]=" closeMessage?'close':'open'">
   <app-message *ngIf="!closeMessage" (close)="closeTap($event,'message')" (ifOpen)="openChat($event)"></app-message>
 </div>
+
 <div id="Notification" class="transition rounded-3 text-white mx-3 p-3 d-none d-md-block"
   [ngClass]=" closeNotification?'close':'open'">
-  <app-notification *ngIf="!closeNotification" (close)="closeTap($event,'notification')"></app-notification>
+  <app-notification *ngIf="!closeNotification" (close)="closeTap($event,'notification')" (goHome)="openN($event)"></app-notification>
 </div>

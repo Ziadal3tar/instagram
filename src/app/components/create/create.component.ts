@@ -3,6 +3,7 @@ import { Component, ElementRef, HostListener } from '@angular/core';
 import { PostsService } from 'src/app/services/posts.service';
 import { ReelService } from 'src/app/services/reel.service';
 import { SharingService } from 'src/app/services/sharing.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { StoriesService } from 'src/app/services/stories.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { StoriesService } from 'src/app/services/stories.service';
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent {
-  activeTap: String = 'Stories';
+  activeTap: String = 'Posts';
   hide: any;
   captionPost: any;
   captionReel: any;
@@ -28,6 +29,7 @@ export class CreateComponent {
     private _posts: PostsService,
     private _sharing: SharingService,
     private _reels: ReelService,
+    private _socket: SocketService,
 
   ) {}
 
@@ -77,6 +79,9 @@ export class CreateComponent {
         if (data.success) {
           this._sharing.updateUserData();
           this.loading = !this.loading;
+
+        this._socket.emit('notification',{eventName:'addPost',type:'post',data:localStorage.getItem('id'),redirect:data.data._id})
+
         }
       },
       (err: HttpErrorResponse) => {
@@ -102,6 +107,8 @@ export class CreateComponent {
         if (data.success) {
           this._sharing.updateUserData();
           this.loading = !this.loading;
+        this._socket.emit('notification',{eventName:'addPost',type:'post',data:localStorage.getItem('id'),redirect:data.data._id})
+
         }
       },
       (err: HttpErrorResponse) => {

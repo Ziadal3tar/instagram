@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class UserService {
-  // private baseUrl = 'https://insta-be.vercel.app/user';
-  private baseUrl = 'https://insta-be.vercel.app/user';
+  // private baseUrl = 'http://localhost:3000/user';
+  private baseUrl = 'http://localhost:3000/user';
 
   constructor(private http: HttpClient) {}
   getUserData(data: any): any {
@@ -56,6 +56,37 @@ export class UserService {
   }
   savePost(data: any): any {
     return this.http.post(`${this.baseUrl}/savePost`,data ,{
+      headers: {
+        authorization: `Bearer__${localStorage.getItem('userToken')}`,
+      },
+    });
+  }
+  addToCollection(data: any): any {
+    return this.http.post(`${this.baseUrl}/addToCollection`,data ,{
+      headers: {
+        authorization: `Bearer__${localStorage.getItem('userToken')}`,
+      },
+    });
+  }
+  getPostsBasedOnSocialNetwork() {
+
+    return this.http.get(`${this.baseUrl}/getPosts` ,{
+      headers: {
+        authorization: `Bearer__${localStorage.getItem('userToken')}`,
+      },
+    });
+  }
+  allNotificationSeen() {
+
+    return this.http.get(`${this.baseUrl}/allNotificationSeen` ,{
+      headers: {
+        authorization: `Bearer__${localStorage.getItem('userToken')}`,
+      },
+    });
+  }
+  bio(data:any) {
+
+    return this.http.post(`${this.baseUrl}/bio` ,data,{
       headers: {
         authorization: `Bearer__${localStorage.getItem('userToken')}`,
       },

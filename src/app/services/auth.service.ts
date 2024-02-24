@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'https://insta-be.vercel.app/auth';
-  // private baseUrl = 'https://insta-be.vercel.app/auth';
+  private baseUrl = 'http://localhost:3000/auth';
+  // private baseUrl = 'http://localhost:3000;
 
   constructor(private http: HttpClient) {}
   register(data: any): any {

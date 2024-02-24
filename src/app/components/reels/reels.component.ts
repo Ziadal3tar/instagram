@@ -10,6 +10,7 @@ import {
 import { PostsService } from 'src/app/services/posts.service';
 
 import { SharingService } from 'src/app/services/sharing.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-reels',
@@ -20,21 +21,29 @@ export class ReelsComponent {
   displayComments: any;
   reels: any[] = [];
   page = 0;
-userData:any
+  userData: any;
   visibleItemIndex = 0;
+  loading:Boolean = true
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
     private _sharing: SharingService,
-    private _post: PostsService
+    private _post: PostsService,
+    private _UserService: UserService
   ) {}
   ngOnInit(): void {
-    this._sharing.currentUserData.subscribe((data:any)=>{
-      this.userData = data
-    })
+
+    this._sharing.currentUserData.subscribe((data: any) => {
+      this.userData = data;
+    });
     this._sharing.updateReel(this.page);
     this._sharing.currentReels.subscribe((data: any) => {
+
       this.reels = this.reels.concat(data);
+      console.log(this.reels.length);
+      if (this.reels.length!=0) {
+this.loading = false
+      }
     });
   }
 
@@ -49,12 +58,13 @@ userData:any
     }
   }
 
-  addReelLike(item:any,index:any) {
+  addReelLike(item: any, index: any) {
     if (!this.reels[index].likes.includes(this.userData._id)) {
-      this.reels[index].likes.push(this.userData._id)
-    }else{
-      this.reels[index].likes = this.reels[index].likes.filter((userId:any) => userId !== this.userData._id);
-
+      this.reels[index].likes.push(this.userData._id);
+    } else {
+      this.reels[index].likes = this.reels[index].likes.filter(
+        (userId: any) => userId !== this.userData._id
+      );
     }
     let data = {
       _id: item._id,
@@ -66,4 +76,23 @@ userData:any
       }
     });
   }
+
+  saveReel(id: any) {
+    let data = {
+      postId: id,
+      ref: 'Reel',
+    };
+    this._UserService.savePost(data).subscribe((data: any) => {
+      if (data.success) {
+        this._sharing.updateUserData();
+      }
+    });
+  }
+  ifSaved(id: any) {
+    let saved = this.userData.saved.filter((item:any)=>item.item == id)
+      if (saved.length != 0) {
+        return true;
+      }
+        return false
+    }
 }

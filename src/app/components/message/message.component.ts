@@ -23,14 +23,13 @@ export class MessageComponent {
         );
 
         let user = {
-          lastMessage: element.messages[0],
+          lastMessage: element.messages[element.messages.length-1],
           profilePic: userData[0].profilePic,
           userName: userData[0].fullName,
           _id: userData[0]._id,
         };
         this.chats.push(user);
       }
-      console.log(this.chats);
 
     });
   }
@@ -44,6 +43,7 @@ export class MessageComponent {
     this.ifOpen.emit('closeTaps');
   }
   openChat(item: any) {
+
 this._sharing.updateChatData({to:item._id})
     // this._sharing.updateChat(chat, item);
     this.ifOpen.emit('true');

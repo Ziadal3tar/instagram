@@ -14,7 +14,9 @@ export class ReelsCommentsComponent {
   close() {
     this.closeComments.emit('');
   }
+ngOnInit(): void {
 
+}
   addReelComment() {
     let data = {
       comment: this.comment,
@@ -24,6 +26,7 @@ export class ReelsCommentsComponent {
     this._post.addComment(data).subscribe((data: any) => {
       if (data.success) {
         this.reel = data.post;
+        
       }
     });
   }

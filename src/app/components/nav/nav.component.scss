@@ -16,6 +16,17 @@
         background-color: #262626;
         border-radius: 10px;
       }
+      i{
+        .numberOfNotifications{
+          position: absolute;
+    top: -3px;
+    font-size: 11px;
+    left: -3px;
+    background-color: red;
+    padding: 0 5px;
+    border-radius: 50%;
+        }
+      }
     }
     @media screen and (max-width : 950px) {
       width: 75px;

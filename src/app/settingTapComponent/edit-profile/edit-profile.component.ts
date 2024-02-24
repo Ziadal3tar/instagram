@@ -24,6 +24,7 @@ export class EditProfileComponent {
   ngOnInit(): void {
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
+      this.bio = data.bio
       this.url = data.profilePic
     });
   }
@@ -55,5 +56,18 @@ this.loading = !this.loading
   cancel() {
     this.changed = !this.changed
     this.url = this.userData.profilePic;
+  }
+  submit(){
+    if(this.bio){
+      this.loading = true
+      this._userService.bio({bio:this.bio}).subscribe((data:any)=>{
+        console.log(data);
+
+        if (data.success) {
+this.loading = false
+
+        }
+      })
+    }
   }
 }

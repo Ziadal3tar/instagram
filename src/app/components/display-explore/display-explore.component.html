@@ -19,7 +19,7 @@
     <app-dropdown-btn></app-dropdown-btn>
   </div>
 
-  <div class="col-md-6 col-12 postImg p-0">
+  <div class="col-md-6 col-12 postImg p-0" *ngIf="exploreData?.postsImgAndVideos">
     <img (click)="ifDoubleClick()" *ngIf="exploreData?.postsImgAndVideos[0]?.type == 'image'"
       src="{{exploreData?.postsImgAndVideos[0].url}}" alt="" srcset="">
 
@@ -27,7 +27,17 @@
       <source src="{{exploreData?.postsImgAndVideos[0].url}}" >
     </video>
 
-    <i [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+    <i [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+      class="bi bgHeart like"></i>
+  </div>
+  <div class="col-md-6 col-12 postImg p-0" *ngIf="exploreData?.url">
+
+
+    <video (click)="ifDoubleClick()" controls autoplay >
+      <source src="{{exploreData?.url}}" >
+    </video>
+
+    <i [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
       class="bi bgHeart like"></i>
   </div>
 
@@ -35,13 +45,13 @@
     <div class="justify-content-between d-flex align-items-center w-100 py-1">
 
       <div>
-        <i (click)="like()" [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+        <i (click)="like()" [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
           class="bi bi-heart me-2 cursorPointer like"></i>
         <i class="bi bi-chat mx-2 cursorPointer"></i>
         <i class="bi bi-send mx-2 cursorPointer"></i>
 
       </div>
-      <i class="bi bi-save cursorPointer" (click)="savePost(exploreData._id)"></i>
+      <i class="bi bi-save cursorPointer" (click)="savePost(exploreData?._id)"></i>
 
 
     </div>
@@ -60,13 +70,13 @@
 
           <div class="userImg me-2">
             <div class="borderImg bg-danger rounded-5  ">
-              <div class="img " style="background-image: url({{exploreData.createdBy.profilePic}});"
+              <div class="img " style="background-image: url({{exploreData?.createdBy.profilePic}});"
                 (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
               </div>
             </div>
           </div>
           <div class="userData">
-            <h6 class="userName">{{exploreData.createdBy.fullName}} <span class="follow text-primary cursorPointer"> <i
+            <h6 class="userName">{{exploreData?.createdBy.fullName}} <span class="follow text-primary cursorPointer"> <i
                   class=" bi bi-dot"></i>Follow</span></h6>
           </div>
 
@@ -82,12 +92,12 @@
 
               <div class="userImg me-2">
                 <div class="borderImg  rounded-5  ">
-                  <div class="img" style="background-image: url({{exploreData.createdBy.profilePic}});"></div>
+                  <div class="img" style="background-image: url({{exploreData?.createdBy.profilePic}});"></div>
                 </div>
               </div>
               <div class="userData pt-2">
-                <h6 class="userName fw-bolder">{{exploreData.createdBy.fullName}}: <span
-                    class="fw-normal">{{exploreData.caption}}
+                <h6 class="userName fw-bolder">{{exploreData?.createdBy.fullName}}: <span
+                    class="fw-normal">{{exploreData?.caption}}
                     <br>
                     <h6 class="fs-7 my-2 opacity-75">3d</h6>
                   </span> </h6>
@@ -96,7 +106,7 @@
             </div>
           </div>
           <div class="postComments mt-2">
-            <div class="userDetails d-flex align-items-start " *ngFor="let item of exploreData.comments">
+            <div class="userDetails d-flex align-items-start " *ngFor="let item of exploreData?.comments">
               <!-- <div class="userImg me-2">
                 <div class="borderImg  rounded-5  ">
                   <div class="img" style="background-image: url({{item.userId.profilePic}});"
@@ -124,13 +134,13 @@
 
           <div>
             <i (click)="like()"
-              [ngClass]="exploreData.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+              [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
               class="bi me-2 cursorPointer like"></i>
             <i class="bi bi-chat mx-2 cursorPointer"></i>
             <i class="bi bi-send mx-2 cursorPointer"></i>
 
           </div>
-          <i class="bi bi-save cursorPointer " [ngClass]="idSaved ? 'text-warning' : ''" (click)="savePost(exploreData._id)"></i>
+          <i class="bi cursorPointer " [ngClass]="idSaved ?'text-warning bi-save-fill':'text-white bi-save'" (click)="savePost(exploreData?._id)"></i>
 
 
         </div>

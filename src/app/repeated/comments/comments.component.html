@@ -1,5 +1,5 @@
 <section class=" d-flex">
-  <div class="userImage"  [ngStyle]="{ 'width.px': size, 'height.px': size }"><app-user-image [story]="false" [data]="{image:commentDetails?.userId?.profilePic}"></app-user-image>
+  <div class="userImage"  [ngStyle]="{ 'width.px': size, 'height.px': size }"><app-user-image [size]="size" [story]="false" [data]="{profilePic:commentDetails?.userId?.profilePic}"></app-user-image>
   </div>
 
   <div class="userData">

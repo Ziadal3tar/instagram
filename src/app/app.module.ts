@@ -53,6 +53,8 @@ import { CommentsComponent } from './repeated/comments/comments.component';
 import { DisplayCollectionComponent } from './components/display-collection/display-collection.component';
 import { YourCollectionsComponent } from './repeated/your-collections/your-collections.component';
 import { AddStoryComponent } from './components/add-story/add-story.component';
+import { PostTimePipe } from './pipes/post-time.pipe';
+import { InstaLoadingComponent } from './repeated/insta-loading/insta-loading.component';
 
 @NgModule({
   declarations: [
@@ -97,6 +99,8 @@ import { AddStoryComponent } from './components/add-story/add-story.component';
     DisplayCollectionComponent,
     YourCollectionsComponent,
     AddStoryComponent,
+    PostTimePipe,
+    InstaLoadingComponent,
 
 
 
@@ -133,7 +137,9 @@ import { AddStoryComponent } from './components/add-story/add-story.component';
           console.error(err);
         }
       } as SocialAuthServiceConfig,
-    }
+    },
+    MessageComponent,
+    HomeComponent
   ],
   bootstrap: [AppComponent]
 })

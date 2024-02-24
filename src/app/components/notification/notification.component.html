@@ -10,16 +10,18 @@
       <hr>
     </h6>
 
-    <div class="notification row d-flex align-items-center justify-content-between my-3 p-2" *ngFor="let item of notification">
+    <div class="notification row d-flex align-items-center justify-content-between my-3 p-2 cursorPointer" *ngFor="let item of notification" (click)="openN(item)">
       <div class="col-2">
         <div class="img ">
-          <img src="{{item.user.image}}" alt="">
+          <img src="{{item.data.profilePic}}" alt="">
         </div>
 
       </div>
       <div class="text col-7">
-        <h6 style="font-size: 14px;" class=" w-100"><span class=" fw-bolder">{{item.user.name}}</span> <span > {{item.notification.text}} </span>
-          <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span>
+        <h6 style="font-size: 14px;" class=" w-100">
+          <!-- <span class=" fw-bolder">{{item.data.userName}}</span> -->
+           <span > {{item.text}} </span>
+          <!-- <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span> -->
         </h6>
       </div>
       <div class=" col-3 pe-3">
@@ -28,7 +30,7 @@
       </div>
     </div>
   </div>
-  <div class="New">
+  <!-- <div class="New">
     <h6 class=" fa my-3">
       Last week
       <hr>
@@ -42,7 +44,9 @@
 
       </div>
       <div class="text col-7">
-        <h6 style="font-size: 14px;" class=" w-100"><span class=" fw-bolder">{{item.user.name}}</span> <span > {{item.notification.text}} </span>
+        <h6 style="font-size: 14px;" class=" w-100">
+          <span class=" fw-bolder">{{item.user.name}}</span>
+           <span > {{item.notification.text}} </span>
           <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span>
         </h6>
       </div>
@@ -51,6 +55,7 @@
 
       </div>
     </div>
-  </div>
+  </div> -->
 
 </section>
+<!-- <div class=" vw-100 h-100 bg-black position-absolute top-0 start-0">f</div> -->

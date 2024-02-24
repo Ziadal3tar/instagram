@@ -10,6 +10,9 @@ import {
 } from '@angular/core';
 import { SharingService } from 'src/app/services/sharing.service';
 import { OwlOptions } from 'ngx-owl-carousel-o';
+import { UserService } from 'src/app/services/user.service';
+import { PostsService } from 'src/app/services/posts.service';
+import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
   selector: 'app-home',
@@ -42,16 +45,22 @@ export class HomeComponent {
     nav: false,
   };
   @Output() visitProfile: EventEmitter<any> = new EventEmitter<any>();
-
+  posts: any[] = [];
   num: any = 1;
   userData: any;
+  displayPost: any;
   uploadFilesData: any;
   uploadStoryData: any;
   ifUploadStory: Boolean = false;
+  instaLoading: Boolean = false;
   option: Boolean = false;
+  comment: any = '';
   constructor(
     private elementRef: ElementRef,
-    private _sharing: SharingService
+    private _sharing: SharingService,
+    private _user: UserService,
+    private _post: PostsService,
+    private _socket: SocketService
   ) {
     if (window.innerWidth >= 767) {
       this.marginSize = 80;
@@ -60,6 +69,13 @@ export class HomeComponent {
       this.marginSize = 90;
       this.widthSize = 4;
     }
+    this.instaLoading = true;
+    this._user.getPostsBasedOnSocialNetwork().subscribe((data: any) => {
+      if (data.allPosts) {
+        this.instaLoading = false;
+        this.posts = data.allPosts;
+      }
+    });
   }
   showDiv: boolean = false;
   mouseX: number = 0;
@@ -70,10 +86,12 @@ export class HomeComponent {
   widthSize: any;
   marginSize: any;
   storyData: any;
+  hoverData: any;
 
   ngOnInit(): void {
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
+
     });
   }
   onMouseMove(event: MouseEvent) {
@@ -88,6 +106,10 @@ export class HomeComponent {
     if (relatedTargetName != 'dataWhenHover') {
       this.showDiv = false;
     }
+  }
+  mouseEnter(data: any) {
+    this.showDiv = true;
+    this.hoverData = data;
   }
   hideDiv() {
     this.showDiv = false;
@@ -120,6 +142,8 @@ export class HomeComponent {
   }
 
   openStory(data: any) {
+    console.log(data.stories.length);
+
     if (data.stories.length != 0) {
       this.storyOpened = true;
       this.storyData = data;
@@ -190,9 +214,127 @@ export class HomeComponent {
       };
     }
   }
-  toProfile(data:any){
-    this.visitProfile.emit(data)
+  toProfile(data: any) {
+    this.visitProfile.emit(data);
+  }
 
+  like(item: any, index: any) {
+    if (item.postsImgAndVideos) {
+      let data = {
+        type: 'post',
+        _id: this.posts[index]._id,
+      };
+      this._post.like(data).subscribe((data: any) => {
+        if (data.message == 'added') {
+          this.posts[index].likes.push(this.userData._id);
+
+          this._socket.emit('notification', {
+            eventName: 'like',
+            type: 'post',
+            data: this.userData._id,
+            redirect: this.posts[index]._id,
+            to: this.posts[index].createdBy._id,
+          });
+        } else {
+          this.posts[index].likes = this.posts[index].likes.filter(
+            (element: any) => element !== this.userData._id
+          );
+        }
+      });
+    } else {
+      let data = {
+        _id: item._id,
+        type: 'reel',
+      };
+      this._post.like(data).subscribe((data: any) => {
+        if (data.success) {
+          this.posts[index].likes = data.newItem.likes;
+        }
+      });
+    }
+  }
+  savePost(item: any, index: any) {
+
+    if (item.postsImgAndVideos) {
+      let data = {
+        postId: item._id,
+        ref: 'Post',
+      };
+      this._user.savePost(data).subscribe((data: any) => {
+        if (data.success) {
+          this._sharing.updateUserData();
+        }
+      });
+    } else {
+      let data = {
+        postId: item._id,
+        ref: 'Reel',
+      };
+      this._user.savePost(data).subscribe((data: any) => {
+        if (data.success) {
+          this._sharing.updateUserData();
+        }
+      });
+    }
+  }
+  addComment(item: any, index: any) {
+    if (item.postsImgAndVideos) {
+      let data = {
+        type: 'post',
+        _id: this.posts[index]._id,
+        comment: this.comment,
+      };
+      this._post.addComment(data).subscribe((data: any) => {
+        if (data.success) {
+          this._post
+            .getPostById(this.posts[index]._id)
+            .subscribe((data: any) => {
+              this.posts[index] = data.post;
+              this.comment = '';
+            });
+          this._socket.emit('notification', {
+            eventName: 'comment',
+            type: 'post',
+            data: this.userData._id,
+            redirect: this.posts[index]._id,
+            to: this.posts[index].createdBy._id,
+          });
+        }
+      });
+    } else {
+      let data = {
+        comment: this.comment,
+        _id: this.posts[index]._id,
+        type: 'reel',
+      };
+      this._post.addComment(data).subscribe((data: any) => {
+        if (data.success) {
+          this.posts[index] = data.post;
+          this.comment = '';
+        }
+      });
+    }
+  }
+  isPostSaved(postId: string): boolean {
+    return true
+  }
+  openPost(post:any){
+    this.displayPost = post
+  }
+  openPostN(id: any) {
+    this._post.getPostById(id).subscribe((data: any) => {
+      this.openPost(data.post)
+    });
+  }
+  openStoryN(data:any){
+    setTimeout(() => {
+      console.log(this.storyOpened);
+      // this.openStory(data)
+      this.storyOpened = true;
+      console.log(this.storyOpened);
+
+      this.storyData = this.userData;
+    }, 200);
 
   }
 }

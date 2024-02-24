@@ -8,15 +8,21 @@ import { Component, Input } from '@angular/core';
 export class DisplaypostsComponent {
 @Input() data:any
 open:Boolean = false
+@Input() select:Boolean = false
 displayPost:any
+selected:any[]=[]
 openPost(data:any){
-  this.open = true
-  // document.styleSheets[0].insertRule('body { height: 100vh; }', 0);
-  // document.styleSheets[0].insertRule('body { overflow-y: hidden; }', 0);
-  document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
+
+    this.open = true
+    // document.styleSheets[0].insertRule('body { height: 100vh; }', 0);
+    // document.styleSheets[0].insertRule('body { overflow-y: hidden; }', 0);
+    document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
 
 
- this.displayPost= data
+   this.displayPost= data
+
+
+  
 }
 closePost(){
   document.getElementsByTagName('body')[0].style.overflowY = 'auto';

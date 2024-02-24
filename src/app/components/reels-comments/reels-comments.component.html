@@ -15,7 +15,7 @@
     </div>
   </div>
   <div class="bot">
-    <div class="userImage"><app-user-image [story]="false" [data]="{image:'./assets/imgs/MAB.jpg'}"></app-user-image>
+    <div class="userImage"><app-user-image [story]="false" [size]="32" [data]="{profilePic:'./assets/imgs/MAB.jpg'}"></app-user-image>
     </div>
     <input type="text" placeholder="Add a comment..." [(ngModel)]="comment">
     <p style="padding-top: 10px;" *ngIf="comment" (click)="addReelComment()"

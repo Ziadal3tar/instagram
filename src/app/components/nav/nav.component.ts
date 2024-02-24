@@ -1,8 +1,8 @@
+import { HomeComponent } from './../home/home.component';
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { ChatComponent } from '../chat/chat.component';
-import { HomeComponent } from '../home/home.component';
 import { SharingService } from 'src/app/services/sharing.service';
 import { UserService } from 'src/app/services/user.service';
 import { SocketService } from 'src/app/services/socket.service';
@@ -17,7 +17,8 @@ export class NavComponent {
     private _sharing: SharingService,
     private _UserService: UserService,
     private _Socket: SocketService,
-    ) {
+    private HomeComp:HomeComponent
+  ) {
     this._Route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this._sharing.updateProfileDataDisplay();
@@ -36,13 +37,16 @@ export class NavComponent {
   closeNotification: Boolean = true;
   userData: any;
   tapId: any;
+  numberOfNotifications: any;
   tap: any = 'Home';
   ngOnInit() {
-
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
-      console.log(data);
 
+      let notSeen = data.notifications?.filter(
+        (item: any) => item.seen == false
+      );
+      this.numberOfNotifications = notSeen?.length;
       this._Socket.emit('updateSocketId', data._id);
 
       let url = this._Route.url.split('/').filter((item: any) => item != '');
@@ -82,6 +86,11 @@ export class NavComponent {
       this.closeSearch = true;
       this.closeMessage = true;
       this.closeNotification = false;
+      this._UserService.allNotificationSeen().subscribe((data: any) => {
+        if (data.success) {
+          this._sharing.updateUserData();
+        }
+      });
     }
   }
 
@@ -127,15 +136,12 @@ export class NavComponent {
     }
   }
 
-  openChat(data:any) {
-    console.log(data);
-    this.closeAllTaps('')
+  openChat(data: any) {
+    this.closeAllTaps('');
     this.tap = 'Message';
     if (data == 'closeTaps') {
-    this.ChatComponent.chat = null
-
+      this.ChatComponent.chat = null;
     }
-
   }
 
   logOut() {
@@ -148,5 +154,19 @@ export class NavComponent {
     this.closeNotification = true;
     this.closeMessage = true;
     this.closeSearch = true;
+  }
+  openN(data: any) {
+
+    if (data.type == 'chat') {
+      this.openChat('');
+    }else if (data.type == 'post') {
+      this.tap = 'Home'
+      // make displayPost i HomeComponent = the post or reel u want to display
+      this.HomeComp.openPostN(data.redirect)
+    }else if (data.type == 'story'){
+      let user = this.userData.following.filter((user:any)=>user._id == data.data._id)
+
+this.HomeComp.openStoryN(user[0])
+    }
   }
 }

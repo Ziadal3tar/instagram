@@ -43,7 +43,7 @@ export class ChatComponent {
   }
   ngOnInit(): void {
 
-    this._Socket.listen('receiveMessage').subscribe((data: any) => {
+    this._Socket.listen('notification').subscribe((data: any) => {
       this._sharing.updateChatData({ to: this.chat._id });
       const audio = document.getElementById('backgroundAudio') as HTMLAudioElement;
       audio.play();
@@ -101,7 +101,9 @@ export class ChatComponent {
       };
       this._chat.sendMessage(data).subscribe((data: any) => {
         if (data.success) {
-          this._Socket.emit('sendMessage', this.chat._id);
+          // this._Socket.emit('sendMessage', this.chat._id);
+          this._Socket.emit('notification',{eventName:'message',type:'chat',data:localStorage.getItem('id'),redirect:this.chat._id,to:this.chat._id})
+
           this._sharing.updateChatData({ to: this.chat._id });
           this.message = '';
         }

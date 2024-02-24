@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { PostsService } from 'src/app/services/posts.service';
 import { SharingService } from 'src/app/services/sharing.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -34,7 +35,8 @@ export class DisplayExploreComponent {
   constructor(
     private _post: PostsService,
     private _sharing: SharingService,
-    private _UserService: UserService
+    private _UserService: UserService,
+    private _socket: SocketService,
   ) {}
   ngOnInit(): void {
     this._sharing.currentUserData.subscribe((data: any) => {
@@ -71,6 +73,8 @@ export class DisplayExploreComponent {
     };
     this._post.like(data).subscribe((data: any) => {
       if (data.message == 'added') {
+        this._socket.emit('notification',{eventName:'like',type:'post',data:this.userData._id,redirect:this.exploreData._id,to:this.exploreData.createdBy._id})
+
         this.exploreData.likes.push(this.userData._id);
       } else {
         this.exploreData.likes = this.exploreData.likes.filter(
@@ -100,12 +104,13 @@ export class DisplayExploreComponent {
         this._post.getPostById(this.exploreData._id).subscribe((data: any) => {
           this.exploreData = data.post;
         });
+        this._socket.emit('notification',{eventName:'comment',type:'post',data:this.userData._id,redirect:this.exploreData._id,to:this.exploreData.createdBy._id})
       }
     });
   }
   isItemSaved() {
-    let arr = this.userData.saved.filter((savedItem:any) => savedItem._id === this.exploreData._id);
-    if (arr.length==0) {
+    let arr = this.userData?.saved?.filter((savedItem:any) => savedItem._id === this.exploreData?._id);
+    if (arr?.length==0) {
       this.idSaved = false
     }else{
       this.idSaved = true

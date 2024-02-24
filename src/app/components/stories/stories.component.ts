@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { SharingService } from 'src/app/services/sharing.service';
+import { SocketService } from 'src/app/services/socket.service';
 import { StoriesService } from 'src/app/services/stories.service';
 
 @Component({
@@ -35,12 +36,13 @@ export class StoriesComponent {
   constructor(
     private _story: StoriesService,
     private _sharing: SharingService,
+    private _socket: SocketService,
     private Router: Router
   ) {}
   ngOnInit(): void {}
   ngAfterViewInit(): void {
     if (this.storyData) {
-      // this.startStory();
+      this.startStory();
     }
   }
   ngOnDestroy(): void {}
@@ -116,7 +118,6 @@ export class StoriesComponent {
     let position = document.getElementById('draggable');
     this.offsetX = position?.style.left;
     this.offsetY = position?.style.top;
-    console.log(this.offsetX, this.offsetY);
 
     this.isDragging = false;
     this.target = null; // Reset the target element
@@ -135,12 +136,13 @@ export class StoriesComponent {
     formData.append('caption', this.captionStory);
     this._story.addStory(formData).subscribe(
       (data: any) => {
-        console.log(data);
 
         if (data.success) {
           this._sharing.updateUserData();
           this.loading = !this.loading;
           this.close()
+        this._socket.emit('notification',{eventName:'addStory',type:'story',data:localStorage.getItem('id'),redirect:data.data._id})
+
         }
       },
       (err: HttpErrorResponse) => {
