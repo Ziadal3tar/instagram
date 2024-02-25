@@ -88,16 +88,11 @@ export class SharingService {
 
 
 
-  private nPost = new BehaviorSubject<any>([]);
-  currentNPost = this.nPost.asObservable();
-  updateNPost(id: any) {
-    console.log(id);
-
-    // let data = {
-    //   page,
-    // };
-    // this._reel.getAllReels(data).subscribe((data: any) => {
-    //   this.reels.next(data.reels);
-    // });
+  private saved = new BehaviorSubject<any>([]);
+  currentSaved = this.saved.asObservable();
+  updateSaved() {
+   this.UserService.getSaved().subscribe((data:any)=>{
+    this.saved.next(data);
+   })
   }
 }

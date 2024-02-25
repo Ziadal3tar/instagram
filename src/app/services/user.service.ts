@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class UserService {
-  // private baseUrl = 'http://localhost:3000/user';
-  private baseUrl = 'http://localhost:3000/user';
+  // private baseUrl = 'https://insta-be.vercel.app/user';
+  private baseUrl = 'https://insta-be.vercel.app/user';
 
   constructor(private http: HttpClient) {}
   getUserData(data: any): any {
@@ -79,6 +79,14 @@ export class UserService {
   allNotificationSeen() {
 
     return this.http.get(`${this.baseUrl}/allNotificationSeen` ,{
+      headers: {
+        authorization: `Bearer__${localStorage.getItem('userToken')}`,
+      },
+    });
+  }
+  getSaved() {
+
+    return this.http.get(`${this.baseUrl}/getSaved` ,{
       headers: {
         authorization: `Bearer__${localStorage.getItem('userToken')}`,
       },

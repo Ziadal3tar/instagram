@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class SocketService {
 
-  private baseUrl = 'http://localhost:3000';
-  // private baseUrl = 'http://localhost:3000';
+  private baseUrl = 'https://insta-be.vercel.app';
+  // private baseUrl = 'https://insta-be.vercel.app';
   socket:any =  io(this.baseUrl)
 
   constructor(private http: HttpClient) {}

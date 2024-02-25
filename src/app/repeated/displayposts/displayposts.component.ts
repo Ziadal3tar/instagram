@@ -11,6 +11,10 @@ open:Boolean = false
 @Input() select:Boolean = false
 displayPost:any
 selected:any[]=[]
+ngOnInit(): void {
+  console.log(this.data);
+
+}
 openPost(data:any){
 
     this.open = true
@@ -22,7 +26,7 @@ openPost(data:any){
    this.displayPost= data
 
 
-  
+
 }
 closePost(){
   document.getElementsByTagName('body')[0].style.overflowY = 'auto';

@@ -76,7 +76,7 @@
               <i class="fs-5 bi-chat cursorPointer"></i>
             </div>
             <div>
-              <i class="fs-5 bi  cursorPointer" (click)="savePost(post,i)"
+              <i class="fs-5 bi  cursorPointer" id="saveIcon{{i}}" (click)="savePost(post,i)"
                 [ngClass]="isPostSaved(post._id) ? 'text-warning bi-save-fill' : 'text-white bi-save'"></i>
             </div>
           </div>

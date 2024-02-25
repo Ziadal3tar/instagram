@@ -46,6 +46,7 @@ export class HomeComponent {
   };
   @Output() visitProfile: EventEmitter<any> = new EventEmitter<any>();
   posts: any[] = [];
+  saved: any[] = [];
   num: any = 1;
   userData: any;
   displayPost: any;
@@ -91,7 +92,11 @@ export class HomeComponent {
   ngOnInit(): void {
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
-
+    });
+    this._sharing.updateSaved();
+    this._sharing.currentSaved.subscribe((data: any) => {
+      console.log(data);
+      this.saved = data.saved;
     });
   }
   onMouseMove(event: MouseEvent) {
@@ -254,6 +259,8 @@ export class HomeComponent {
     }
   }
   savePost(item: any, index: any) {
+    // const saveIcon = document.getElementById(`saveIcon${index}`)
+    // console.log(saveIcon);
 
     if (item.postsImgAndVideos) {
       let data = {
@@ -262,7 +269,8 @@ export class HomeComponent {
       };
       this._user.savePost(data).subscribe((data: any) => {
         if (data.success) {
-          this._sharing.updateUserData();
+          // this._sharing.updateUserData();
+          this._sharing.updateSaved()
         }
       });
     } else {
@@ -272,7 +280,8 @@ export class HomeComponent {
       };
       this._user.savePost(data).subscribe((data: any) => {
         if (data.success) {
-          this._sharing.updateUserData();
+          // this._sharing.updateUserData();
+          this._sharing.updateSaved()
         }
       });
     }
@@ -316,17 +325,23 @@ export class HomeComponent {
     }
   }
   isPostSaved(postId: string): boolean {
-    return true
+    console.log(postId);
+    let post = this.saved.filter((post: any) => post._id == postId);
+    if (post.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
-  openPost(post:any){
-    this.displayPost = post
+  openPost(post: any) {
+    this.displayPost = post;
   }
   openPostN(id: any) {
     this._post.getPostById(id).subscribe((data: any) => {
-      this.openPost(data.post)
+      this.openPost(data.post);
     });
   }
-  openStoryN(data:any){
+  openStoryN(data: any) {
     setTimeout(() => {
       console.log(this.storyOpened);
       // this.openStory(data)
@@ -335,6 +350,5 @@ export class HomeComponent {
 
       this.storyData = this.userData;
     }, 200);
-
   }
 }

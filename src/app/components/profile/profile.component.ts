@@ -21,6 +21,7 @@ export class ProfileComponent {
   toAddToCollection: Boolean = false;
   openCollection: any;
   selected: any = [];
+  saved: any = [];
   displayData: any;
   userId: any;
   collectionName: any;
@@ -32,12 +33,18 @@ export class ProfileComponent {
     private _socket: SocketService,
   ) {}
   ngOnInit(): void {
+    this._sharing.currentSaved.subscribe((data: any) => {
+      this.saved = data.saved;
+      console.log(this.saved);
+
+    });
     let url = this._Route.url.split('/').filter((item: any) => item != '');
 
     this.userId = localStorage.getItem('id');
 
     this._sharing.currentProfileDataDisplay.subscribe((data: any) => {
       this.displayData = data;
+console.log(data);
 
       let to={to:this.displayData._id}
       this._sharing.updateChatData(to)

@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class PostsService {
-  private baseUrl = 'http://localhost:3000/posts';
-  // private baseUrl = 'http://localhost:3000/posts';
+  private baseUrl = 'https://insta-be.vercel.app/posts';
+  // private baseUrl = 'https://insta-be.vercel.app/posts';
 
   constructor(private http: HttpClient) {}
   addPost(data: any): any {
