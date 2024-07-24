@@ -7,8 +7,9 @@ import { Injectable } from '@angular/core';
 export class ChatService {
 
 
-  private baseUrl = 'https://insta-be.vercel.app/chats';
-  // private baseUrl = 'https://insta-be.vercel.app/auth';
+  private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/chats';
+  // private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/auth';
+  // private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/auth';
 
   constructor(private http: HttpClient) {}
   sendMessage(data: any) {

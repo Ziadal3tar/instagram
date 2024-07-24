@@ -19,16 +19,18 @@
     <app-dropdown-btn></app-dropdown-btn>
   </div>
 
-  <div class="col-md-6 col-12 postImg p-0" *ngIf="exploreData?.postsImgAndVideos">
-    <img (click)="ifDoubleClick()" *ngIf="exploreData?.postsImgAndVideos[0]?.type == 'image'"
-      src="{{exploreData?.postsImgAndVideos[0].url}}" alt="" srcset="">
+  <div class="col-md-6 col-12 postImg p-0 position-relative" *ngIf="exploreData?.postsImgAndVideos">
+    <img (click)="ifDoubleClick()" *ngIf="exploreData?.postsImgAndVideos[value]?.type == 'image'"
+      src="{{exploreData?.postsImgAndVideos[value].url}}" alt="" srcset="">
 
-    <video (click)="ifDoubleClick()" controls autoplay *ngIf="exploreData?.postsImgAndVideos[0]?.type == 'video'">
-      <source src="{{exploreData?.postsImgAndVideos[0].url}}" >
+    <video (click)="ifDoubleClick()" controls autoplay *ngIf="exploreData?.postsImgAndVideos[value]?.type == 'video'">
+      <source src="{{exploreData?.postsImgAndVideos[value].url}}" >
     </video>
 
     <i [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
       class="bi bgHeart like"></i>
+      <button *ngIf="exploreData.postsImgAndVideos.length >1" class="nav-btn prev-btn" (click)="toggleValue(value-1)">&#10094;</button>
+      <button *ngIf="exploreData.postsImgAndVideos.length >1" class="nav-btn next-btn" (click)="toggleValue(value+1)">&#10095;</button>
   </div>
   <div class="col-md-6 col-12 postImg p-0" *ngIf="exploreData?.url">
 

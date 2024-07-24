@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { SharingService } from 'src/app/services/sharing.service';
@@ -12,7 +11,6 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
 
 import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { FacebookLoginProvider } from '@abacritt/angularx-social-login';
@@ -31,14 +29,17 @@ export class LoginComponent {
   logInForm: FormGroup = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     password: new FormControl(null, [Validators.required]),
-    registerType: new FormControl(null),
-
+    // registerType: new FormControl(null),
   });
-  constructor(private _auth: AuthService,private _sharing: SharingService, private _Route: Router,
+  constructor(
+    private _auth: AuthService,
+    private _sharing: SharingService,
+    private _Route: Router,
 
-    private authService: SocialAuthService) {}
+    private authService: SocialAuthService
+  ) {}
   ngOnInit(): void {
-localStorage.clear()
+    localStorage.clear();
     this.logInForm.value.registerType = 'default';
 
     (window as any).handleCredentialResponse =
@@ -56,18 +57,19 @@ localStorage.clear()
           profilePicType: 'fbImage',
           registerType: this.registerType,
         };
-        this._auth.logInWithFbOrGoogle(data).subscribe((data: any) => {
-          this.loading = !this.loading;
-          (data);
+        this._auth.logInWithFbOrGoogle(data).subscribe(
+          (data: any) => {
+            this.loading = !this.loading;
+            data;
 
-          if (data.success) {
-            this.ifSuccess(data)
-
+            if (data.success) {
+              this.ifSuccess(data);
+            }
+          },
+          (err: HttpErrorResponse) => {
+            this.ErrorResponse = err.error.message;
           }
-        },
-        (err: HttpErrorResponse) => {
-          this.ErrorResponse = err.error.message;
-        });
+        );
       }
     });
   }
@@ -91,42 +93,41 @@ localStorage.clear()
         profilePicType: 'fbImage',
         registerType: this.registerType,
       };
-      this._auth.logInWithFbOrGoogle(data).subscribe((data: any) => {
-        this.loading = !this.loading;
-        if (data.success) {
-          this.ifSuccess(data)
-
-
+      this._auth.logInWithFbOrGoogle(data).subscribe(
+        (data: any) => {
+          this.loading = !this.loading;
+          if (data.success) {
+            this.ifSuccess(data);
+          }
+        },
+        (err: HttpErrorResponse) => {
+          this.ErrorResponse = err.error.message;
         }
-      },
-      (err: HttpErrorResponse) => {
-        this.ErrorResponse = err.error.message;
-      });
+      );
     }
   }
   logIn() {
-    this.ErrorResponse = '';
-    let data = this.logInForm.value;
-    this._auth.logIn(data).subscribe(
-      (data: any) => {
-        if (data.message == 'welcome') {
+    this.loading = true; // Set loading to true
 
-this.ifSuccess(data)
+    this.ErrorResponse = '';
+    const data = this.logInForm.value;
+    this._auth.logIn(data).subscribe(
+      (response: any) => {
+        if (response.data.signIn.message === 'Welcome') {
+          this.ifSuccess(response.data.signIn);
+        } else {
+          this.ErrorResponse = response.data.signIn.message;
         }
-      },
-      (err: HttpErrorResponse) => {
-        this.ErrorResponse = err.error.message;
+        this.loading = false; // Set loading to false after processing
       }
     );
   }
-ifSuccess(data:any){
-  localStorage.setItem('userToken', data.token);
-  localStorage.setItem('id', data.id);
-  this._Route.navigate([`/userProfile/${data.id}`]);
-  this._sharing.updateUserData()
-}
 
+  ifSuccess(data: any) {
 
-
-
+    localStorage.setItem('userToken', data.token);
+    localStorage.setItem('id', data.id);
+    this._Route.navigate([`/userProfile/${data.id}`]);
+    this._sharing.updateUserData();
+  }
 }

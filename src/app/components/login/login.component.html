@@ -32,7 +32,7 @@
     <p class="p-2 fs-7 opacity-75 text-center cursorPointer">Did you forget your password?</p>
     <div class="col-12 centerCenter py-3">
 
-      <button class=" btn btn-primary w-100 rounded-1 py-1" [disabled]="logInForm.invalid" (click)="logIn()">Login</button>
+      <button class=" btn btn-primary w-100 rounded-1 py-1" [disabled]="logInForm.invalid" (click)="logIn()">Login<app-loading-btn *ngIf="loading"></app-loading-btn></button>
     </div>
     <p class="opacity-75 my-3 text-center">
 

@@ -16,12 +16,15 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./display-explore.component.scss'],
 })
 export class DisplayExploreComponent {
+
   @Input() exploreData: any;
+
   userData: any;
   comment: any;
   doubleClick: boolean = false;
   yourCollections: boolean = false;
   @Output() open: EventEmitter<any> = new EventEmitter<any>();
+  value = 0;
 
   showDiv: boolean = false;
   idSaved: boolean = false;
@@ -44,6 +47,19 @@ export class DisplayExploreComponent {
 
       this.isItemSaved()
     });
+  }
+
+  toggleValue( newValue: number) {
+    console.log(newValue);
+
+    if (newValue < 0) {
+      newValue = this.exploreData.postsImgAndVideos.length-1;
+    } else if (newValue > this.exploreData.postsImgAndVideos.length-1 ) {
+      newValue = 0;
+    }
+    console.log(newValue);
+
+    this.value = newValue;
   }
   onMouseMove(event: MouseEvent) {
     this.mouseX = event.clientX;

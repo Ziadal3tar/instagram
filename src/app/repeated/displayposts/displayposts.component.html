@@ -1,7 +1,6 @@
 <div class="col-12 row m-0">
   <div class="col-6 col-sm-4  m-0 p-2 cursorPointer" (click)="openPost(item)" *ngFor="let item of data">
-    <!-- {{item.caption}} -->
-    <div class="col-12 parent rounded-3 overflow-hidden" [ngClass]="item?.postsImgAndVideos[0]?.type">
+    <div class="col-12 parent rounded-3 overflow-hidden" *ngIf="item?.postsImgAndVideos" >
 
 
       <div *ngIf="item?.postsImgAndVideos[0]?.type == 'image'" class="img"
@@ -10,6 +9,17 @@
 
       <video *ngIf="item?.postsImgAndVideos[0]?.type == 'video'">
         <source src="{{item?.postsImgAndVideos[0].url}}" type="video/mp4">
+      </video>
+
+
+    </div>
+    <div class="col-12 parent rounded-3 overflow-hidden" *ngIf="item?.url">
+
+
+
+
+      <video >
+        <source src="{{item?.url}}" type="video/mp4">
       </video>
 
 

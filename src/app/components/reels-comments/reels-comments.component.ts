@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PostsService } from 'src/app/services/posts.service';
+import { SharingService } from 'src/app/services/sharing.service';
 
 @Component({
   selector: 'app-reels-comments',
@@ -8,14 +9,18 @@ import { PostsService } from 'src/app/services/posts.service';
 })
 export class ReelsCommentsComponent {
   comment: any;
+  userData: any;
   @Output() closeComments: EventEmitter<any> = new EventEmitter<any>();
   @Input() reel: any;
-  constructor(private _post: PostsService) {}
+  constructor(private _post: PostsService, private _sharing:SharingService) {}
   close() {
     this.closeComments.emit('');
   }
 ngOnInit(): void {
-
+this._sharing.currentUserData.subscribe((data:any)=>{
+  console.log(data);
+this.userData = data
+})
 }
   addReelComment() {
     let data = {
@@ -26,7 +31,7 @@ ngOnInit(): void {
     this._post.addComment(data).subscribe((data: any) => {
       if (data.success) {
         this.reel = data.post;
-        
+
       }
     });
   }

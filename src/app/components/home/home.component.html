@@ -32,6 +32,9 @@
     </div>
 
     <div id="posts" class="col-12 mt-2 px-md-5 px-0 ">
+
+
+
       <div class="col-12 post" *ngFor="let post of posts let i = index">
         <div class="col-12 d-flex align-items-center justify-content-between header ">
           <div class="postOwnerDetails d-flex">
@@ -53,11 +56,17 @@
         </div>
 
         <div class="content" *ngIf="!post?.url" >
-          <img *ngIf="post?.postsImgAndVideos[0]?.type == 'image' " src="{{post?.postsImgAndVideos[0].url}}" class="cursorPointer" (click)="displayPost = post"
-            srcset="">
-          <video controls  *ngIf="post?.postsImgAndVideos[0]?.type == 'video'">
-            <source src="{{post?.postsImgAndVideos[0].url}}">
-          </video>
+          <div class=" w-100 h-100 centerCenter">
+
+            <img *ngIf="post?.postsImgAndVideos[postNavigationStates[i]]?.type == 'image'  " src="{{post?.postsImgAndVideos[postNavigationStates[i]].url}}" class="cursorPointer" (click)="displayPost = post"
+              srcset="">
+            <video controls  *ngIf="post?.postsImgAndVideos[postNavigationStates[i]]?.type == 'video' ">
+              <source src="{{post?.postsImgAndVideos[postNavigationStates[i]].url}}">
+            </video>
+
+          </div>
+          <button *ngIf="post.postsImgAndVideos.length >1" class="nav-btn prev-btn" (click)="toggleValue(i,postNavigationStates[i]-1)">&#10094;</button>
+          <button *ngIf="post.postsImgAndVideos.length >1" class="nav-btn next-btn" (click)="toggleValue(i,postNavigationStates[i]+1)">&#10095;</button>
         </div>
 
         <div class="content" *ngIf="post?.url" >
@@ -94,6 +103,10 @@
           </div>
         </div>
       </div>
+
+
+
+
     </div>
   </div>
 

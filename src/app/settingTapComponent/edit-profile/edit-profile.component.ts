@@ -61,7 +61,6 @@ this.loading = !this.loading
     if(this.bio){
       this.loading = true
       this._userService.bio({bio:this.bio}).subscribe((data:any)=>{
-        console.log(data);
 
         if (data.success) {
 this.loading = false

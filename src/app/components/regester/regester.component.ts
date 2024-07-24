@@ -41,7 +41,7 @@ export class RegesterComponent {
 
   ngOnInit(): void {
 
-      this.authService.signOut();
+      // this.authService.signOut();
 
 
     (window as any).handleCredentialResponse =
@@ -72,8 +72,7 @@ export class RegesterComponent {
         (err: HttpErrorResponse) => {
         this.loading = !this.loading;
 
-          this.ErrorResponse = err.error.message;
-
+  
 
         });
       }
@@ -116,21 +115,23 @@ export class RegesterComponent {
   }
 
   register() {
-    this.signUpForm.value.registerType = 'default';
+    this.loading = !this.loading;
+
     let data = this.signUpForm.value;
-    this._auth.register(data).subscribe((data: any) => {
-      if (data.message == 'added successfully') {
-        this.ErrorResponse = '';
 
-        this._Route.navigate(['/login']);
+    this._auth.register(data).subscribe(
+      (response: any) => {
+        console.log(response);
+
+        if (response.data.signUp === 'Added successfully') {
+          this.ErrorResponse = '';
+          this._Route.navigate(['/login']);
+        }
+      },
+      (err: any) => {
+        this.loading = !this.loading;
+        this.ErrorResponse = err.message;
       }
-    },
-    (err: HttpErrorResponse) => {
-      this.loading = !this.loading;
-
-      this.ErrorResponse = err.error.message;
-
-
-    });
+    );
   }
 }

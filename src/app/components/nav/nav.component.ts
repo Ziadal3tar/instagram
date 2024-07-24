@@ -47,7 +47,10 @@ export class NavComponent {
         (item: any) => item.seen == false
       );
       this.numberOfNotifications = notSeen?.length;
-      this._Socket.emit('updateSocketId', data._id);
+if (data._id) {
+
+  // this._Socket.emit('updateSocketId', data._id);
+}
 
       let url = this._Route.url.split('/').filter((item: any) => item != '');
       if (localStorage.getItem('id') != url[1]) {

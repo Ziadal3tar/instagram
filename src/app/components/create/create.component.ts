@@ -107,7 +107,7 @@ export class CreateComponent {
         if (data.success) {
           this._sharing.updateUserData();
           this.loading = !this.loading;
-        this._socket.emit('notification',{eventName:'addPost',type:'post',data:localStorage.getItem('id'),redirect:data.data._id})
+        // this._socket.emit('notification',{eventName:'addPost',type:'post',data:localStorage.getItem('id'),redirect:data.data._id})
 
         }
       },

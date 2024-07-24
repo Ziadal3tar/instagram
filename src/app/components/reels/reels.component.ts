@@ -23,7 +23,8 @@ export class ReelsComponent {
   page = 0;
   userData: any;
   visibleItemIndex = 0;
-  loading:Boolean = true
+  loading: Boolean = true;
+  arr: any[] = [];
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
@@ -32,17 +33,15 @@ export class ReelsComponent {
     private _UserService: UserService
   ) {}
   ngOnInit(): void {
-
     this._sharing.currentUserData.subscribe((data: any) => {
       this.userData = data;
+      data.savedReels.filter((item: any) => this.arr.push(item._id));
     });
     this._sharing.updateReel(this.page);
     this._sharing.currentReels.subscribe((data: any) => {
-
       this.reels = this.reels.concat(data);
-      console.log(this.reels.length);
-      if (this.reels.length!=0) {
-this.loading = false
+      if (this.reels.length != 0) {
+        this.loading = false;
       }
     });
   }
@@ -89,10 +88,12 @@ this.loading = false
     });
   }
   ifSaved(id: any) {
-    let saved = this.userData.saved.filter((item:any)=>item.item == id)
-      if (saved.length != 0) {
-        return true;
-      }
-        return false
+    console.log(id);
+
+    let saved = this.userData?.saved?.filter((item: any) => item.item == id);
+    if (saved?.length != 0) {
+      return true;
     }
+    return false;
+  }
 }

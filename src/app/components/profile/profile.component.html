@@ -90,7 +90,7 @@
         <i class="bi bi-gear-fill fs-5 cursorPointer" (click)="setting = true"></i>
       </div>
       <div class="col-12 d-md-flex d-none centerBetween my-3">
-        <p><span>{{displayData?.posts?.length}}</span> posts</p>
+        <p><span>{{allPosts?.length}}</span> posts</p>
         <p><span>{{displayData?.followers?.length}}</span> followers</p>
         <p><span>{{displayData?.following?.length}}</span> following</p>
       </div>
@@ -131,7 +131,7 @@
           </svg>
           <p>POSTS</p>
         </li>
-        <li (click)="tap='saved'" class="text-decoration-none fs-7 py-3 cursorPointer"
+        <li (click)="tap='saved'" class="text-decoration-none fs-7 py-3 cursorPointer" *ngIf="url == userId"
           [ngClass]="{'active': tap == 'saved'}" (click)="changeProfileTaps($event)"><i
             class="bi bi-bookmark-check-fill"></i> SAVED</li>
         <li (click)="tap='tagged'" class="text-decoration-none fs-7 py-3 cursorPointer"
@@ -146,7 +146,7 @@
 
 
   <section *ngIf="tap == 'posts'" id="posts" class="col-9">
-    <app-displayposts [data]="displayData?.posts" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
+    <app-displayposts [data]="allPosts" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
 
     <div class="col-12 ifNoPhoto centerCenter flex-column py-5" *ngIf="displayData?.posts?.length ==0">
       <div class="icon centerCenter"><i class="bi bi-camera fs-1 opacity-50"></i></div>
@@ -155,7 +155,7 @@
       <h6 class="text-primary cursorPointer">Share your first photo</h6>
     </div>
   </section>
-  <section *ngIf="tap == 'saved'" id="saved" class="col-lg-9 col-12">
+  <section *ngIf="tap == 'saved' " id="saved" class="col-lg-9 col-12">
     <div class="col-12">
       <div class="col-12 centerBetween">
         <h6 class="fs-7">Only you can see what you've saved</h6>
@@ -165,7 +165,7 @@
         <input type="text" class=" w-100 p-2 rounded-0 text-white bg-transparent border-0 border-bottom"
           [(ngModel)]="collectionName" placeholder="Collection Name">
         <div class=" position-absolute end-0 top-0 h-100 centerCenter">
-          <button [disabled]="!nameNewCollection" class="cursorPointer text-white btn bg-transparent border-0"
+          <button class="cursorPointer text-white btn bg-transparent border-0 z-3"
             (click)="newCollection()">NEXT</button>
 
         </div>
@@ -229,7 +229,7 @@
 
 
 
-            <div *ngIf="item.url" class="h-100">
+            <div *ngIf="item.url" class="h-100 position-relative">
               <!-- <div class="w-100 h-100 m-0 img" *ngIf="item?.postsImgAndVideos[0]?.type == 'image'"
                 [style.background-image]="'url(' + item?.postsImgAndVideos[0].url + ')'"> </div> -->
               <video>
@@ -237,21 +237,21 @@
               </video>
             </div>
           </div>
-        <div class="title">
-          <h4>All Saved </h4>
+          <div class="title">
+            <h4>All Saved </h4>
+          </div>
         </div>
+
       </div>
 
-    </div>
-
-    <div *ngFor="let item of displayData.collections" (click)="openCollection = item"
-      class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center">
-      <app-display-collection [collections]='item'></app-display-collection>
-    </div>
+      <div *ngFor="let item of displayData.collections" (click)="openCollection = item"
+        class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center">
+        <app-display-collection [collections]='item'></app-display-collection>
+      </div>
 
 
 
-    <!-- <div *ngFor="let item of displayData.collections" class=" col-lg-4 col-md-8 col-12 centerCenter my-3 row   "
+      <!-- <div *ngFor="let item of displayData.collections" class=" col-lg-4 col-md-8 col-12 centerCenter my-3 row   "
         (click)="openCollection = item">
         <app-display-collection [collections]='item'></app-display-collection>
 
@@ -263,8 +263,13 @@
   </section>
 </section>
 
+
+
+
+
+<!--when open collection-->
 <section id="displayCollection" class="row container d-flex justify-content-center pt-3" *ngIf="openCollection">
-  <!--when open collection-->
+
   <div class="col-9 d-flex">
     <p class="cursorPointer" (click)="openCollection = undefined"><i class="bi bi-chevron-left me-2"></i>Saved</p>
   </div>
@@ -285,10 +290,22 @@
     </div>
     <!-- <app-displayposts *ngIf="openCollection?.saved?.length !=0" [data]="openCollection.saved"></app-displayposts> -->
     <!-- <app-displayposts *ngIf="openCollection" [data]="displayData?.saved"></app-displayposts> -->
-    <app-displayposts [data]="displayData?.savedPosts" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
+    <app-displayposts [data]="openCollection" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
 
   </div>
 </section>
+
+
+
+
+
+
+
+
+
+
+
+
 
 <div id="setting" class="col-12" *ngIf="edit"><app-setting (close)="edit = false"></app-setting> </div>
 <div *ngIf="setting" id="close" (click)="closeSetting($event)"
@@ -309,20 +326,83 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 <div class="toAddToCollection centerBetween flex-column" *ngIf="toAddToCollection">
   <div class="close centerStart w-100 ps-3 "> <i class=" bi bi-x-lg cursorPointer"
       (click)="toAddToCollection = false"></i></div>
   <!-- <app-displayposts [data]="displayData.saved" [select]="true"></app-displayposts> -->
   <div class="mid w-100 row m-0 scrollStyle">
     <div class="h-auto p-0 col-12 row m-0">
-      <div class="col-4 " *ngFor="let item of displayData.saved"
+
+<div class="col-4 p-1 m-0 mt-1" (click)="select(item)" *ngFor="let item of saved">
+  <div class="ifSelect centerCenter rounded-3 m-1 pt-1" *ngIf="selected.includes(item._id)"> <i class="bi bi-check fs-1"></i></div>
+
+  <div class="col-12 rounded-3 overflow-hidden" *ngIf="item?.postsImgAndVideos" >
+
+
+    <div *ngIf="item?.postsImgAndVideos[0]?.type == 'image'" class="img"
+      style="background-image: url({{item.postsImgAndVideos[0].url}});"></div>
+
+
+    <video *ngIf="item?.postsImgAndVideos[0]?.type == 'video'">
+      <source src="{{item?.postsImgAndVideos[0].url}}" type="video/mp4">
+    </video>
+
+
+  </div>
+  <div class="col-12 parent rounded-3 overflow-hidden" *ngIf="item?.url">
+
+
+
+
+    <video >
+      <source src="{{item?.url}}" type="video/mp4">
+    </video>
+
+
+  </div>
+
+</div>
+
+
+
+
+      <!-- <div class="col-4 " *ngFor="let item of saved" [ngClass]="{'d-none': !item.postsImgAndVideos}"
         [style.background-image]="'url(' + item.postsImgAndVideos[0].url + ')'" (click)="select(item)">
+
         <div class="ifSelect centerCenter" *ngIf="selected.includes(item._id)"> <i class="bi bi-check fs-1"></i></div>
 
       </div>
+ -->
+
+
+
+
+
+
+
+
+
+
+
     </div>
 
   </div>
+
+
+
+
+
   <div class="done cursorPointer centerCenter border-top border-opacity-25" (click)="select('add')">ADD
     <!-- <button class="btn btn-primary my-2 rounded-5"
     (click)="select('add')">ADD</button> -->

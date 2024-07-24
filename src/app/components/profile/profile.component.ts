@@ -11,7 +11,6 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ProfileComponent {
   tap: String = 'posts';
-  nameNewCollection: String = '';
   addNewCollection: Boolean = false;
   SelectionStage: Boolean = false;
   edit: Boolean = false;
@@ -22,32 +21,34 @@ export class ProfileComponent {
   openCollection: any;
   selected: any = [];
   saved: any = [];
+  allPosts: any = [];
   displayData: any;
   userId: any;
+  url: any;
   collectionName: any;
-@Output() OpenChat: EventEmitter<any>= new EventEmitter<any>()
+  @Output() OpenChat: EventEmitter<any> = new EventEmitter<any>();
   constructor(
     private _Route: Router,
     private _sharing: SharingService,
     private _userServices: UserService,
-    private _socket: SocketService,
+    private _socket: SocketService
   ) {}
   ngOnInit(): void {
     this._sharing.currentSaved.subscribe((data: any) => {
       this.saved = data.saved;
-      console.log(this.saved);
-
+      // this.allPosts = data.allPosts;
+      console.log(data);
     });
     let url = this._Route.url.split('/').filter((item: any) => item != '');
-
+    this.url = url[1];
     this.userId = localStorage.getItem('id');
 
     this._sharing.currentProfileDataDisplay.subscribe((data: any) => {
       this.displayData = data;
-console.log(data);
+      this.allPosts =data.posts
 
-      let to={to:this.displayData._id}
-      this._sharing.updateChatData(to)
+      let to = { to: this.displayData._id };
+      this._sharing.updateChatData(to);
       if (this.displayData?.followers?.includes(this.userId)) {
         this.following = true;
       } else if (this.displayData?.following?.includes(this.userId)) {
@@ -61,32 +62,27 @@ console.log(data);
   changeProfileTaps(data: any) {}
 
   select(data: any) {
-if (data == 'add') {
-let data = {
-  selected: this.selected,
-  collectionId:this.openCollection._id
-}
+    if (data == 'add') {
+      let data = {
+        selected: this.selected,
+        collectionId: this.openCollection._id,
+      };
 
-this._userServices.addToCollection(data).subscribe((data:any)=>{
-
-  if (data.success) {
-    this.openCollection = undefined
-    this.toAddToCollection = false
-  }
-
-})
-}else{
-  if (this.selected.includes(data._id)) {
-    this.selected = this.selected.filter((item:any) => item !== data._id);
-  }else{
-    this.selected.push(data._id)
-  }
-}
-
-
+      this._userServices.addToCollection(data).subscribe((data: any) => {
+        if (data.success) {
+          this.openCollection = undefined;
+          this.toAddToCollection = false;
+        }
+      });
+    } else {
+      if (this.selected.includes(data._id)) {
+        this.selected = this.selected.filter((item: any) => item !== data._id);
+      } else {
+        this.selected.push(data._id);
+      }
+    }
   }
   close() {
-    this.nameNewCollection = '';
     this.SelectionStage = false;
     this.selected = [];
     this.addNewCollection = false;
@@ -94,20 +90,7 @@ this._userServices.addToCollection(data).subscribe((data:any)=>{
   back() {
     this.SelectionStage = false;
   }
-  // addCollection() {
-  //   let items = [];
-  //   for (let i = 0; i < this.selected.length; i++) {
-  //     const element = this.selected[i];
-  //     const elementSelected = this.saved.find((item) => item.id === element);
-  //     items.push(elementSelected);
-  //   }
-  //   let collection = {
-  //     name: this.nameNewCollection,
-  //     items: items,
-  //   };
-  //   this.collections.push(collection);
-  //   this.close();
-  // }
+
   closeSetting(event: any) {
     if (event.target.id == 'close') {
       this.setting = false;
@@ -120,11 +103,15 @@ this._userServices.addToCollection(data).subscribe((data:any)=>{
   follow() {
     this._userServices.follow(this.displayData._id).subscribe((data: any) => {
       if (data.success) {
-
         this._sharing.updateProfileDataDisplay();
 
-        this._socket.emit('notification',{eventName:'follow',type:'user',data:localStorage.getItem('id'),redirect:localStorage.getItem('id'),to:this.displayData._id})
-
+        this._socket.emit('notification', {
+          eventName: 'follow',
+          type: 'user',
+          data: localStorage.getItem('id'),
+          redirect: localStorage.getItem('id'),
+          to: this.displayData._id,
+        });
       }
     });
   }
@@ -138,8 +125,10 @@ this._userServices.addToCollection(data).subscribe((data:any)=>{
       }
     });
   }
-  openChat(){
-
-    this.OpenChat.emit('')
+  openChat() {
+    this.OpenChat.emit('');
+  }
+  addToCollection(collection: any) {
+    console.log(collection);
   }
 }

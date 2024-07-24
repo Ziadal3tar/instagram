@@ -55,6 +55,9 @@ import { YourCollectionsComponent } from './repeated/your-collections/your-colle
 import { AddStoryComponent } from './components/add-story/add-story.component';
 import { PostTimePipe } from './pipes/post-time.pipe';
 import { InstaLoadingComponent } from './repeated/insta-loading/insta-loading.component';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { SLoadingComponent } from './components/sloading/sloading.component';
+import { GraphQLModule } from './graphql.module'; // Import SlickCarouselModule
 
 @NgModule({
   declarations: [
@@ -101,6 +104,7 @@ import { InstaLoadingComponent } from './repeated/insta-loading/insta-loading.co
     AddStoryComponent,
     PostTimePipe,
     InstaLoadingComponent,
+    SLoadingComponent,
 
 
 
@@ -114,7 +118,9 @@ import { InstaLoadingComponent } from './repeated/insta-loading/insta-loading.co
     HttpClientModule,
     ReactiveFormsModule,
     SocialLoginModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    SlickCarouselModule,
+    GraphQLModule
   ],
   providers: [
     {

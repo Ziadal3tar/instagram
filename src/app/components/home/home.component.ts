@@ -20,6 +20,16 @@ import { SocketService } from 'src/app/services/socket.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent {
+  slickConfig = {
+    autoplay: true,
+    autoplaySpeed: 2000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+    dots: true,
+    infinite: true,
+  };
+
   customOptions: OwlOptions = {
     loop: false,
     mouseDrag: true,
@@ -46,6 +56,8 @@ export class HomeComponent {
   };
   @Output() visitProfile: EventEmitter<any> = new EventEmitter<any>();
   posts: any[] = [];
+  postNavigationStates: number[] = [];
+
   saved: any[] = [];
   num: any = 1;
   userData: any;
@@ -75,6 +87,9 @@ export class HomeComponent {
       if (data.allPosts) {
         this.instaLoading = false;
         this.posts = data.allPosts;
+        for (let i = 0; i < data.allPosts.length; i++) {
+          this.postNavigationStates.push(0);
+        }
       }
     });
   }
@@ -99,6 +114,20 @@ export class HomeComponent {
       this.saved = data.saved;
     });
   }
+
+  toggleValue(index: number, newValue: number) {
+    console.log(newValue);
+
+    if (newValue < 0) {
+      newValue = this.posts[index].postsImgAndVideos.length-1;
+    } else if (newValue > this.posts[index].postsImgAndVideos.length-1 ) {
+      newValue = 0;
+    }
+    console.log(newValue);
+
+    this.postNavigationStates[index] = newValue;
+  }
+
   onMouseMove(event: MouseEvent) {
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
@@ -147,8 +176,6 @@ export class HomeComponent {
   }
 
   openStory(data: any) {
-    console.log(data.stories.length);
-
     if (data.stories.length != 0) {
       this.storyOpened = true;
       this.storyData = data;
@@ -260,7 +287,6 @@ export class HomeComponent {
   }
   savePost(item: any, index: any) {
     // const saveIcon = document.getElementById(`saveIcon${index}`)
-    // console.log(saveIcon);
 
     if (item.postsImgAndVideos) {
       let data = {
@@ -270,7 +296,7 @@ export class HomeComponent {
       this._user.savePost(data).subscribe((data: any) => {
         if (data.success) {
           // this._sharing.updateUserData();
-          this._sharing.updateSaved()
+          this._sharing.updateSaved();
         }
       });
     } else {
@@ -281,7 +307,7 @@ export class HomeComponent {
       this._user.savePost(data).subscribe((data: any) => {
         if (data.success) {
           // this._sharing.updateUserData();
-          this._sharing.updateSaved()
+          this._sharing.updateSaved();
         }
       });
     }
@@ -325,7 +351,6 @@ export class HomeComponent {
     }
   }
   isPostSaved(postId: string): boolean {
-    console.log(postId);
     let post = this.saved.filter((post: any) => post._id == postId);
     if (post.length == 0) {
       return false;
@@ -343,7 +368,6 @@ export class HomeComponent {
   }
   openStoryN(data: any) {
     setTimeout(() => {
-      console.log(this.storyOpened);
       // this.openStory(data)
       this.storyOpened = true;
       console.log(this.storyOpened);
