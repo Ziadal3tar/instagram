@@ -13,18 +13,19 @@ export class AuthService {
 
   constructor(private http: HttpClient,private apollo: Apollo) {}
   register(data: any): any {
-    // return this.http.post(`${this.baseUrl}/signUp`, data, {});
-    return this.apollo.mutate({
-      mutation: signUp,
-      variables: data,
-    });
+    return this.http.post(`${this.baseUrl}/signUp`, data, {});
+    // return this.apollo.mutate({
+    //   mutation: signUp,
+    //   variables: data,
+    // });
   }
   logIn(data: any):any {
+    return this.http.post(`${this.baseUrl}/logIn`, data, {});
 
-    return this.apollo.mutate({
-      mutation: signIn,
-      variables: data,
-    });
+    // return this.apollo.mutate({
+    //   mutation: signIn,
+    //   variables: data,
+    // });
   }
   loginWithGoogle(data: any): any {
     return this.http.post(`${this.baseUrl}/logInWithGoogle`, data, {});
