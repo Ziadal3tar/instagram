@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ReelService {
-  private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/reels';
-  // private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/posts';
+  private baseUrl = 'https://insta-be-ziadal3tars-projects.vercel.app/reels';
+  // private baseUrl = 'https://insta-be-ziadal3tars-projects.vercel.app/posts';
   constructor(private http: HttpClient) {}
   addReel(data: any): any {
     return this.http.post(`${this.baseUrl}/addReel`, data, {

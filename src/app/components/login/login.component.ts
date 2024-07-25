@@ -113,12 +113,18 @@ export class LoginComponent {
     const data = this.logInForm.value;
     this._auth.logIn(data).subscribe(
       (response: any) => {
-        if (response.data.signIn.message === 'Welcome') {
-          this.ifSuccess(response.data.signIn);
-        } else {
-          this.ErrorResponse = response.data.signIn.message;
+        console.log(response);
+
+        if (response.message === 'welcome') {
+          this.ifSuccess(response);
         }
-        this.loading = false; // Set loading to false after processing
+        this.loading = false;
+      },
+      (err: any) => {
+        console.log(err);
+
+        this.loading = !this.loading;
+        this.ErrorResponse = err.error.message;
       }
     );
   }

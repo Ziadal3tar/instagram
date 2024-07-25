@@ -10,7 +10,7 @@ export class SocketService {
 
   private baseUrl = 'http://localhost:3000';
   // private baseUrl = 'http://localhost:3000';
-  socket:any =  io(this.baseUrl)
+  socket:any 
 
   constructor(private http: HttpClient) {}
 

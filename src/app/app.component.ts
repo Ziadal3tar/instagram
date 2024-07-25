@@ -19,14 +19,14 @@ export class AppComponent {
   }
   ngOnInit(): void {
     // localStorage.clear()
-    this._Socket.listen('notification').subscribe((data: any) => {
+    // this._Socket.listen('notification').subscribe((data: any) => {
 
 
-      this._sharing.updateUserData();
-      const audio = document.getElementById(
-        'backgroundAudio'
-      ) as HTMLAudioElement;
-      audio.play();
-    });
+    //   this._sharing.updateUserData();
+    //   const audio = document.getElementById(
+    //     'backgroundAudio'
+    //   ) as HTMLAudioElement;
+    //   audio.play();
+    // });
   }
 }

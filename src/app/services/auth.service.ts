@@ -8,8 +8,8 @@ import { signUp,signIn } from '../graphQl/mutations';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/auth';
-  // private baseUrl = 'http://localhost:3000;
+  private baseUrl = 'https://insta-be-ziadal3tars-projects.vercel.app/auth';
+  // private baseUrl = 'http://localhost:3000/auth'
 
   constructor(private http: HttpClient,private apollo: Apollo) {}
   register(data: any): any {

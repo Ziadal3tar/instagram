@@ -21,7 +21,7 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
         return {
           cache: new InMemoryCache(),
           link: httpLink.create({
-            uri: 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/graphql' // Replace with your GraphQL server URI
+            uri: 'https://insta-be-ziadal3tars-projects.vercel.app/graphql' // Replace with your GraphQL server URI
           }),
         };
       },

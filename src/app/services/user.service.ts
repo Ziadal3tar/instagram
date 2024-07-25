@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class UserService {
-  // private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/user';
-  private baseUrl = 'https://insta-eoq9k26ys-ziadal3tars-projects.vercel.app/user';
+  // private baseUrl = 'https://insta-be-ziadal3tars-projects.vercel.app/user';
+  private baseUrl = 'https://insta-be-ziadal3tars-projects.vercel.app/user';
 
   constructor(private http: HttpClient) {}
   getUserData(data: any): any {

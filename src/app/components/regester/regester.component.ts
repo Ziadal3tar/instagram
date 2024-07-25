@@ -72,7 +72,7 @@ export class RegesterComponent {
         (err: HttpErrorResponse) => {
         this.loading = !this.loading;
 
-  
+
 
         });
       }
@@ -123,14 +123,14 @@ export class RegesterComponent {
       (response: any) => {
         console.log(response);
 
-        if (response.data.signUp === 'Added successfully') {
+        if (response.message == 'added successfully') {
           this.ErrorResponse = '';
           this._Route.navigate(['/login']);
         }
       },
       (err: any) => {
         this.loading = !this.loading;
-        this.ErrorResponse = err.message;
+        this.ErrorResponse = err.error.message;
       }
     );
   }
