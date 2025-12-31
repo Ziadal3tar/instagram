@@ -1,0 +1,46 @@
+.p-story {
+  padding: 2.5px;
+}
+
+.border-story {
+  border: 3px solid rgb(0, 0, 0);
+
+}
+
+.friendStory {
+  // z-index: 0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+
+  .borderImg {
+
+    @media screen and (min-width : 300px) and (max-width : 400px) {
+      padding: 1.5px;
+    }
+
+    .img {
+
+      @media screen and (min-width : 300px) and (max-width : 400px) {
+        width: 45px !important;
+        height: 45px !important;
+
+      }
+
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-position: center;
+      background-size: cover;
+    }
+  }
+
+  .name {
+    margin-top: 5px;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,47 @@
+<section id="explore" class="explore-container">
+  <div class="topbar d-md-none p-3 d-flex justify-content-between align-items-center">
+    <app-search [userData]="userData" (allSearch)="allSearch = $event"></app-search>
+  </div>
+
+  <div class="columns-row">
+    <!-- Column 1 -->
+    <div class="column" *ngIf="columns[0]?.length">
+      <ng-container *ngFor="let item of columns[0]; let i = index; trackBy: trackById">
+        <article class="media-wrap" (click)="openEX(item)">
+          <video *ngIf="item.type === 'video'" [attr.src]="item.src" preload="metadata" playsinline muted loop></video>
+          <img loading="lazy"*ngIf="item.type === 'image'" [src]="item.src" alt="post image">
+        </article>
+      </ng-container>
+    </div>
+
+    <!-- Column 2 (hidden on small screens via CSS) -->
+    <div class="column column-2" *ngIf="columns[1]?.length">
+      <ng-container *ngFor="let item of columns[1]; let i = index; trackBy: trackById">
+        <article class="media-wrap" (click)="openEX(item)">
+          <video *ngIf="item.type === 'video'" [attr.src]="item.src" preload="metadata" playsinline muted loop></video>
+          <img loading="lazy"*ngIf="item.type === 'image'" [src]="item.src" alt="post image">
+        </article>
+      </ng-container>
+    </div>
+
+    <!-- Column 3 (only for large screens) -->
+    <div class="column column-3" *ngIf="columns[2]?.length">
+      <ng-container *ngFor="let item of columns[2]; let i = index; trackBy: trackById">
+        <article class="media-wrap" (click)="openEX(item)">
+          <video *ngIf="item.type === 'video'" [attr.src]="item.src" preload="metadata" playsinline muted loop></video>
+          <img loading="lazy"*ngIf="item.type === 'image'" [src]="item.src" alt="post image">
+        </article>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Optional: loading / empty state -->
+  <div class="empty-state" *ngIf="!loading && totalItems === 0">
+    <h4>لا توجد منشورات الآن</h4>
+    <p>ابدأ بمتابعة الحسابات أو استكشف المحتوى الشائع.</p>
+    <button class="btn btn-primary" (click)="openSearch()">اكتشف الآن</button>
+  </div>
+
+  <!-- <div class="loading" *ngIf="loading">جاري التحميل...</div> -->
+  <app-loading *ngIf="loading"></app-loading>
+</section>

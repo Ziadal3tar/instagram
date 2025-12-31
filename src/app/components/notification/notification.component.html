@@ -1,0 +1,61 @@
+<section id="notification" class=" w-100 h-100 scrollStyle p-1">
+  <div class=" d-flex align-items-center justify-content-between">
+    <h4>Notification</h4>
+    <i (click)="Close()" class="bi bi-x-lg cursorPointer"></i>
+  </div>
+
+  <div class="New">
+    <h6 class=" fa my-3">
+      New
+      <hr>
+    </h6>
+
+    <div class="notification row d-flex align-items-center justify-content-between my-3 p-2 cursorPointer" *ngFor="let item of notification" (click)="openN(item)">
+      <div class="col-2">
+        <div class="img ">
+          <img loading="lazy"src="{{item.data.profilePic}}" alt="">
+        </div>
+
+      </div>
+      <div class="text col-7">
+        <h6 style="font-size: 14px;" class=" w-100">
+          <!-- <span class=" fw-bolder">{{item.data.userName}}</span> -->
+           <span > {{item.text}} </span>
+          <!-- <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span> -->
+        </h6>
+      </div>
+      <div class=" col-3 pe-3">
+      <button class="btn btn-primary fs-7">Follow</button>
+
+      </div>
+    </div>
+  </div>
+  <!-- <div class="New">
+    <h6 class=" fa my-3">
+      Last week
+      <hr>
+    </h6>
+
+    <div class="notification row d-flex align-items-center justify-content-between my-3" *ngFor="let item of notification">
+      <div class="col-2">
+        <div class="img ">
+          <img loading="lazy"src="{{item.user.image}}" alt="">
+        </div>
+
+      </div>
+      <div class="text col-7">
+        <h6 style="font-size: 14px;" class=" w-100">
+          <span class=" fw-bolder">{{item.user.name}}</span>
+           <span > {{item.notification.text}} </span>
+          <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span>
+        </h6>
+      </div>
+      <div class=" col-3 pe-3">
+      <button class="btn btn-primary fs-7">Follow</button>
+
+      </div>
+    </div>
+  </div> -->
+
+</section>
+<!-- <div class=" vw-100 h-100 bg-black position-absolute top-0 start-0">f</div> -->

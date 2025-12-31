@@ -1,0 +1,53 @@
+{
+  "name": "insta",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@abacritt/angularx-social-login": "^2.2.0",
+    "@angular/animations": "^16.2.12",
+    "@angular/common": "^16.2.0",
+    "@angular/compiler": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@angular/forms": "^16.2.0",
+    "@angular/platform-browser": "^16.2.0",
+    "@angular/platform-browser-dynamic": "^16.2.0",
+    "@angular/router": "^16.2.0",
+    "@apollo/client": "^3.11.1",
+    "@ng-bootstrap/ng-bootstrap": "^15.1.1",
+    "@types/gapi": "^0.0.47",
+    "@types/gapi.auth2": "^0.0.60",
+    "angularx-social-login": "^4.1.0",
+    "animate.css": "^4.1.1",
+    "apollo-angular": "^7.0.2",
+    "apollo-angular-link-http": "^1.11.0",
+    "graphql": "^16.9.0",
+    "jwt-decode": "^4.0.0",
+    "ngx-owl-carousel-o": "^17.0.0",
+    "ngx-slick-carousel": "^17.0.0",
+    "rxjs": "~7.8.0",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.13.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.2.16",
+    "@angular/cli": "~16.2.0",
+    "@angular/compiler-cli": "^16.2.0",
+    "@types/jasmine": "~4.3.0",
+    "jasmine-core": "~4.6.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.1.3"
+  }
+}

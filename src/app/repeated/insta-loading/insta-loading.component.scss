@@ -1,0 +1,19 @@
+.inLoad::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: rgb(155, 32, 32);
+  animation: fillAnimation 5s forwards;
+}
+
+@keyframes fillAnimation {
+  0% {
+    width: 0;
+  }
+  80% {
+    width: 100%;
+  }
+}

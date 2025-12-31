@@ -1,0 +1,71 @@
+<section class="col-12 row p-4" id="EditProfile">
+  <div class="col-12">
+    <h4>Edit profile</h4>
+  </div>
+  <div class="col-12 centerCenter row m-0 py-4">
+
+    <div class="col-12 col-md-10 startStart mb-5 part1">
+      <div class="col-4 p-0">
+
+        <div id="userImage" [style.background-image]="'url(' + url + ')'" class="img me-5"></div>
+      </div>
+      <div class="col-8 p-0 ">
+        <p>{{userData.fullName}}</p>
+        <label for="changeImgInput" class="text-primary change" *ngIf="!changed">change profile photo</label>
+        <div *ngIf="changed" class=" w-100 centerBetween">
+          <i class="bi bi-check text-success fw-bolder fs-3 cursorPointer" (click)="save()"></i>
+          <i class="bi bi-x text-danger fw-bolder fs-3 cursorPointer" (click)="cancel()"></i>
+        </div>
+
+
+        <input type="file" class="d-none" name="changeImgInput" id="changeImgInput" (change)="upload($event)">
+      </div>
+    </div>
+    <!-- === -->
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
+      <p class="col-4 p-0 ">Website</p>
+      <div class=" col-8 p-0">
+        <input disabled="false" type="text" class=" w-100 bg-gray rounded-1 border-0 px-3 py-1 mb-2"
+          placeholder="Website">
+        <p class="fs-7 opacity-50">Editing your links is only available on mobile. Visit the Instagram app and edit your
+          profile to change the websites in your bio.</p>
+      </div>
+    </div>
+    <!-- === -->
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
+      <p class="col-4 p-0">Bio</p>
+      <div class=" col-8 p-0">
+        <textarea name="" [(ngModel)]="bio" maxlength="150"
+          class=" w-100 text-white bg-transparent rounded-1 border-1 px-3 py-1 mb-2" cols="10" rows="2"></textarea>
+        <p class="fs-7">{{bio.length}}/150</p>
+      </div>
+    </div>
+    <!-- === -->
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
+      <p class="col-4 p-0">Gender</p>
+      <div class=" col-8 p-0">
+        <p class="border rounded-2 p-1 ps-2 mb-2">Male</p>
+        <p class="fs-7">This won’t be part of your public profile.</p>
+      </div>
+    </div>
+    <!-- === -->
+    <div class="col-12 col-md-10 row startStart  mb-5 part2">
+      <p class="col-4 p-0 fs-7">Show account suggestions on profiles</p>
+      <div class=" col-8 p-0 d-flex centerCenter">
+        <div class="checkbox-container">
+          <label [ngClass]="{'checked': checked}" for="dynamicLength" class=" centerCenter">
+            <i class="bi bi-check text-black"></i>
+
+          </label>
+          <input type="checkbox" [(ngModel)]="checked" class="d-none" id="dynamicLength" />
+        </div>
+        <p class="fs-7">Choose whether people can see similar account suggestions on your profile, and whether your
+          account can be suggested on other profiles.</p>
+      </div>
+    </div>
+    <div class="col-12 col-md-10 ">
+      <button class="offset-4 btn btn-primary" (click)="submit()">Submit</button>
+    </div>
+  </div>
+</section>
+<app-loading *ngIf="loading"></app-loading>

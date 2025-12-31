@@ -1,0 +1,47 @@
+<div class="d-flex justify-content-center">
+  <div class="reelsContainer" #reelsContainer (scroll)="handleScroll()">
+    <div class="row m-0 col-12" *ngFor="let item of reels let i = index ">
+      <div id="reel{{i}}" class="reel row m-0 col-12 position-relative">
+        <div class="videos h-100 col-12 col-md1-1 col-md-10 p-0">
+          <video controls>
+            <source src="{{item?.url}}" type="video/mp4">
+          </video>
+        </div>
+        <div class="  btns p-0 d-flex flex-column align-items-center justify-content-end pb-3">
+          <div class=" d-flex flex-column align-items-center">
+            <i [ngClass]="item.likes.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'" class=" fs-5 bi " (click)="addReelLike(item,i)"></i>
+            <p class="fs-7">{{item?.likes.length}}</p>
+          </div>
+          <div class=" d-flex flex-column align-items-center position-relative">
+            <i (click)="displayComments = i" class=" fs-5 bi bi-chat"></i>
+            <p class="fs-7">{{item?.comments.length}}</p>
+          </div>
+          <div>
+            <i class=" fs-5 bi bi-send"></i>
+          </div>
+          <div>
+            <!-- <i class=" fs-5 bi  " (click)="saveReel(item._id)" [ngClass]="!ifSaved(item._id)?'text-warning bi-save-fill':'text-white bi-save'"></i> -->
+            <i class="fs-5 bi" (click)="saveReel(item._id)" [ngClass]="{'text-warning bi-save-fill': item._id && arr.includes(item._id), 'text-white bi-save': item._id && !arr.includes(item._id)}"></i>
+
+          </div>
+          <div>
+            <app-dropdown-btn></app-dropdown-btn>
+          </div>
+          <div class="img m-0">
+            <img loading="lazy"src="{{item.createdBy.profilePic}}" alt="">
+          </div>
+        </div>
+        <div id="reelComments" class="w-100 px-0" [ngClass]="i == displayComments ?'open':'close'">
+          <app-reels-comments (closeComments)="displayComments=-1" [reel]="item"></app-reels-comments>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<app-insta-loading *ngIf="loading"></app-insta-loading>
+
+
+
+<i class="fs-5 bi"></i>
+<!-- [ngClass]="!ifSaved(item._id)?'text-warning bi-save-fill':'text-white bi-save'" -->

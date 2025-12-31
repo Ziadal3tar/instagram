@@ -1,0 +1,38 @@
+<section id="search" class=" w-100 h-100 overflow-y-hidden transition">
+  <div class=" d-flex align-items-center justify-content-between" >
+    <h4>Search</h4>
+    <i  *ngIf="!closeSearchIcone; else closeSearchTemplate" (click)="Close()" class="bi bi-x-lg cursorPointer"></i>
+    <ng-template #closeSearchTemplate>
+      <i   (click)="Close()" [ngClass]="closeSearch?'bi-caret-up-fill':'bi-caret-down-fill'" class="bi  cursorPointer"></i>
+    </ng-template>
+
+
+
+  </div>
+  <input (keyup)="search()" [(ngModel)]="searchText" type="text" class="searchInput text-danger p-2 my-5 w-100 bg-white bg-opacity-25 border-0 rounded-3"
+    placeholder="Search...">
+  <div class=" w-100 d-flex align-items-center justify-content-between">
+    <h6 *ngIf="recent; else searchedTemplate">Recent</h6>
+
+    <ng-template #searchedTemplate>
+      <h6>Search</h6>
+
+    </ng-template>
+    <h6 class="text-primary fs-7 cursorPointer" *ngIf="recent" (click)="clear(0)">Clear All</h6>
+  </div>
+   <div class="d-flex align-items-center justify-content-between w-100 mt-3 "  *ngFor="let item of searched" (click)="toUserProfile(item)" >
+    <div class="userDetails d-flex cursorPointer">
+      <div class="suggestedImg me-2">
+        <div class="borderImg bg-danger rounded-5  ">
+          <div class="img" [style.background-image]="'url(' + item.profilePic + ')'"></div>
+        </div>
+      </div>
+      <div class="userData d-flex align-items-start justify-content-center flex-column">
+        <p class="userName">{{item.fullName}} </p>
+        <p class="name">{{item.userName}} <span class="followers fs-7"><i class="bi bi-dot"></i> 4513
+          </span></p>
+      </div>
+    </div>
+    <div class=" text-primary cursorPointer"><i class="bi bi-x-lg" (click)="clear(item._id)"></i></div>
+  </div>
+</section>

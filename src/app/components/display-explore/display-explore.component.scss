@@ -1,0 +1,255 @@
+#explore {
+  width: 70%;
+  position: fixed;
+  background-color: rgb(0, 0, 0);
+  z-index: 8 !important;
+  height: 85vh;
+
+  @media (min-width : 767px) and (max-width : 900px) {
+    width: 100% !important;
+    top: 11.5vh;
+    right: 0 !important;
+    height: 77vh;
+  }
+
+  @media screen and (min-width : 900px) {
+
+    top: 11.5vh;
+    right: 15%;
+    height: 77vh;
+
+  }
+
+  @media screen and (max-width : 767px) {
+    height: 100vh !important;
+    width: 100% !important;
+    overflow-y: scroll;
+
+  }
+
+  .half2 {
+    @media screen and (max-width : 767px) {
+      height: 125vh !important;
+    }
+  }
+
+  .img {
+    max-width: 100%;
+    max-height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+
+
+    img,
+    video {
+      vertical-align: middle;object-fit: cover;
+      max-height: 100%;
+      max-width: 100%;
+      min-width: 75%;
+      width: auto;
+      height: auto;
+      margin: 0;
+    }
+  }
+
+  #details {
+    width: 100%;
+
+    @media screen and (max-width : 767px) {
+      height: 77vh !important;
+
+    }
+
+    .owner {
+      width: 100%;
+    }
+
+    .comments {
+      height: 50vh;
+    }
+
+    .functions {}
+
+    .addComment {}
+  }
+}
+
+
+
+
+
+.userDetails {
+  height: 10%;
+
+  .userImg {
+    .borderImg {
+      padding: 2.5px;
+
+      .img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-position: center;
+        background-size: cover;
+        border: solid black 3px;
+      }
+    }
+  }
+
+
+
+
+
+  .userData {
+
+    .userName {
+      font-size: 15px;
+    }
+
+    .name {
+      font-size: 15px;
+      opacity: .5;
+    }
+  }
+}
+
+#explore {
+  width: 70%;
+  position: fixed;
+  background-color: rgb(0, 0, 0);
+  z-index: 8 !important;
+
+  @media screen and (min-width : 767px) {
+    top: 5%;
+    right: 15%;
+    height: 90%;
+
+  }
+
+  @media screen and (max-width : 767px) {
+    height: 125vh !important;
+    width: 100% !important;
+  }
+
+  .postImg {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.5s;
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: white;
+    }
+
+    .prev-btn {
+      left: 10px;
+    }
+
+    .next-btn {
+      right: 10px;
+    }
+    &:hover {
+      img {
+        filter: grayscale(100%);
+      }
+
+      .bgHeart {
+
+        opacity: 1;
+      }
+    }
+
+    .bgHeart {
+      position: absolute;
+      top: calc(50% - 35px);
+      left: calc(50% - 35px);
+      ;
+      font-size: 70px;
+      opacity: 0;
+      transition: 0.5s;
+    }
+
+    img,
+    video {
+      vertical-align: middle;object-fit: cover;
+      max-height: 100%;
+      max-width: 100%;
+      min-width: 75%;
+      width: auto;
+      height: auto;
+      margin: 0;
+      transition: 0.5s;
+      cursor: pointer;
+
+    }
+  }
+
+  #details {
+    width: 100%;
+    height: 100vh;
+
+    .owner {
+      width: 100%;
+    }
+
+    .comments {
+      height: 50vh;
+    }
+
+    .functions {}
+
+    .addComment {}
+  }
+}
+
+
+
+
+
+.userDetails {
+  height: 10%;
+
+  .userImg {
+    .borderImg {
+      padding: 2.5px;
+
+      .img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-position: center;
+        background-size: cover;
+        border: solid black 3px;
+      }
+    }
+  }
+
+
+
+
+
+  .userData {
+
+    .userName {
+      font-size: 15px;
+    }
+
+    .name {
+      font-size: 15px;
+      opacity: .5;
+    }
+  }
+}
+

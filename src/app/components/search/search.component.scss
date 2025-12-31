@@ -1,0 +1,58 @@
+#search {
+  transition: 0.5s !important;
+  .searchInput {
+    color: rgb(255, 255, 255) !important;
+    background-color: #ffffff1f;
+  }
+
+  .userDetails {
+    .userImg {
+      .borderImg {
+
+        .img {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background-position: center;
+          background-size: contain;
+          border: 3px solid black;
+        }
+      }
+    }
+
+    .suggestedImg {
+      .borderImg {
+        padding: 2.5px;
+        .img {
+          width: 45px;
+          height: 45px;
+          background-image: url('../../../assets/imgs/mosalah.jpg');
+          border-radius: 50%;
+          background-position: center;
+          background-size: contain;
+          border: 3px solid #262626;
+        }
+      }
+    }
+
+
+
+    .userData {
+
+      .userName {
+        font-size: 15px;
+      }
+
+      .name {
+        font-size: 15px;
+        opacity: .5;
+      }
+    }
+  }
+}
+
+::placeholder {
+
+
+  color: rgba(255, 255, 255, 0.616);
+}

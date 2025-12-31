@@ -1,0 +1,83 @@
+.active {
+  border-bottom: 1px solid white !important;
+
+  p {
+    opacity: 1 !important;
+  }
+}
+
+#create {
+  border-radius: 5px;
+  margin-top: 10vh;
+  border: 1px solid rgba(255, 255, 255, 0.397) !important;
+  height: auto;
+  padding: 50px !important;
+@media (max-width:768px) {
+margin-left: 0;
+margin-right: 0;
+}
+  .pages {
+    height: 70vh;
+
+    .imgPost {
+height: 100%;
+
+      .imgs {
+        height: 345px !important;
+        .full{
+          height: 100%;
+        }
+        .h-4{
+          height: calc(345/4)px !important;
+
+        }
+        .img{
+          padding: 0;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          .last{
+width: 100%;
+height: 100%;
+background: #0000005a;
+
+          }
+        }
+      }
+    }
+
+
+
+
+
+    .imgStory {
+      height: 100%;
+
+      .img {
+        width: 100%;
+        height: 90%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      .input {
+
+        height: 10%;
+
+        input {
+          margin-top: 3%;
+          height: 100%;
+        }
+
+      }
+    }
+  }
+}
+
+
+.draggable {
+  position: absolute;
+  padding: 5px;
+  cursor: pointer;
+}

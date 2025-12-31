@@ -1,0 +1,47 @@
+#EditProfile {
+  .part1 {
+    #userImage {
+      width: 40px;
+      height: 40px;
+      background-image: url('../../../assets/imgs/MAB.jpg');
+      background-position: center;
+      background-size: cover;
+      border-radius: 50%;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    .change {
+      &:hover {
+        color: white !important;
+        cursor: pointer;
+      }
+    }
+  }
+
+}
+
+
+
+.checkbox-container{
+  label{
+    width: 30px;
+    height: 30px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    margin-right: 8px;
+    display: inline-block;
+    box-sizing: border-box;
+    cursor: pointer;
+    background-color: transparent;
+    padding: 3px 4px !important;
+    i{
+    }
+  }
+  .checked{
+    background-color: #fff;
+  }
+}
+

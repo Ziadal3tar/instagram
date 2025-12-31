@@ -1,0 +1,197 @@
+
+@import 'animate.css';
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Satisfy&display=swap');
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #000000;
+  font-size: 17px;
+  background-attachment: fixed;
+  font-family: 'Raleway', sans-serif;
+  scroll-behavior: smooth;
+  color: rgb(255, 255, 255);
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.logo {
+  p {
+    font-family: Satisfy;
+    font-size: 27px;
+    margin-bottom: 20px;
+  }
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: rgb(255, 255, 255);
+  margin: 0;
+}
+
+.transition {
+  transition: .5s;
+}
+
+.cursorPointer {
+  cursor: pointer !important;
+}
+
+input {
+  outline: none;
+
+}
+
+.fs-7 {
+  font-size: 12px;
+}
+
+.fadeIn {
+  display: inline-block;
+  margin: 0 0.5rem;
+
+  animation: fadeIn;
+  /* referring directly to the animation's @keyframe declaration */
+  animation-duration: 0.5s;
+  /* don't forget to set a duration! */
+}
+
+.scrollStyle {
+  overflow-y: scroll;
+}
+
+.scrollStyle::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+
+}
+
+
+.centerCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.centerStart {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.centerEnd {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+.centerBetween {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.startStart {
+  display: flex;
+  align-items: start;
+  justify-content: left;
+}
+
+.centerEvenly {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.startEvenly {
+  display: flex;
+  align-items: start;
+  justify-content: space-evenly;
+}
+
+.ws-nw {
+  white-space: nowrap;
+}
+
+.bg-gray {
+  background-color: #363636;
+}
+.owl-item {
+  width: 100px !important;
+}
+.customBorder {
+  border: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.customBorderBot {
+  border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.customBorderTop {
+  border-top: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.customBorderEnd {
+  border-right: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.customBorderStart {
+  border-left: solid 1px rgba(255, 255, 255, 0.2);
+}
+
+.customCheckbox {
+  input:checked {
+    +label {
+      span {
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  label {
+    width: 25px;
+    height: 25px;
+    border: 1px white solid !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.disabled {
+  color: rgb(69, 69, 69);
+  cursor: none !important;
+
+  &:hover {
+    background-color: #000000 !important;
+  }
+}
+.text-primary{
+  color: #0095f6 !important;
+}
+.bg-primary{
+  background-color: #0095f6 !important;
+}
+.btn-primary{
+  background-color: #0095f6 !important;
+}
+.disable{
+  opacity: 0.2;
+  cursor: none !important;
+}

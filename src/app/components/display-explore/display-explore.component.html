@@ -1,0 +1,202 @@
+<section id="explore" class="row m-0">
+  <div class="owner p-3 d-md-none  justify-content-between d-flex align-items-center ">
+
+    <div class="userDetails d-flex align-items-center ">
+
+      <div class="userImg me-2">
+        <div class="borderImg bg-danger rounded-5  ">
+          <div class="img " style="background-image: url({{exploreData?.createdBy?.profilePic}});"
+            (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
+        </div>
+      </div>
+      <div class="userData">
+        <h6 class="userName">ahmedali458 <span class="follow text-primary cursorPointer"> <i
+              class=" bi bi-dot"></i>Follow</span></h6>
+      </div>
+
+    </div>
+
+    <app-dropdown-btn></app-dropdown-btn>
+  </div>
+
+  <!-- media area -->
+  <div class="col-md-6 col-12 postImg p-0 position-relative" *ngIf="exploreData">
+    <!-- if there is multiple media (carousel) -->
+    <ng-container *ngIf="exploreData.postsImgAndVideos?.length">
+      <!-- image -->
+      <img loading="lazy" *ngIf="exploreData.type === 'image'" (click)="ifDoubleClick()" [src]="exploreData.src" alt="post image" />
+
+      <!-- video -->
+      <video *ngIf="exploreData.type === 'video'" (click)="ifDoubleClick()" controls autoplay
+        [attr.src]="exploreData.src" preload="metadata" playsinline muted></video>
+
+      <!-- carousel nav (show only if >1) -->
+      <button *ngIf="exploreData.postsImgAndVideos?.length > 1" class="nav-btn prev-btn"
+        (click)="toggleValue(value - 1)">
+        &#10094;
+      </button>
+      <button *ngIf="exploreData.postsImgAndVideos?.length > 1" class="nav-btn next-btn"
+        (click)="toggleValue(value + 1)">
+        &#10095;
+      </button>
+
+    </ng-container>
+
+    <!-- fallback: single src (e.g., reel url) -->
+    <ng-container *ngIf="!exploreData.postsImgAndVideos?.length && exploreData.src">
+      <img loading="lazy"*ngIf="exploreData.type === 'image'" [src]="exploreData.src" (click)="ifDoubleClick()" />
+      <video *ngIf="exploreData.type === 'video'" controls autoplay (click)="ifDoubleClick()"
+        [attr.src]="exploreData.src" preload="metadata" playsinline muted></video>
+    </ng-container>
+
+    <!-- big heart when liked -->
+    <i [ngClass]="exploreData?.likes?.includes(userData?._id) ? 'bi-heart-fill text-danger' : 'bi-heart'"
+      class="bi bgHeart like"></i>
+  </div>
+
+  <!-- <div class="col-md-6 col-12 postImg p-0" *ngIf="exploreData?.url">
+
+
+    <video (click)="ifDoubleClick()" controls autoplay >
+      <source src="{{exploreData?.src}}" >
+    </video>
+
+    <i [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+      class="bi bgHeart like"></i>
+  </div> -->
+
+  <div class="functions d-block d-md-none p-3">
+    <div class="justify-content-between d-flex align-items-center w-100 py-1">
+
+      <div>
+        <i (click)="like()"
+          [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+          class="bi bi-heart me-2 cursorPointer like"></i>
+        <i class="bi bi-chat mx-2 cursorPointer"></i>
+        <i class="bi bi-send mx-2 cursorPointer"></i>
+
+      </div>
+      <i class="bi bi-save cursorPointer" (click)="savePost(exploreData?._id)"></i>
+
+
+    </div>
+    <div>
+      <p>{{exploreData?.likes?.length}} likes</p>
+      <p class="fs-7 opacity-50">3 DAYS AGO</p>
+    </div>
+  </div>
+  <hr class="d-block d-md-none">
+
+  <div class="col-md-6 col-12 position-relative p-0 py-3 half2">
+    <div id="details" class=" position-relative">
+      <div class="owner px-3 justify-content-between d-md-flex d-none align-items-center ">
+
+        <div class="userDetails d-flex align-items-center ">
+
+          <div class="userImg me-2">
+            <div class="borderImg bg-danger rounded-5  ">
+              <div class="img " style="background-image: url({{exploreData?.createdBy.profilePic}});"
+                (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
+              </div>
+            </div>
+          </div>
+          <div class="userData">
+            <h6 class="userName">{{exploreData?.createdBy.fullName}} <span class="follow text-primary cursorPointer"> <i
+                  class=" bi bi-dot"></i>Follow</span></h6>
+          </div>
+
+        </div>
+
+        <app-dropdown-btn></app-dropdown-btn>
+      </div>
+      <hr class="d-none d-md-block">
+      <div class="comments px-3">
+        <div class=" w-100 h-100 scrollStyle ">
+          <div class="postInfo d-flex">
+            <div class="userDetails d-flex align-items-start ">
+
+              <div class="userImg me-2">
+                <div class="borderImg  rounded-5  ">
+                  <div class="img" style="background-image: url({{exploreData?.createdBy.profilePic}});"></div>
+                </div>
+              </div>
+              <div class="userData pt-2">
+                <h6 class="userName fw-bolder">{{exploreData?.createdBy.fullName}}: <span
+                    class="fw-normal">{{exploreData?.caption}}
+                    <br>
+                    <h6 class="fs-7 my-2 opacity-75">3d</h6>
+                  </span> </h6>
+              </div>
+
+            </div>
+          </div>
+          <div class="postComments mt-2">
+            <div class="userDetails d-flex align-items-start " *ngFor="let item of exploreData?.comments">
+              <!-- <div class="userImg me-2">
+                <div class="borderImg  rounded-5  ">
+                  <div class="img" style="background-image: url({{item.userId.profilePic}});"
+                    (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
+                  </div>
+                </div>
+              </div>
+              <div class="userData pt-2">
+                <h6 class="userName fw-bolder">{{item.userId.userName}}: <span class="fw-normal">{{item.comment}}
+                    <br>
+                    <div class=" d-flex">
+                      <h6 class="fs-7 my-2 opacity-75">3d</h6>
+                      <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
+                    </div>
+                  </span> </h6>
+              </div> -->
+              <app-comments [size]=30 [commentDetails]='item'></app-comments>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="functions px-3">
+        <div class="justify-content-between d-flex align-items-center w-100 py-1">
+
+          <div>
+            <i (click)="like()"
+              [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
+              class="bi me-2 cursorPointer like"></i>
+            <i class="bi bi-chat mx-2 cursorPointer"></i>
+            <i class="bi bi-send mx-2 cursorPointer"></i>
+
+          </div>
+          <i class="bi cursorPointer " [ngClass]="isSaved ?'text-warning bi-save-fill':'text-white bi-save'"
+            (click)="savePost(exploreData)"></i>
+
+
+        </div>
+        <div>
+          <p>{{exploreData?.likes?.length}} likes</p>
+          <p class="fs-7 opacity-50">3 DAYS AGO</p>
+        </div>
+      </div>
+      <hr>
+      <div class="addComment px-3 justify-content-between d-flex align-items-center">
+        <i class="bi bi-emoji-smile"></i>
+
+        <input type="text" class=" border-0 bg-black text-white w-100 px-3" [(ngModel)]="comment"
+          placeholder="Add a comment...">
+        <p class="fs-7 cursorPointer" (click)="addComment()">Post</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<app-your-collections *ngIf="yourCollections" [ref]="'Post'" [collections]="userData.collections" [post]="exploreData"
+  (close)="yourCollections = false"></app-your-collections>
+
+
+<div id="dataWhenHover" style="z-index: 9 !important;" class="fadeIn bg-danger  " *ngIf="showDiv"
+  (mouseleave)="showDiv = false" [style.position]="'fixed'" [style.top]="divTop" [style.left]="divLeft">
+  <app-hoverdata [data]="exploreData?.createdBy"></app-hoverdata>
+</div>

@@ -1,0 +1,345 @@
+<section id="profile" class=" row  centerCenter" *ngIf="!openCollection && !edit">
+  <div class=" col-11 col-lg-10 d-flex row m-0 py-5 centerCenter mt-3 mt-md-0">
+    <div class="col-4 centerCenter">
+      <div class="userImg" [style.background-image]="'url(' + displayData?.profilePic + ')'">
+      </div>
+    </div>
+    <div class="col-8 col-lg-6 offset-lg-1">
+      <div class="col-12 py-2">
+
+
+
+        <!--
+        <button class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white d-block d-md-none"
+          (click)="edit = true"><i class="bi bi-pen-fill"></i></button> -->
+
+
+        <div class="d-flex d-block d-md-none">
+
+
+          <button *ngIf="userId == displayData?._id; else elseBlock2"
+            class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white" (click)="edit = true"><i
+              class="bi bi-pen-fill"></i></button>
+
+          <ng-template #elseBlock2>
+            <button (click)="follow()" [ngClass]="{
+    'bg-gray': (follower && following)||(!follower && following),
+    'bg-success': follower && !following,
+    'bg-primary': !follower && !following
+  }" class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-block d-md-none">
+
+              {{ (follower && following) ? 'UnFollow' :
+              (!follower && following) ? 'UnFollow' :
+              (follower && !following) ? 'Follow Back' :
+              'Follow' }}
+
+
+
+
+            </button>
+          </ng-template>
+
+          <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1"
+            *ngIf="userId != displayData?._id" (click)="openChat()">Chat</button>
+
+        </div>
+
+
+
+      </div>
+      <div class="col-12 centerBetween ">
+        <p class="userName">{{displayData?.userName}}</p>
+
+
+
+
+
+
+
+
+
+
+        <div class=" d-none d-md-flex">
+          <button *ngIf="userId == displayData?._id; else elseBlock"
+            class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 " (click)="edit = true">Edit
+            profile</button>
+          <ng-template #elseBlock>
+            <button (click)="follow()" [ngClass]="{
+    'bg-gray': (follower && following)||(!follower && following),
+    'bg-success': follower && !following,
+    'bg-primary': !follower && !following
+  }" class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-none d-md-block">
+
+              {{ (follower && following) ? 'UnFollow' :
+              (!follower && following) ? 'UnFollow' :
+              (follower && !following) ? 'Follow Back' :
+              'Follow' }}
+
+
+
+
+            </button>
+          </ng-template>
+
+          <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1" (click)="openChat()"
+            *ngIf="userId != displayData?._id">Chat</button>
+
+        </div>
+
+
+        <i class="bi bi-gear-fill fs-5 cursorPointer" (click)="setting = true"></i>
+      </div>
+      <div class="col-12 d-md-flex d-none centerBetween my-3">
+        <p><span>{{allPosts?.length}}</span> posts</p>
+        <p><span>{{displayData?.followers?.length}}</span> followers</p>
+        <p><span>{{displayData?.following?.length}}</span> following</p>
+      </div>
+      <div class="col-12">
+        <p>{{displayData?.fullName}}</p>
+        <p class="fs-7" *ngIf="displayData?.bio">{{displayData?.bio}}</p>
+      </div>
+
+    </div>
+    <div class="col-12 d-flex d-md-none align-items-center justify-content-around mt-4">
+
+      <p class="ws-nw fs-7 "><span>{{displayData?.posts?.length}}</span> posts</p>
+      <p class="ws-nw fs-7 "><span>{{displayData?.followers?.length}}</span> followers</p>
+      <p class="ws-nw fs-7 "><span>{{displayData?.following?.length}}</span> following</p>
+    </div>
+  </div>
+
+
+
+  <div class="col-11 col-md-9">
+    <div class="row m-0 col-12 centerCenter">
+      <ul class="d-flex list-unstyled align-items-center justify-content-between col-md-6 col-12" id="list">
+        <li (click)="tap='posts'" class="text-decoration-none fs-7 py-3 cursorPointer centerCenter"
+          [ngClass]="{'active': tap == 'posts'}" (click)="changeProfileTaps($event)">
+          <svg aria-label="" class="x1lliihq x1n2onr6 x5n08af me-1" fill="currentColor" height="12" role="img"
+            viewBox="0 0 24 24" width="12">
+            <title></title>
+            <rect fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="2" width="18" x="3" y="3"></rect>
+            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              x1="9.015" x2="9.015" y1="3" y2="21"></line>
+            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              x1="14.985" x2="14.985" y1="3" y2="21"></line>
+            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              x1="21" x2="3" y1="9.015" y2="9.015"></line>
+            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              x1="21" x2="3" y1="14.985" y2="14.985"></line>
+          </svg>
+          <p>POSTS</p>
+        </li>
+        <li (click)="tap='saved'" class="text-decoration-none fs-7 py-3 cursorPointer" *ngIf="url == userId"
+          [ngClass]="{'active': tap == 'saved'}" (click)="changeProfileTaps($event)"><i
+            class="bi bi-bookmark-check-fill"></i> SAVED</li>
+        <li (click)="tap='tagged'" class="text-decoration-none fs-7 py-3 cursorPointer"
+          [ngClass]="{'active': tap == 'tagged'}" (click)="changeProfileTaps($event)"><i
+            class="bi bi-person-badge-fill"></i> TAGGED</li>
+      </ul>
+    </div>
+  </div>
+
+
+
+
+
+  <section *ngIf="tap == 'posts'" id="posts" class="col-9">
+    <app-displayposts [data]="allPosts" *ngIf="allPosts?.length"></app-displayposts>
+
+
+    <div class="col-12 ifNoPhoto centerCenter flex-column py-5" *ngIf="displayData?.posts?.length ==0">
+      <div class="icon centerCenter"><i class="bi bi-camera fs-1 opacity-50"></i></div>
+      <h1 class=" fw-bolder">Share Photos</h1>
+      <p class="text-center">When you share photos, they will appear on your profile.</p>
+      <h6 class="text-primary cursorPointer">Share your first photo</h6>
+    </div>
+  </section>
+  <section *ngIf="tap == 'saved' " id="saved" class="col-lg-9 col-12">
+    <div class="col-12">
+      <div class="col-12 centerBetween">
+        <h6 class="fs-7">Only you can see what you've saved</h6>
+        <h6 class="text-primary cursorPointer" (click)="addNewCollection = !addNewCollection">+ New Collection</h6>
+      </div>
+      <div class="col-12 col-md-5 mt-3 position-relative " *ngIf="addNewCollection">
+        <input type="text" class=" w-100 p-2 rounded-0 text-white bg-transparent border-0 border-bottom"
+          [(ngModel)]="collectionName" placeholder="Collection Name">
+        <div class=" position-absolute end-0 top-0 h-100 centerCenter">
+          <button class="cursorPointer text-white btn bg-transparent border-0 z-3"
+            (click)="newCollection()">NEXT</button>
+
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+    </div>
+    <div class=" d-flex align-items-center justify-content-start pt-5 row">
+      <div class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center"
+        (click)="openCollection = saved">
+        <div class="defaultCollection row m-0 p-0">
+          <div class=" w-50 h-50 p-0 overflow-hidden" *ngFor="let item of saved let i = index"
+            [ngClass]="{'d-none': i>=4}">
+
+
+            <div *ngIf="item.postsImgAndVideos" class="h-100">
+              <div class="w-100 h-100 m-0 img" *ngIf="item?.postsImgAndVideos[0]?.type == 'image'"
+                [style.background-image]="'url(' + item?.postsImgAndVideos[0].url + ')'"> </div>
+
+
+              <video controls autoplay *ngIf="item.postsImgAndVideos[0]?.type == 'video'">
+                <source src="{{item?.postsImgAndVideos[0].url}}" type="video/mp4">
+              </video>
+            </div>
+
+            <div *ngIf="item.url" class="h-100 position-relative">
+              <!-- <div class="w-100 h-100 m-0 img" *ngIf="item?.postsImgAndVideos[0]?.type == 'image'"
+                [style.background-image]="'url(' + item?.postsImgAndVideos[0].url + ')'"> </div> -->
+              <video>
+                <source src="{{item.url}}" type="video/mp4">
+              </video>
+            </div>
+          </div>
+          <div class="title">
+            <h4>All Saved </h4>
+          </div>
+        </div>
+
+      </div>
+
+
+    <div *ngFor="let item of displayData.collections"
+     (click)="openCollection=item"
+     class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center">
+  <app-display-collection [collections]="item" ></app-display-collection>
+</div>
+    </div>
+  </section>
+  <section *ngIf="tap =='tagged'" id="tagged" class="col-9">
+    <app-displayposts [data]="displayData?.posts"></app-displayposts>
+  </section>
+</section>
+
+
+
+
+
+<!--when open collection-->
+<section id="displayCollection" class="row container d-flex justify-content-center pt-3" *ngIf="openCollection" >
+
+  <div class="col-9 d-flex">
+    <p class="cursorPointer" (click)="openCollection = undefined"><i class="bi bi-chevron-left me-2"></i>Saved</p>
+  </div>
+  <div class="col-9 pt-3">
+    <div class="centerBetween">
+      <p class="fs-5 text-capitalize">{{openCollection?.collectionName || 'All'}}</p>
+      <app-dropdown-btn *ngIf="openCollection?.collectionName" (toAddToCollection)="fromBtns($event)"
+        [lis]="['Delete collection', 'Add from saved', 'Edit collection', 'Cancel']" [indexes]="[0]"></app-dropdown-btn>
+
+    </div>
+  </div>
+  <div class="col-9 displayed">
+    <div *ngIf="openCollection?.saved?.length ==0" class="w-100 centerBetween flex-column ifEmpty">
+      <div class="centerCenter opacity-25"><i class="bi bi-save"></i></div>
+      <h2>Start Saving</h2>
+      <h5>Save photos and videos to your collection.</h5>
+      <p class="text-primary cursorPointer" (click)="toAddToCollection = true">Add to collection</p>
+    </div>
+    <!-- <app-displayposts *ngIf="openCollection?.saved?.length !=0" [data]="openCollection.saved"></app-displayposts> -->
+    <!-- <app-displayposts *ngIf="openCollection" [data]="displayData?.saved"></app-displayposts> -->
+    <app-displayposts [data]="openCollection" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="setting" class="col-12" *ngIf="edit"><app-setting (close)="edit = false"></app-setting> </div>
+<div *ngIf="setting" id="close" (click)="closeSetting($event)"
+  class=" w-100 h-100 bg-black bg-opacity-50 position-fixed top-0 start-0 centerCenter">
+  <div id="edit" class=" col-8 col-md-5 col-lg-3 ">
+    <ul>
+      <li>Apps and Websites</li>
+      <li>QR Code</li>
+      <li>Notifications</li>
+      <li>Settings and privacy</li>
+      <li>Meta Verified</li>
+      <li>Supervision</li>
+      <li (click)="logOut()">Log Out</li>
+      <li>Cancel</li>
+    </ul>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="toAddToCollection centerBetween flex-column" *ngIf="toAddToCollection">
+  <div class="close centerStart w-100 ps-3">
+    <i class="bi bi-x-lg cursorPointer" (click)="toAddToCollection = false"></i>
+  </div>
+
+  <div class="mid w-100 row m-0 scrollStyle">
+    <div class="h-auto p-0 col-12 row m-0">
+      <div class="col-4 p-1 m-0 mt-1" *ngFor="let item of saved; trackBy: trackById" (click)="select(item._id)">
+        <!-- علامة الاختيار -->
+        <div class="ifSelect centerCenter rounded-3 m-1 pt-1" *ngIf="selected.includes(item._id)">
+          <i class="bi bi-check fs-1"></i>
+        </div>
+
+        <!-- عرض الصورة/الفيديو من postsImgAndVideos -->
+        <ng-container *ngIf="item?.postsImgAndVideos?.length > 0; else fallbackUrl">
+          <div *ngIf="item.postsImgAndVideos[0].type === 'image'" class="col-12 rounded-3 overflow-hidden">
+            <div class="img" [style.background-image]="'url(' + item.postsImgAndVideos[0].url + ')'"></div>
+          </div>
+
+          <div *ngIf="item.postsImgAndVideos[0].type === 'video'" class="col-12 rounded-3 overflow-hidden">
+            <video controls preload="metadata" muted class="w-100">
+              <source [src]="item.postsImgAndVideos[0].url" type="video/mp4" />
+            </video>
+          </div>
+        </ng-container>
+
+        <!-- fallback: لو فيه item.url منفصل -->
+        <ng-template #fallbackUrl>
+          <div *ngIf="item?.url" class="col-12 parent rounded-3 overflow-hidden">
+            <video preload="metadata" muted class="w-100">
+              <source [src]="item.url" type="video/mp4" />
+            </video>
+          </div>
+
+
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <div class="done cursorPointer centerCenter border-top border-opacity-25" (click)="confirmAdd()">ADD</div>
+</div>
+<app-loading *ngIf="loading"></app-loading>

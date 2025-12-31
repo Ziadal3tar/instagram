@@ -1,0 +1,24 @@
+<section id="message" class=" w-100 h-100 scrollStyle  ps-3">
+  <div class=" d-flex align-items-center justify-content-between pe-3">
+    <h4>Ziadalmorsy22</h4>
+    <i (click)="openSearch()" class="bi bi-box-arrow-in-down-left cursorPointer"></i>
+
+  </div>
+
+  <div class="notification row d-flex align-items-center justify-content-between my-3 cursorPointer"
+    *ngFor="let item of chats" (click)="openChat(item)">
+    <div class="col-2">
+      <div class="img ">
+        <img loading="lazy"src="{{item.profilePic}}" alt="">
+      </div>
+
+    </div>
+    <div class="text col-8">
+      <h6 style="font-size: 14px;" class=" w-100">{{item.userName}}</h6>
+      <p class="fs-7 w-100 opacity-75 ">{{item.lastMessage.message}}</p>
+    </div>
+    <div class="col-2 d-flex align-items-start">
+      <i class="bi bi-dot fs-1 text-primary"></i>
+    </div>
+  </div>
+</section>

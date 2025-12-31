@@ -1,0 +1,29 @@
+.yourCollections {
+.select{
+  width: 25px;
+  height: 25px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9;
+  margin-left: 25px;
+  margin-top: 7px;
+  cursor: pointer;
+}
+.select.selected{
+  background-color: #fff;
+}
+top: 10vh;
+  div {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  position: relative;
+  z-index: 999999999;
+
+
+}

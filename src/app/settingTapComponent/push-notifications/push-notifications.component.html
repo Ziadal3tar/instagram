@@ -1,0 +1,9 @@
+<section class="col-12 row p-2" id="EmailNotifications">
+  <div class="col-12 mb-5">
+    <h4>Push Notifications</h4>
+  </div>
+  <div class="col-12 " *ngFor="let item of Qus let i = index">
+    <app-qnotifications (value)="receiveValue($event,i)" [data]="item"></app-qnotifications>
+  </div>
+  <p class="fs-7">We'll only notify you for people who choose to tell others about their birthdays on Instagram. You can change who to tell about your birthday any time in your profile Personal information settings.</p>
+</section>

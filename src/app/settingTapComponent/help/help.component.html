@@ -1,0 +1,17 @@
+<section class="col-12 row p-4" id="EmailNotifications">
+  <div class="col-12 mb-5">
+    <h4>Help</h4>
+  </div>
+  <div class="col-12 my-2" *ngFor="let item of qus let i = index">
+    <div class="col-12 centerBetween cursorPointer qus" (click)="active(i,$event)">
+      <p>{{item.qus}}</p>
+      <i class="bi bi-chevron-right"></i>
+    </div>
+
+    <div id="desc{{i}}" class="col-12 my-2  description transition  px-3">
+      <p>
+        {{item.desc}}
+      </p>
+    </div>
+  </div>
+</section>

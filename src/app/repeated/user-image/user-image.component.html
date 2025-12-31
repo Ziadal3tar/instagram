@@ -1,0 +1,15 @@
+<!-- <div class="userImg me-2">
+  <div class="borderImg   rounded-5"  [ngClass]="{'p-story bg-danger': story}">
+    <div class="img" style="background-image: url({{data.image}});">
+    </div>
+  </div>
+</div> -->
+<div class="friendStory centerCenter"  >
+
+  <div class="borderImg bg-danger rounded-5  "  [ngClass]="{'p-story': story}">
+    <div class=" img " [ngClass]="{'border-story': story}" [style.height]=" size+'px'" [style.width]=" size+'px'" [style.background-image]="'url(' + data?.profilePic + ')'"></div>
+  </div>
+  <!-- <div class=" w-100 text-center">
+    <p class="name">{{slide.userName}}</p>
+  </div> -->
+</div>

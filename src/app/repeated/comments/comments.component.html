@@ -1,0 +1,15 @@
+<section class=" d-flex">
+  <div class="userImage" (click)="toUser(commentDetails.userId._id)" [ngStyle]="{ 'width.px': size, 'height.px': size }"><app-user-image [size]="size" [story]="false" [data]="{profilePic:commentDetails?.userId?.profilePic}"></app-user-image>
+  </div>
+
+  <div class="userData">
+    <h6 class="userName fw-bolder">{{commentDetails?.userId.userName}}: <span class="fw-normal">{{commentDetails?.comment}}
+        <br>
+        <div class=" d-flex">
+          <h6 class="fs-7 my-2 opacity-75">3d</h6>
+          <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
+        </div>
+      </span> </h6>
+  </div>
+
+</section>

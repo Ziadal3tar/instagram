@@ -1,0 +1,99 @@
+<section id="stories" *ngIf="storyData"
+  class="row m-0 w-100 h-100 py-3 d-flex align-items-center justify-content-center centerCenter">
+  <div class="  h-100 story position-relative rounded-4 overflow-hidden">
+    <div class="w-100 h-100 d-flex position-absolute top-0 start-0 z-1">
+      <div class="w-50 h-100 bg-transparent" (click)="prev()"></div>
+      <div class="w-50 h-100 bg-transparent" (click)="next()"></div>
+    </div>
+    <div class="top py-2">
+      <div class="line ">
+        <div *ngFor="let item of storyData?.stories let i = index" [ngClass]="{'active': i<imgId,'inLoad': i==imgId}"
+          class="division "></div>
+      </div>
+      <div class="row m-0 d-flex align-items-center py-3">
+        <div class="userData col-8 d-flex align-items-center cursorPointer z-3 position-relative" (click)="toProfile()">
+          <!-- <div class="img" [style.background-image]="'url(' + storyData?.profilePic + ')'"></div> -->
+          <app-user-image [story]="false" [size]="40" [data]="storyData"></app-user-image>
+          <p class="ms-2">{{storyData?.userName}}</p>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-between">
+          <i class="bi bi-stop-circle fs-5 cursorPointer"></i>
+          <i class="bi bi-volume-mute fs-5 cursorPointer"></i>
+          <app-dropdown-btn></app-dropdown-btn>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="img position-relative centerCenter">
+
+
+      <div class="w-100 h-100" *ngIf="storyData?.stories[imgId]?.type == 'image'"
+        style="background-image: url({{storyData?.stories[imgId].url}});"></div>
+
+
+
+      <div [style.left]="storyData?.stories[imgId].left" [style.top]="storyData?.stories[imgId].top"
+        [style.background-color]="storyData?.stories[imgId].color" style="padding: 5px 15px !important;" class="position-absolute rounded-5 ">
+        {{storyData?.stories[imgId].caption}}</div>
+
+
+
+        <video controls autoplay *ngIf="storyData?.stories[imgId]?.type == 'video'">
+          <source src="{{storyData?.stories[imgId].url}}">
+        </video>
+
+
+    </div>
+
+    <div class="bot w-100 row align-items-center justify-content-between ">
+      <div class="col-9">
+        <input type="text" class="w-100 bg-transparent rounded-5 py-2 ps-2 text-white "
+          placeholder="Reply to dolana ali">
+      </div>
+      <div class="col-3 d-flex align-items-center justify-content-between">
+        <i class="bi bi-heart fs-5 cursorPointer"></i>
+        <i class="bi bi-chat fs-5 cursorPointer"></i>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ----------------------------------------- -->
+<section id="stories" *ngIf="!storyData"
+  class="row m-0 w-100 h-100 py-3 d-flex align-items-center justify-content-center">
+  <div class="  h-100 story position-relative rounded-4 overflow-hidden">
+
+    <div class="top py-2 centerEnd">
+
+      <button class="col-3 offset-1 btn btn-primary py-1 z-3 " (click)="addStory()"><p *ngIf="!loading">POST</p> <app-loading-btn *ngIf="loading"></app-loading-btn></button>
+    </div>
+    <div class="img centerCenter position-relative">
+
+      <div class="w-100 h-100" style="background-image: url({{uploadStoryData.Src}});"
+        *ngIf="uploadStoryData?.type == 'image'"></div>
+
+
+
+
+    <video controls autoplay *ngIf="uploadStoryData?.type == 'video'">
+      <source src="{{uploadStoryData.Src}}">
+    </video>
+
+    <div class="draggable z-3 rounded-5 p-1" id="draggable" *ngIf="captionStory" [style.background-color]="captionColor"
+      (mousedown)="onMouseDown($event)">
+      {{captionStory}}
+    </div>
+  </div>
+    <div class="bot m-0 position-relative z-1 w-100 row align-items-center justify-content-between ">
+      <div class="col-12 centerBetween">
+        <input type="text" class="w-75 bg-transparent rounded-5 py-2 ps-2 text-white" [(ngModel)]="captionStory"
+          placeholder="Caption">
+          <input type="color" id="bg" class=" d-none mt-2 position-absolute top-0 end-0" style="height: 25px; width: 25px;"
+          [(ngModel)]="captionColor">
+          <label *ngIf="captionStory" for="bg"><i class="bi bi-palette-fill fs-4 cursorPointer"></i></label>
+          <label *ngIf="!captionStory"><i class="bi bi-palette-fill fs-4 disable"></i></label>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,267 @@
+#profile {
+  >div:first-child {
+    border-bottom: 1px solid rgb(49, 49, 49);
+
+    .userImg {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+
+      @media screen and (max-width : 767px) {
+        width: 60px !important;
+        height: 60px !important;
+      }
+
+
+    }
+  }
+
+  #list {
+    li {
+      border-top: 1px solid transparent;
+
+    }
+
+    .active {
+      border-top: 1px solid white;
+    }
+  }
+
+  #posts {
+
+    .ifNoPhoto {
+      >* {
+        margin: 5px 0;
+      }
+
+      .icon {
+        width: 80px;
+        height: 80px;
+        border: solid 1px rgba(255, 255, 255, 0.406);
+        border-radius: 50%;
+      }
+    }
+  }
+
+#saved {
+  .defaultCollection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    .img {
+      background-size: cover;
+      background-position: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .title {
+      width: 100%;
+      text-align: center;
+      margin-top: 6px;
+
+      h4 {
+        margin: 0;
+      }
+    }
+  }
+
+  .saved {
+    z-index: 10;
+  }
+}
+
+
+
+}
+
+#displayCollection {
+  .displayed {
+    .ifEmpty {
+      padding: 170px 0 !important;
+
+      div {
+        width: 60px;
+        height: 60px;
+        border: 1px solid white;
+        border-radius: 50%;
+      }
+
+      height: 70vh !important;
+    }
+  }
+}
+
+#displayCollection,
+#tagged,
+#posts {
+  .parent {
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      padding-top: 100%;
+    }
+
+    .img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
+  }
+}
+
+.vh12vw {
+
+  height: 250px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+#edit {
+  height: 55%;
+  background-color: #262626;
+  border-radius: 20px;
+  z-index: 99;
+
+  ul {
+    z-index: 999;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+
+    li {
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.235);
+      }
+
+      cursor: pointer;
+      font-size: 15px;
+      list-style: none;
+      padding: 10px 0 11px 0;
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
+
+
+.defaultCollection {
+  width: 250px;
+  height: 250px;
+  background: #0b0b0b;
+  cursor: pointer;
+  border-radius: 10px !important;
+  overflow: hidden;
+  transition: 0.5s;
+
+  .img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100% !important;
+  }
+
+  video {
+    vertical-align: middle;object-fit: cover;
+    height: 100%;
+    width: 100%;
+
+
+  }
+
+  &:hover {
+    filter: blur(1px);
+
+    .title {
+      background-color: rgba(0, 0, 0, 0.486) !important;
+
+      h4 {
+        opacity: 1;
+      }
+    }
+  }
+
+  .title {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: end;
+    transition: 0.5s;
+  pointer-events: none; // مهم جداً
+
+    h4 {
+      opacity: 0;
+      transition: 0.5s;
+    }
+  }
+}
+.toAddToCollection{
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    top: 0;
+      position: absolute;
+  }
+  .close{
+    height: 7%;
+  }
+position: fixed;
+width: 350px;
+height: 90vh;
+top: 5%;
+background-color: #0b0b0be7;
+border-radius: 20px;
+margin: 0 29%;
+.mid{
+  height: 85%;
+  div{
+    height: calc(350px / 3) !important;
+    background-position: center;
+    background-size:  cover;
+    position: relative;
+    cursor: pointer;
+    .ifSelect{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #000000cf;
+      z-index: 9;
+
+      }
+  }
+}
+.done{
+  height: 8%;
+  border-top: 1px solid rgb(255 255 255 / 11%) !important;
+    width: 100%;
+}
+}

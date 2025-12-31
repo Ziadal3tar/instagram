@@ -1,0 +1,29 @@
+<section class="col-12 my-5">
+  <div class="col-12">
+    <p class="fw-bold">
+      {{data.title}}
+    </p>
+  </div>
+  <div class="col-12" *ngIf="data.type == 2" id="{{data.id}}">
+    <div class="col-12 centerStart my-3" *ngFor="let item of if2 let x = index">
+      <div class="customCheckbox me-3">
+        <input (change)="check($event,data.id,item)" class="customCheckbox" id="{{data.id+item}}" class="d-none" type="checkbox">
+        <label for="{{data.id+item}}"><span></span></label>
+      </div>
+      <p>{{item}}</p>
+    </div>
+  </div>
+  <div class="col-12" *ngIf="data.type == 3" id="{{data.id}}">
+    <div class="col-12 centerStart my-3" *ngFor="let item of if3 let x = index">
+      <div class="customCheckbox me-3">
+        <input (change)="check($event,data.id,item)" class="customCheckbox" id="{{data.id+item}}" class="d-none" type="checkbox">
+        <label for="{{data.id+item}}"><span></span></label>
+
+      </div>
+      <p>{{item}}</p>
+    </div>
+  </div>
+  <div class="col-12 pt-5 customBorderBot">
+    <p class="fs-7">{{data.explain}}</p>
+  </div>
+</section>

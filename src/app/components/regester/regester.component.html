@@ -1,0 +1,60 @@
+<section class="vh-100 centerCenter overflow-hidden" id="register">
+  <div class="col-md-6 col-lg-4 col-10 px-3 px-md-4 px-lg-5">
+    <div class="logo pt-3 col-12 centerCenter">
+      <p class="cursorPointer" [routerLink]="'/home'">
+        Instagram
+      </p>
+    </div>
+    <p class="fw-bolder opacity-50 text-center ">Login to see photos and videos from your friends.</p>
+    <div class="col-12 centerCenter flex-column my-3">
+
+
+      <button class="btn btn-primary mb-3 fs-7 px-5 py-2" (click)="signInWithFB()">Login by FACEBOOK </button>
+
+      <div id="g_id_onload" data-client_id="1098782159208-4afkg7i8tv5e0btbk5emsk5lhre7fmaj.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse">
+      </div>
+
+
+      <div class="g_id_signin mb-3" data-type="standard" data-shape="rectangular" data-theme="outline"
+        data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="163">
+      </div>
+
+      <p class="or centerCenter fw-bold opacity-50">OR</p>
+    </div>
+    <form [formGroup]="signUpForm" class="col-12 ">
+      <p class="text-danger" *ngIf="ErrorResponse !=''">{{ErrorResponse}}</p>
+
+      <div class="py-1">
+        <input type="email" class="w-100 px-2 custom1Border py-1 rounded-1"  formControlName="email" name="email"
+          placeholder="Email">
+      </div>
+      <div class="py-1">
+        <input type="text" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="fullName" name="fullName"
+          placeholder="Full Name">
+      </div>
+      <div class="py-1">
+        <input type="text" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="userName" name="userName"
+          placeholder="User Name">
+      </div>
+      <div class="py-1">
+        <input type="password" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="password"
+          name="password" placeholder="Password">
+      </div>
+    </form>
+    <p class="p-2 fs-7 opacity-75 text-center">Perhaps the individuals using our service have uploaded your contact
+      information to Instagram. <span class="text-primary text-decoration-underline cursorPointer">Learn more</span></p>
+    <p class="p-2 fs-7 opacity-75 text-center">By signing up, you agree to the terms, privacy policy, and cookie policy.
+    </p>
+    <div class="col-12 centerCenter py-3">
+
+      <button class=" btn btn-primary w-100 rounded-1 py-1 " [disabled]="signUpForm.invalid"
+        (click)="register()">SignUp <app-loading-btn *ngIf="loading"></app-loading-btn></button>
+    </div>
+    <p class="opacity-75 my-3 text-center">
+      Do you have an account? <span [routerLink]="'/login'"
+        class="text-primary cursorPointer text-decoration-underline">Log in.</span></p>
+
+
+  </div>
+</section>

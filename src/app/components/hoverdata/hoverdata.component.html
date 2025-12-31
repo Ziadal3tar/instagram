@@ -1,0 +1,50 @@
+<section id="dataWhenHover" class="p-2">
+
+  <div class="d-flex align-items-center justify-content-between w-100 ">
+    <div class="userDetails d-flex " (click)="toUser(data._id)">
+      <div class="hoveredImg me-2">
+        <div class="borderImg  rounded-5  ">
+          <div class="img" [style.background-image]="'url(' + data?.profilePic + ')'"></div>
+        </div>
+      </div>
+      <div class="userData d-flex align-items-start justify-content-center flex-column">
+        <p class="userName">{{data.userName}} </p>
+        <p class="name">Suggested for you</p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class=" d-flex align-items-center justify-content-evenly my-4">
+    <div class=" d-flex flex-column align-items-center justify-content-center">
+<h6>{{ (data?.posts?.length || 0) + (data?.reels?.length || 0) }}</h6>      <h6>posts</h6>
+    </div>
+    <div class=" d-flex flex-column align-items-center justify-content-center">
+      <h6>{{data.followers.length}}</h6>
+      <h6>followers</h6>
+    </div>
+    <div class=" d-flex flex-column align-items-center justify-content-center">
+      <h6>{{data.following.length}}</h6>
+      <h6>following</h6>
+    </div>
+  </div>
+  <div class=" d-flex align-items-center justify-content-around">
+    <img loading="lazy"class="border-1 border-black" *ngFor="let post of data.posts let i = index" [ngClass]="{'d-none': i>2}" src="{{post.postsImgAndVideos[0].url}}" width="110" height="110" alt="">
+
+  </div>
+
+
+
+  <!-- <div class=" d-flex flex-column align-items-center justify-content-center py-3">
+    <hr class=" w-100">
+    <i class="bi bi-instagram fs-1 text-danger"></i>
+    <h4 class=" fs-6">no posts yet</h4>
+    <h6 class=" fs-6 opacity-50 text-center px-4">When boodyabomady shares photos and reels, you'll see them here.</h6>
+    <hr class="w-100">
+  </div> -->
+  <div class=" w-100 p-3">
+
+    <button class=" btn btn-primary rounded-3 w-100"><i class="bi bi-person-fill-add"></i> follow</button>
+
+  </div>
+</section>

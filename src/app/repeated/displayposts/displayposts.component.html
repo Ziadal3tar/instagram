@@ -1,0 +1,64 @@
+<div class="col-12 row m-0">
+  <div class="col-6 col-sm-4 m-0 p-2 cursorPointer"
+       *ngFor="let item of data; trackBy: trackById"
+       (click)="openPost(item)">
+
+    <!-- media block -->
+    <div class="col-12 parent rounded-3 overflow-hidden" *ngIf="item?.postsImgAndVideos?.length">
+
+      <!-- IMAGE case -->
+      <ng-container *ngIf="item.postsImgAndVideos[0]?.type === 'image'">
+        <img
+          class="img"
+          alt="{{ item.caption || 'post image' }}"
+          src="{{item.postsImgAndVideos[0].url}}"
+          (error)="onImgError($event)"
+          loading="lazy" />
+      </ng-container>
+
+      <!-- VIDEO case -->
+      <ng-container *ngIf="item.postsImgAndVideos[0]?.type === 'video'">
+        <video
+          class="video-el"
+          [appLazyLoad]="item.postsImgAndVideos[0].url"
+          [isVideo]="true"
+          preload="none"
+          muted
+          playsinline
+          controls>
+        </video>
+      </ng-container>
+
+    </div>
+
+    <!-- fallback single url (video) -->
+    <div  class="col-12 parent rounded-3 overflow-hidden" *ngIf="!item.postsImgAndVideos?.length && item?.url">
+      <video 
+        class="video-el"
+        [appLazyLoad]="item.url"
+        [isVideo]="true"
+        preload="none"
+        muted
+        playsinline
+        controls>
+      </video>
+    </div>
+
+  </div>
+</div>
+
+<section id="display_Post" *ngIf="open">
+  <i
+    style="z-index: 9;"
+    class="bi bi-x-lg position-fixed top-0 end-0 m-3 cursorPointer fw-bolder px-5 pt-3 fs-5 d-md-block d-none"
+    (click)="closePost()"></i>
+
+  <div class="d-block row d-md-none p-2 pt-3 bg-black d-flex position-relative mt-5">
+    <i (click)="closePost()" class="bi bi-arrow-left text-start position-absolute start-0 ms-3 cursorPointer"></i>
+    <p class="text-center">EXPLORE</p>
+  </div>
+
+  <app-display-explore #appDisplayExplore id="display-explore1" (open)="open = $event"
+    [exploreData]="displayPost">
+  </app-display-explore>
+</section>

@@ -1,0 +1,289 @@
+#home {
+  .moreStory {
+    padding: 0 10px !important;
+    margin: 0 !important;
+    top: 0;
+    left: 0;
+  }
+
+  #story {
+    .ng-star-inserted {
+      .owl-nav {
+        display: none !important;
+      }
+
+    }
+
+    .friendStory {
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      width: 100%;
+
+      .borderImg {
+        padding: 2.5px;
+
+        @media screen and (min-width : 300px) and (max-width : 400px) {
+          padding: 1.5px;
+        }
+
+        .img {
+
+          @media screen and (min-width : 300px) and (max-width : 400px) {
+            width: 40px;
+            height: 40px;
+            border: 2px solid black;
+
+          }
+
+          width: 60px;
+          height: 60px;
+          background-image: url(../../../assets/imgs/marie.jpg);
+          border-radius: 50%;
+          background-position: center;
+          background-size: contain;
+          border: 3px solid black;
+        }
+      }
+
+      .name {
+        margin-top: 5px;
+        font-size: 13px;
+      }
+    }
+
+    .name {
+
+      @media screen and (min-width : 300px) and (max-width : 400px) {
+        font-size: 10px;
+        margin-top: 7px;
+      }
+    }
+  }
+
+  .addStoryBtn {
+    position: relative;
+
+    .option {
+      transition: 0.5s;
+      overflow: hidden;
+      background-color: #743ad5;
+      position: absolute;
+      top: 80px;
+      width: 100px;
+      border-radius: 5px;
+      text-align: center;
+
+      label {
+        transition: 0.5s;
+
+        height: 20px;
+        margin: 0;
+        padding: 4px;
+        font-size: 15px;
+        white-space: nowrap;
+        height: 50%;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #8d6fc2;
+
+        }
+      }
+    }
+
+    .closeOption {}
+
+    .openOption {
+      height: 0px;
+
+    }
+
+    div {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  //posts-------------------
+  #posts {
+    .post {
+      max-height: 900px;
+      height: auto;
+      margin: 50px 0;
+
+      @media (min-width : 1150px) {
+        padding: 0 100px;
+
+      }
+
+      @media (min-width : 768px) and (max-width : 900px) {
+        padding: 0 10px !important;
+
+      }
+
+      @media (min-width : 600px) and (max-width : 768px) {
+        padding: 0 100px;
+
+      }
+
+      @media (min-width : 576px) and (max-width : 600px) {
+        padding: 0 100px;
+
+      }
+
+      @media (min-width : 300px) and (max-width : 576px) {
+        padding: 0 10px;
+
+      }
+
+      .header {
+        .postOwnerDetails {
+          .postOwnerImg {
+            .borderImg {
+              background-color: linear-gradient(to left, #743ad5, #d53a9d);
+              padding: 2.5px;
+
+              .img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-position: center;
+                background-size: contain;
+                border: 3px solid black;
+              }
+            }
+          }
+
+          .postOwnerName {
+            .type {
+              font-size: 10px;
+            }
+          }
+        }
+
+      }
+
+      .content {
+        margin-top: 10px;
+        border: 0.5px solid rgba(255, 255, 255, 0.203);
+        background-size: contain;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        position: relative;
+
+        .nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 24px;
+          cursor: pointer;
+          border: none;
+          background: none;
+          color: white;
+        }
+
+        .prev-btn {
+          left: 10px;
+        }
+
+        .next-btn {
+          right: 10px;
+        }
+
+      }
+
+      .footer {
+        .icons {
+          i {
+
+            @media screen and (max-width: 500px) {
+              font-size: 15px !important;
+            }
+          }
+
+          @media (min-width: 400px) and (max-width: 500px) {
+
+            padding-right: 40px;
+          }
+
+          @media (min-width: 300px) and (max-width: 400px) {
+
+            padding-right: 20px;
+          }
+        }
+      }
+
+      img {
+        height: auto;
+        width: 100%;
+        max-height: 520px !important;
+        object-fit: contain;
+      }
+
+      video {
+        max-height: 600px !important;
+        height: auto;
+        width: 90%;
+      }
+    }
+  }
+
+  //user-------------------
+  #rightSide {
+    .userDetails {
+      .userImg {
+        .borderImg {
+          .img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-position: center;
+            background-size: cover;
+          }
+        }
+      }
+
+      .suggestedImg {
+        .borderImg {
+          .img {
+            width: 45px;
+            height: 45px;
+            background-image: url(../../../assets/imgs/team-4.jpg);
+            border-radius: 50%;
+            background-position: center;
+            background-size: contain;
+            border: 3px solid black;
+          }
+        }
+      }
+
+      .userData {
+        .userName {
+          font-size: 15px;
+        }
+
+        .name {
+          font-size: 15px;
+          opacity: .5;
+        }
+      }
+    }
+  }
+}
+
+#storySec {
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+}

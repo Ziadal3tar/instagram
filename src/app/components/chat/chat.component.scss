@@ -1,0 +1,219 @@
+.noChat {
+  >div {
+    >div {
+      height: 25%;
+    }
+  }
+
+  .icon {
+    padding: 0;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid white;
+
+    i {
+      margin: 0;
+      padding: 0;
+      font-size: 30px;
+    }
+  }
+}
+
+.chat {
+  >div {
+    height: 100vh;
+
+    .details {
+      height: 10%;
+      width: 100%;
+      border-bottom: .1px solid;
+      .img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50% !important;
+        background-size: contain;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        overflow: hidden;
+        @media screen and (min-width : 300px) and (max-width : 500px) {
+          width: 35px;
+          height: 35px;
+        }
+        img {
+          vertical-align: middle;object-fit: cover;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          object-fit: cover;
+
+
+        }
+      }
+      .ws-nw{
+        @media screen and (min-width : 300px) and (max-width : 500px) {
+          font-size: 15px;
+          margin-left: 10px;
+          white-space: nowrap;        }
+
+      }
+      .iconCall{
+        i{
+          font-size: 15px !important;
+        }
+      }
+    }
+
+    .messages {
+      height: 80%;
+      width: 100%;
+
+      .cc {
+        ::before {
+          background: transparent !important;
+          display: none !important;
+        }
+      }
+
+      .message {
+        position: relative;
+        display: flex;
+        margin: 5px 0;
+        width: 100%;
+
+        .borderTop {
+          border-radius: 10px 10px 0 0;
+        }
+
+        .borderMid {
+          border-radius: 0 !important;
+        }
+
+        .borderBot {
+          border-radius: 0 0 10px 10px;
+        }
+
+        p {
+          position: relative;
+          right: 0;
+          text-align: right;
+          max-width: 90%;
+          padding: 12px;
+          background-color: #3797f0;
+          border-radius: 10px;
+          font-size: 0.9em;
+
+          span {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85em;
+          }
+
+          ::before {
+            content: '';
+            z-index: -1;
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #3797f0 0%, #3797f0 50%, transparent 50%, transparent);
+          }
+        }
+      }
+
+      .sent {
+        justify-content: flex-end;
+      }
+
+      .received {
+        justify-content: flex-start;
+
+        p {
+          background-color: #262626;
+          text-align: left;
+
+          ::before {
+            left: -10px !important;
+            z-index: -1;
+            background: linear-gradient(225deg, #262626 0%, #262626 50%, transparent 50%, transparent);
+          }
+        }
+      }
+    }
+
+    .send {
+      border-top: .1px solid;
+      height: 10%;
+      width: 100%;
+
+      >div {
+        input {
+          border: solid white 1px;
+        }
+      }
+    }
+  }
+}
+
+.search {
+  background-color: #262626;
+  top: calc((100vh - 400px) /2) !important;
+  left: calc((100vw - 550px) /2) !important;
+  width: 550px !important;
+  height: 400px !important;
+  border-radius: 20px;
+@media (max-width:768px){
+  left: 10% !important;
+  width: 80% !important;
+
+}
+  .researched {
+    height: 65%;
+
+    .userSearched {
+      .img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50% !important;
+        background-size: contain;
+        background-repeat: no-repeat;
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        overflow: hidden;
+
+        img {
+          vertical-align: middle;object-fit: cover;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          object-fit: cover;
+        }
+      }
+      &:hover {
+        background-color: #4b4b4b;
+      }
+
+      input[type="checkbox"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #999999;
+        border-radius: 5px;
+        outline: none;
+      }
+
+      input[type="checkbox"]:checked {
+        background-color: #0d6efd;
+      }
+    }
+  }
+}

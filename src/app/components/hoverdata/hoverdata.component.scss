@@ -1,0 +1,40 @@
+#dataWhenHover {
+  width: 400px;
+  height: 350px;
+  background-color: #000000;
+
+
+
+
+.userDetails{
+
+
+  .hoveredImg {
+    .borderImg {
+      padding: 2.5px;
+
+      .img {
+        width: 45px;
+        height: 45px;
+        background-image: url(../../../assets/imgs/team-4.jpg);
+        border-radius: 50%;
+        background-position: center;
+        background-size: contain;
+        border: 3px solid #262626;
+      }
+    }
+  }
+  .userData {
+
+    .userName {
+      font-size: 15px;
+    }
+
+    .name {
+      font-size: 15px;
+      opacity: .5;
+    }
+  }
+
+}
+}
