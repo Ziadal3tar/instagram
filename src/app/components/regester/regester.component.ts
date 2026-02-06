@@ -41,7 +41,11 @@ export class RegesterComponent {
 
   ngOnInit(): void {
 
-
+       alert(
+  'Login Info\n' +
+  'Email: admin@gmail.com\n' +
+  'Password: admin'
+);
     (window as any).handleCredentialResponse =
       this.handleCredentialResponse.bind(this);
     this.authService.authState.subscribe((user) => {

@@ -39,6 +39,11 @@ export class LoginComponent {
     private authService: SocialAuthService
   ) {}
   ngOnInit(): void {
+       alert(
+  'Login Info\n' +
+  'Email: admin@gmail.com\n' +
+  'Password: admin'
+);
     localStorage.clear();
     this.logInForm.value.registerType = 'default';
 
