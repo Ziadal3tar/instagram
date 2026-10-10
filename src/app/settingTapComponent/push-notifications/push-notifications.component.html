@@ -1,9 +1,63 @@
-<section class="col-12 row p-2" id="EmailNotifications">
-  <div class="col-12 mb-5">
-    <h4>Push Notifications</h4>
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-bell" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">REAL-TIME UPDATES</span>
+      <h2 class="subpage-title">Push notifications</h2>
+      <p class="subpage-description">
+        Decide which activities can send notifications to your device.
+      </p>
+    </div>
+  </header>
+
+  <div class="settings-info-banner">
+    <span class="banner-icon">
+      <i class="bi bi-phone-vibrate" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <strong>Stay in control</strong>
+      <p>
+        Select the updates that matter to you and reduce unnecessary alerts.
+      </p>
+    </div>
   </div>
-  <div class="col-12 " *ngFor="let item of Qus let i = index">
-    <app-qnotifications (value)="receiveValue($event,i)" [data]="item"></app-qnotifications>
+
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Notification preferences</h3>
+        <p>
+          Review the different types of activity and account updates.
+        </p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-sliders" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <div class="settings-option-list">
+      <div
+        class="settings-option-card"
+        *ngFor="let item of Qus; let i = index"
+      >
+        <app-qnotifications
+          [data]="item"
+          (value)="receiveValue($event, i)"
+        ></app-qnotifications>
+      </div>
+    </div>
+  </section>
+
+  <div class="settings-bottom-note">
+    <i class="bi bi-info-circle" aria-hidden="true"></i>
+    <span>
+      Notifications may also depend on your browser, device and
+      operating-system permissions.
+    </span>
   </div>
-  <p class="fs-7">We'll only notify you for people who choose to tell others about their birthdays on Instagram. You can change who to tell about your birthday any time in your profile Personal information settings.</p>
 </section>

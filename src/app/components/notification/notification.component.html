@@ -1,61 +1,108 @@
-<section id="notification" class=" w-100 h-100 scrollStyle p-1">
-  <div class=" d-flex align-items-center justify-content-between">
-    <h4>Notification</h4>
-    <i (click)="Close()" class="bi bi-x-lg cursorPointer"></i>
+<section class="notification-panel" aria-label="Notifications">
+  <header class="panel-header">
+    <div class="header-copy">
+      <span class="eyebrow">YOUR COMMUNITY</span>
+      <h2>Notifications</h2>
+
+      <p>
+        {{ notification.length }}
+        {{ notification.length === 1 ? 'update' : 'updates' }}
+
+        <span *ngIf="hasUnread">
+          · {{ unreadCount }} unread
+        </span>
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        class="mark-read-button"
+        type="button"
+        *ngIf="hasUnread"
+        [disabled]="markingAllRead"
+        (click)="markAllRead()"
+      >
+        <i class="bi bi-check2-all" aria-hidden="true"></i>
+        <span>{{ markingAllRead ? 'Marking...' : 'Mark all read' }}</span>
+      </button>
+
+      <button
+        class="icon-button"
+        type="button"
+        (click)="closePanel()"
+        aria-label="Close notifications"
+        title="Close"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="activity-strip" *ngIf="notification.length">
+    <span class="section-label">RECENT ACTIVITY</span>
+
+    <span class="unread-summary" *ngIf="hasUnread">
+      <span class="live-dot"></span>
+      {{ unreadCount }} unread
+    </span>
+    <span class="all-read-label" *ngIf="!hasUnread">
+      All caught up
+    </span>
   </div>
 
-  <div class="New">
-    <h6 class=" fa my-3">
-      New
-      <hr>
-    </h6>
+  <div class="state state-empty" *ngIf="!notification.length">
+    <span class="empty-icon">
+      <i class="bi bi-bell" aria-hidden="true"></i>
+    </span>
 
-    <div class="notification row d-flex align-items-center justify-content-between my-3 p-2 cursorPointer" *ngFor="let item of notification" (click)="openN(item)">
-      <div class="col-2">
-        <div class="img ">
-          <img loading="lazy"src="{{item.data.profilePic}}" alt="">
-        </div>
+    <strong>You're all caught up</strong>
 
-      </div>
-      <div class="text col-7">
-        <h6 style="font-size: 14px;" class=" w-100">
-          <!-- <span class=" fw-bolder">{{item.data.userName}}</span> -->
-           <span > {{item.text}} </span>
-          <!-- <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span> -->
-        </h6>
-      </div>
-      <div class=" col-3 pe-3">
-      <button class="btn btn-primary fs-7">Follow</button>
-
-      </div>
-    </div>
+    <p>
+      When people interact with your profile, their activity will appear here.
+    </p>
   </div>
-  <!-- <div class="New">
-    <h6 class=" fa my-3">
-      Last week
-      <hr>
-    </h6>
 
-    <div class="notification row d-flex align-items-center justify-content-between my-3" *ngFor="let item of notification">
-      <div class="col-2">
-        <div class="img ">
-          <img loading="lazy"src="{{item.user.image}}" alt="">
-        </div>
+  <div class="notification-list" *ngIf="notification.length">
+    <button
+      class="notification"
+      type="button"
+      *ngFor="let item of notification; trackBy: trackById"
+      [class.unread]="!item.seen"
+      (click)="openN(item)"
+      [attr.aria-label]="'Notification from ' + (item.data?.userName || 'a user')"
+    >
+      <span class="avatar-wrap">
+        <img
+          [src]="item.data?.profilePic "
+          [alt]="item.data?.userName || 'User profile'"
+          loading="lazy"
+        />
+      </span>
 
-      </div>
-      <div class="text col-7">
-        <h6 style="font-size: 14px;" class=" w-100">
-          <span class=" fw-bolder">{{item.user.name}}</span>
-           <span > {{item.notification.text}} </span>
-          <span class=" fw-bolder" *ngIf="item.notification.users.length!=0">{{item.notification.users[0].name}} </span>
-        </h6>
-      </div>
-      <div class=" col-3 pe-3">
-      <button class="btn btn-primary fs-7">Follow</button>
+      <span class="body">
+        <span class="message-line">
+          <strong *ngIf="item.data?.userName">
+            {{ item.data?.userName }}
+          </strong>
 
-      </div>
-    </div>
-  </div> -->
+          <span>
+            {{ item.text || 'You have a new notification.' }}
+          </span>
+        </span>
 
+        <span class="meta-line">
+          <time *ngIf="item.createdAt">
+            {{ formatTime(item.createdAt) }}
+          </time>
+
+          <span class="new-label" *ngIf="!item.seen">New</span>
+        </span>
+      </span>
+
+      <span class="notification-indicator" aria-hidden="true">
+        <span class="dot" *ngIf="!item.seen"></span>
+        <i class="bi bi-chevron-right" *ngIf="item.seen"></i>
+      </span>
+    </button>
+  </div>
 </section>
-<!-- <div class=" vw-100 h-100 bg-black position-absolute top-0 start-0">f</div> -->

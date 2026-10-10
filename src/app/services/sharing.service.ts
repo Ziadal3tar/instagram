@@ -1,115 +1,108 @@
-import { UserService } from './user.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { ReelService } from './reel.service';
-import { ChatComponent } from '../components/chat/chat.component';
-import { ChatService } from './chat.service';
+import { BehaviorSubject, Observable, catchError, of, shareReplay, tap } from 'rxjs';
+import { UserService } from './user.service';
+import { ApiResponse, CurrentUser, SavedPage, UserSummary } from '../core/models/api.models';
+import { SessionService } from '../core/services/session.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class SharingService {
+  private readonly userDataSubject = new BehaviorSubject<CurrentUser | null>(null);
+  readonly currentUserData = this.userDataSubject.asObservable();
+
+  private readonly savedSubject = new BehaviorSubject<SavedPage>({ page: 1, limit: 50, items: [], hasMore: false });
+  readonly currentSaved = this.savedSubject.asObservable();
+
+  private userRequest?: Observable<ApiResponse<{ userData: CurrentUser }>>;
+  private savedRequest?: Observable<ApiResponse<SavedPage>>;
+
   constructor(
-    private _Router: Router,
-    private UserService: UserService,
-    private _reel: ReelService,
-    private _Chat: ChatService,
-    
+    private readonly userService: UserService,
+    private readonly router: Router,
+    private readonly session: SessionService,
   ) {}
-  private userData: any = new BehaviorSubject<any>([]);
-  currentUserData = this.userData.asObservable();
-  updateUserData() {
-    console.log(this._Router.url.split('/').filter((item: any) => item != ''));
-    
-    if (localStorage.getItem('userToken')) {
-      this.UserService.getUserData(localStorage.getItem('userToken')).subscribe(
-        (data: any) => {
-          console.log(data);
-          
-          this.userData.next(data.userData);
-        },
-        (err: HttpErrorResponse) => {
-          console.log(err);
-          
-          if (
-            err.error.message == 'jwt expired' ||
-            err.error.message == 'jwt malformed'
-          ) {
-            localStorage.removeItem('userToken');
-            this._Router.navigate([`/login`]);
-          } else {
-            localStorage.removeItem('userToken');
-            this._Router.navigate(['/login']);
-          }
-        }
-      );
-    } else {
-      this.userData.next(undefined);
+
+  get currentUser(): CurrentUser | null { return this.userDataSubject.value; }
+  get currentSavedPage(): SavedPage { return this.savedSubject.value; }
+
+  updateUserData(force = true): void {
+    if (!this.session.hasToken()) {
+      this.userDataSubject.next(null);
+      return;
     }
-    // this.userData.next(data);
+    if (!force && (this.userDataSubject.value || this.userRequest)) return;
+
+    this.userRequest = this.userService.getUserData().pipe(
+      tap((response) => {
+        if (response.success && response.data?.userData) this.userDataSubject.next(response.data.userData);
+      }),
+      catchError(() => {
+        this.session.clear();
+        this.userDataSubject.next(null);
+        void this.router.navigate(['/login']);
+        return of({ success: false } as ApiResponse<{ userData: CurrentUser }>);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+    this.userRequest.subscribe();
   }
 
-  private ProfileDataDisplay = new BehaviorSubject<Boolean>(false);
-  currentProfileDataDisplay = this.ProfileDataDisplay.asObservable();
-  updateProfileDataDisplay() {
-    console.log('gfgfgf');
-    
-    let url = this._Router.url.split('/').filter((item: any) => item != '');
-    this.UserService.getProfilesData({ _id: url[1] }).subscribe((data: any) => {
-      console.log(data);
-      
-      this.ProfileDataDisplay.next(data.profile);
-    });
-  }
+  refreshCurrentUser(): void { this.updateUserData(true); }
 
-
-
-  private search = new BehaviorSubject<Boolean>(false);
-  currentSearch = this.search.asObservable();
-  updateSearch() {
-    this.search.next(true);
-  }
-  private chatData = new BehaviorSubject<any>([]);
-  currentChatData = this.chatData.asObservable();
-  updateChatData(data: any) {
-    this._Chat.getChat(data).subscribe((data: any) => {
-      this.chatData.next(data);
-    });
-  }
-
-  private reels = new BehaviorSubject<any>([]);
-  currentReels = this.reels.asObservable();
-  updateReel(page: any) {
-    let data = {
-      page,
+  applyIncomingNotification(event: any): void {
+    const payload = event?.payload;
+    const current = this.userDataSubject.value;
+    if (!current || !payload?.text) return;
+    const notification = {
+      _id: `socket-${Date.now()}`,
+      text: payload.text,
+      seen: false,
+      type: payload.type,
+      actorId: payload.data ? String(payload.data) : undefined,
+      data: null,
+      createdAt: payload.createdAt,
     };
-    this._reel.getAllReels(data).subscribe((data: any) => {
-      this.reels.next(data.reels);
+    this.userDataSubject.next({
+      ...current,
+      notifications: [notification, ...(current.notifications ?? [])].slice(0, 30),
+      unseenNotifications: (current.unseenNotifications ?? 0) + 1,
     });
   }
 
+  updateSaved(force = true): void {
+    if (!force && this.savedSubject.value.items.length) return;
+    if (this.savedRequest && !force) { this.savedRequest.subscribe(); return; }
 
-
-
-
-
-
-
-
-
-  private saved = new BehaviorSubject<any>([]);
-  currentSaved = this.saved.asObservable();
-  updateSaved() {
-   this.UserService.getSaved().subscribe((data:any)=>{
-    this.saved.next(data);
-   })
+    this.savedRequest = this.userService.getSaved(1, 50).pipe(
+      tap((response) => {
+        if (response.success && response.data) this.savedSubject.next(response.data);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+    this.savedRequest.subscribe();
   }
 
-
-  toUser(id:any){
-    this._Router.navigate([`/userProfile/${id}`]);
-
+  upsertSavedLocally(item: any, saved: boolean): void {
+    const current = this.savedSubject.value;
+    const id = String(item?._id);
+    if (!id || id === 'undefined') return;
+    const exists = current.items.some((entry) => String(entry._id) === id);
+    const items = saved
+      ? (exists ? current.items : [item, ...current.items])
+      : current.items.filter((entry) => String(entry._id) !== id);
+    this.savedSubject.next({ ...current, items });
   }
+
+  applyFollowingState(profile: UserSummary, isFollowing: boolean): void {
+    const current = this.userDataSubject.value;
+    if (!current) return;
+    const following = current.following ?? [];
+    const exists = following.some((user) => String(user._id) === String(profile._id));
+    const nextFollowing = isFollowing
+      ? (exists ? following : [...following, { ...profile }])
+      : following.filter((user) => String(user._id) !== String(profile._id));
+    this.userDataSubject.next({ ...current, following: nextFollowing });
+  }
+
+  toUser(id: string): void { if (id) void this.router.navigate(['/userProfile', id]); }
 }

@@ -1,60 +1,191 @@
-<section class="vh-100 centerCenter overflow-hidden" id="register">
-  <div class="col-md-6 col-lg-4 col-10 px-3 px-md-4 px-lg-5">
-    <div class="logo pt-3 col-12 centerCenter">
-      <p class="cursorPointer" [routerLink]="'/home'">
-        Instagram
-      </p>
-    </div>
-    <p class="fw-bolder opacity-50 text-center ">Login to see photos and videos from your friends.</p>
-    <div class="col-12 centerCenter flex-column my-3">
-
-
-      <button class="btn btn-primary mb-3 fs-7 px-5 py-2" (click)="signInWithFB()">Login by FACEBOOK </button>
-
-      <div id="g_id_onload" data-client_id="1098782159208-4afkg7i8tv5e0btbk5emsk5lhre7fmaj.apps.googleusercontent.com"
-        data-callback="handleCredentialResponse">
+<section class="auth-page auth-page--register" id="register">
+  <div class="auth-shell">
+    <aside class="auth-visual" aria-hidden="true">
+      <div class="visual-brand">
+        <span class="visual-brand-icon"><i class="bi bi-instagram"></i></span>
+        <span>Moments, shared.</span>
       </div>
 
-
-      <div class="g_id_signin mb-3" data-type="standard" data-shape="rectangular" data-theme="outline"
-        data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="163">
+      <div class="visual-copy">
+        <span class="visual-kicker">A NEW CHAPTER STARTS HERE</span>
+        <h1>Your people. Your moments. Your space.</h1>
+        <p>Create your account and start sharing the moments, ideas, and stories that make you who you are.</p>
       </div>
 
-      <p class="or centerCenter fw-bold opacity-50">OR</p>
-    </div>
-    <form [formGroup]="signUpForm" class="col-12 ">
-      <p class="text-danger" *ngIf="ErrorResponse !=''">{{ErrorResponse}}</p>
-
-      <div class="py-1">
-        <input type="email" class="w-100 px-2 custom1Border py-1 rounded-1"  formControlName="email" name="email"
-          placeholder="Email">
+      <div class="visual-art">
+        <span class="visual-orbit visual-orbit--one"></span>
+        <span class="visual-orbit visual-orbit--two"></span>
+        <div class="story-preview story-preview--back">
+          <span class="preview-top"><i></i><i></i><i></i></span>
+          <span class="preview-sun"></span>
+          <span class="preview-horizon"></span>
+          <span class="preview-caption">Find your kind of magic</span>
+        </div>
+        <div class="story-preview story-preview--front">
+          <span class="preview-top"><i></i><i></i><i></i></span>
+          <span class="preview-flower"><i class="bi bi-stars"></i></span>
+          <span class="preview-caption">Your story begins here</span>
+        </div>
+        <div class="floating-note floating-note--top"><i class="bi bi-heart-fill"></i><span>Share what you love</span></div>
+        <div class="floating-note floating-note--bottom"><i class="bi bi-people-fill"></i><span>Meet your community</span></div>
       </div>
-      <div class="py-1">
-        <input type="text" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="fullName" name="fullName"
-          placeholder="Full Name">
-      </div>
-      <div class="py-1">
-        <input type="text" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="userName" name="userName"
-          placeholder="User Name">
-      </div>
-      <div class="py-1">
-        <input type="password" class="w-100 px-2 custom1Border py-1 rounded-1" formControlName="password"
-          name="password" placeholder="Password">
-      </div>
-    </form>
-    <p class="p-2 fs-7 opacity-75 text-center">Perhaps the individuals using our service have uploaded your contact
-      information to Instagram. <span class="text-primary text-decoration-underline cursorPointer">Learn more</span></p>
-    <p class="p-2 fs-7 opacity-75 text-center">By signing up, you agree to the terms, privacy policy, and cookie policy.
-    </p>
-    <div class="col-12 centerCenter py-3">
 
-      <button class=" btn btn-primary w-100 rounded-1 py-1 " [disabled]="signUpForm.invalid"
-        (click)="register()">SignUp <app-loading-btn *ngIf="loading"></app-loading-btn></button>
-    </div>
-    <p class="opacity-75 my-3 text-center">
-      Do you have an account? <span [routerLink]="'/login'"
-        class="text-primary cursorPointer text-decoration-underline">Log in.</span></p>
+      <p class="visual-footer">A place for the moments that matter.</p>
+    </aside>
 
+    <main class="auth-panel">
+      <div class="auth-form-card">
+        <a class="auth-wordmark" [routerLink]="'/home'" aria-label="Instagram home">Instagram</a>
 
+        <header class="auth-heading">
+          <span class="auth-eyebrow">JOIN THE COMMUNITY</span>
+          <h2>Create your account</h2>
+          <p>Sign up to see photos and videos from your friends.</p>
+        </header>
+
+        <div class="auth-social-actions">
+          <button
+            type="button"
+            class="auth-social-button auth-social-button--facebook"
+            (click)="signInWithFB()"
+            [disabled]="loading"
+          >
+            <i class="bi bi-facebook" aria-hidden="true"></i>
+            <span>Continue with Facebook</span>
+          </button>
+
+          <div
+            id="g_id_onload"
+            data-client_id="1098782159208-4afkg7i8tv5e0btbk5emsk5lhre7fmaj.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+          ></div>
+          <div class="google-signin-wrap">
+            <div
+              class="g_id_signin"
+              data-type="standard"
+              data-shape="rectangular"
+              data-theme="outline"
+              data-text="signup_with"
+              data-size="large"
+              data-logo_alignment="left"
+              data-width="300"
+            ></div>
+          </div>
+        </div>
+
+        <div class="auth-divider" role="separator" aria-label="or">
+          <span></span><b>OR</b><span></span>
+        </div>
+
+        <form [formGroup]="signUpForm" (ngSubmit)="register()" class="auth-form" novalidate>
+          <div class="auth-error" *ngIf="errorResponse" role="alert" aria-live="polite">
+            <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+            <span>{{ errorResponse }}</span>
+          </div>
+
+          <div class="auth-field">
+            <label for="register-email">Email address</label>
+            <div class="auth-input-wrap" [class.auth-field--invalid]="signUpForm.controls.email.touched && signUpForm.controls.email.invalid">
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+              <input
+                id="register-email"
+                type="email"
+                formControlName="email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                inputmode="email"
+                [attr.aria-invalid]="signUpForm.controls.email.touched && signUpForm.controls.email.invalid"
+                [attr.aria-describedby]="signUpForm.controls.email.touched && signUpForm.controls.email.invalid ? (signUpForm.controls.email.hasError('required') ? 'register-email-error' : 'register-email-format-error') : null"
+              />
+            </div>
+            <p class="auth-field-error" id="register-email-error" *ngIf="signUpForm.controls.email.touched && signUpForm.controls.email.hasError('required')">Please enter your email address.</p>
+            <p class="auth-field-error" id="register-email-format-error" *ngIf="signUpForm.controls.email.touched && signUpForm.controls.email.hasError('email')">Enter a valid email address.</p>
+          </div>
+
+          <div class="auth-field">
+            <label for="register-full-name">Full name</label>
+            <div class="auth-input-wrap" [class.auth-field--invalid]="signUpForm.controls.fullName.touched && signUpForm.controls.fullName.invalid">
+              <i class="bi bi-person" aria-hidden="true"></i>
+              <input
+                id="register-full-name"
+                type="text"
+                formControlName="fullName"
+                name="fullName"
+                placeholder="Your full name"
+                autocomplete="name"
+                [attr.aria-invalid]="signUpForm.controls.fullName.touched && signUpForm.controls.fullName.invalid"
+                [attr.aria-describedby]="signUpForm.controls.fullName.touched && signUpForm.controls.fullName.invalid ? 'register-full-name-error' : null"
+              />
+            </div>
+            <p class="auth-field-error" id="register-full-name-error" *ngIf="signUpForm.controls.fullName.touched && signUpForm.controls.fullName.hasError('required')">Please enter your name.</p>
+          </div>
+
+          <div class="auth-field">
+            <label for="register-username">Username</label>
+            <div class="auth-input-wrap" [class.auth-field--invalid]="signUpForm.controls.userName.touched && signUpForm.controls.userName.invalid">
+              <i class="bi bi-at" aria-hidden="true"></i>
+              <input
+                id="register-username"
+                type="text"
+                formControlName="userName"
+                name="userName"
+                placeholder="Choose a username"
+                autocomplete="username"
+                autocapitalize="none"
+                [attr.aria-invalid]="signUpForm.controls.userName.touched && signUpForm.controls.userName.invalid"
+                [attr.aria-describedby]="signUpForm.controls.userName.touched && signUpForm.controls.userName.invalid ? 'register-username-error' : null"
+              />
+            </div>
+            <p class="auth-field-error" id="register-username-error" *ngIf="signUpForm.controls.userName.touched && signUpForm.controls.userName.hasError('required')">Please choose a username.</p>
+          </div>
+
+          <div class="auth-field">
+            <label for="register-password">Password</label>
+            <div class="auth-input-wrap" [class.auth-field--invalid]="signUpForm.controls.password.touched && signUpForm.controls.password.invalid">
+              <i class="bi bi-lock" aria-hidden="true"></i>
+              <input
+                id="register-password"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                name="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+                [attr.aria-invalid]="signUpForm.controls.password.touched && signUpForm.controls.password.invalid"
+                [attr.aria-describedby]="signUpForm.controls.password.touched && signUpForm.controls.password.invalid ? 'register-password-error' : null"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                [attr.aria-pressed]="showPassword"
+              >
+                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="auth-field-error" id="register-password-error" *ngIf="signUpForm.controls.password.touched && signUpForm.controls.password.hasError('required')">Please create a password.</p>
+            <p class="auth-field-hint">Choose a password you do not use on other websites.</p>
+          </div>
+
+          <p class="auth-terms">
+            By signing up, you agree to our community guidelines and acknowledge that you have read our privacy information.
+          </p>
+
+          <button class="auth-submit-button" type="submit" [disabled]="signUpForm.invalid || loading">
+            <span>{{ loading ? 'Creating account…' : 'Sign up' }}</span>
+            <app-loading-btn *ngIf="loading"></app-loading-btn>
+            <i *ngIf="!loading" class="bi bi-arrow-right" aria-hidden="true"></i>
+          </button>
+        </form>
+
+        <p class="auth-switch-copy">
+          Already have an account?
+          <a [routerLink]="'/login'">Log in</a>
+        </p>
+
+        <p class="auth-legal">A place for your memories, ideas, and everyday moments.</p>
+      </div>
+    </main>
   </div>
 </section>

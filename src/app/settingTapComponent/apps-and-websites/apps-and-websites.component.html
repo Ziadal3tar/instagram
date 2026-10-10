@@ -1,41 +1,121 @@
-<section class="col-12 row p-4" id="EditProfile">
-  <div class="col-12">
-    <h4>Apps and websites</h4>
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-grid-1x2" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">CONNECTED SERVICES</span>
+      <h2 class="subpage-title">Apps and websites</h2>
+      <p class="subpage-description">
+        Review applications that have access to your account information.
+      </p>
+    </div>
+  </header>
+
+  <div class="settings-info-banner">
+    <span class="banner-icon">
+      <i class="bi bi-shield-check" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <strong>Manage your account access</strong>
+      <p>
+        Connected apps may access information you authorize.
+        Review your connections regularly.
+      </p>
+    </div>
   </div>
-  <div class="col-12 row m-0 pt-4 taps">
-    <div (click)="activeTap = 'Active'" [ngClass]="{'active': activeTap == 'Active'}"
-      class=" col-4 centerCenter customBorderBot active cursorPointer">
-      <p class="m-0 opacity-50">Active</p>
-    </div>
-    <div (click)="activeTap = 'Expired'" [ngClass]="{'active': activeTap == 'Expired'}"
-      class=" col-4 centerCenter customBorderBot cursorPointer">
-      <p class="m-0 opacity-50">Expired</p>
-    </div>
-    <div (click)="activeTap = 'Removed'" [ngClass]="{'active': activeTap == 'Removed'}"
-      class=" col-4 centerCenter customBorderBot cursorPointer">
-      <p class="m-0 opacity-50">Removed</p>
-    </div>
+
+  <div class="settings-segmented-tabs" role="tablist" aria-label="Application status">
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTap === 'Active'"
+      [class.active]="activeTap === 'Active'"
+      (click)="setActiveTab('Active')"
+    >
+      <span>Active</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTap === 'Expired'"
+      [class.active]="activeTap === 'Expired'"
+      (click)="setActiveTab('Expired')"
+    >
+      <span>Expired</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTap === 'Removed'"
+      [class.active]="activeTap === 'Removed'"
+      (click)="setActiveTab('Removed')"
+    >
+      <span>Removed</span>
+    </button>
   </div>
-  <div class="col-12">
-    <div *ngIf="activeTap == 'Active'" class="col-12">
-      <h6 class="my-3">These are apps and websites you've connected to your Instagram account. They can access
-        non-public information
-        that you choose to share with them.</h6>
-      <p class="fs-7 opacity-50">
-        You have not authorized any applications to access your Instagram account.
-      </p>
-    </div>
-    <div *ngIf="activeTap == 'Expired'" class="col-12">
-      <h6 class="my-3">These are apps and websites you've connected to your Instagram account that you may not have used in the last 90 days. They're no longer able to access your non-public information, but may still have the information you shared while they were active. "Non-public" means information that an app can only access if you choose to share it when you log in with your Instagram account (like your email address).</h6>
-      <p class="fs-7 opacity-50">
-        You have no expired applications that had access to your Instagram account.
-      </p>
-    </div>
-    <div *ngIf="activeTap == 'Removed'" class="col-12">
-      <h6 class="my-3">These are apps and websites that are no longer connected to your Instagram account. They can't access your non-public information anymore, but may still have the information you shared while they were active. "Non-public" means information that an app can only access if you choose to share it when you log in with your Instagram account (like your email address). You can ask an app to delete your information. To do it, review their Privacy Policy for details and contact information. If you contact an app, they may need your User ID.</h6>
-      <p class="fs-7 opacity-50">
-        You have no removed applications that had access to your Instagram account.
-      </p>
-    </div>
+
+  <div class="settings-tab-content" role="tabpanel">
+    <ng-container [ngSwitch]="activeTap">
+
+      <div *ngSwitchCase="'Active'" class="settings-empty-state">
+        <span class="empty-state-icon">
+          <i class="bi bi-plug" aria-hidden="true"></i>
+        </span>
+
+        <span class="empty-state-eyebrow">ACTIVE CONNECTIONS</span>
+        <h3>No connected apps</h3>
+
+        <p>
+          You have not authorized any applications to access your
+          Instagram account.
+        </p>
+
+        <span class="empty-state-footnote">
+          New connections will appear here.
+        </span>
+      </div>
+
+      <div *ngSwitchCase="'Expired'" class="settings-empty-state">
+        <span class="empty-state-icon">
+          <i class="bi bi-clock-history" aria-hidden="true"></i>
+        </span>
+
+        <span class="empty-state-eyebrow">EXPIRED CONNECTIONS</span>
+        <h3>No expired apps</h3>
+
+        <p>
+          Apps that have not been used recently and have lost access
+          to your non-public information will appear here.
+        </p>
+
+        <span class="empty-state-footnote">
+          There are no expired applications to display.
+        </span>
+      </div>
+
+      <div *ngSwitchCase="'Removed'" class="settings-empty-state">
+        <span class="empty-state-icon">
+          <i class="bi bi-plug-fill" aria-hidden="true"></i>
+        </span>
+
+        <span class="empty-state-eyebrow">REMOVED CONNECTIONS</span>
+        <h3>No removed apps</h3>
+
+        <p>
+          Applications disconnected from your account will appear
+          here for reference.
+        </p>
+
+        <span class="empty-state-footnote">
+          There are no removed applications to display.
+        </span>
+      </div>
+
+    </ng-container>
   </div>
 </section>

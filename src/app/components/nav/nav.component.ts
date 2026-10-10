@@ -1,172 +1,143 @@
-import { HomeComponent } from './../home/home.component';
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { OnInit } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { ChatComponent } from '../chat/chat.component';
-import { SharingService } from 'src/app/services/sharing.service';
-import { UserService } from 'src/app/services/user.service';
-import { SocketService } from 'src/app/services/socket.service';
+import { Subject, filter, takeUntil } from 'rxjs';
+
+import { CurrentUser } from '../../core/models/api.models';
+import { AuthService } from '../../services/auth.service';
+import { SharingService } from '../../services/sharing.service';
+import { SocketService } from '../../services/socket.service';
+import { SessionService } from '../../core/services/session.service';
+
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss'],
 })
-export class NavComponent {
+export class NavComponent implements OnInit, OnDestroy {
+  userData: CurrentUser | null = null;
+
+  showSearch = false;
+  showNotifications = false;
+  showMobileMenu = false;
+
+  private readonly destroy$ = new Subject<void>();
+
   constructor(
-    private _Route: Router,
-    private _sharing: SharingService,
-    private _UserService: UserService,
-    private _Socket: SocketService,
-    private HomeComp: HomeComponent
-  ) {
-    this._Route.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-      }
-    });
-  }
-  @ViewChild(ChatComponent) ChatComponent: ChatComponent | any;
-  @ViewChild(HomeComponent) HomeComponent: ChatComponent | any;
+    private readonly router: Router,
+    private readonly sharing: SharingService,
+    private readonly auth: AuthService,
+    private readonly socket: SocketService,
+    private readonly session: SessionService,
+  ) {}
 
-  title = 'insta';
-  exploreData: any;
-  open: Boolean = false;
-  hide: Boolean = false;
-  closeSearch: Boolean = true;
-  closeMessage: Boolean = true;
-  closeNotification: Boolean = true;
-  userData: any;
-  tapId: any;
-  numberOfNotifications: any;
-  tap: any = 'Home';
-  ngOnInit() {
-    this._sharing.currentUserData.subscribe((data: any) => {
-      this.userData = data;
-
-      let notSeen = data.notifications?.filter(
-        (item: any) => item.seen == false
-      );
-      this.numberOfNotifications = notSeen?.length;
-      if (data._id) {
-
-      }
-
-      let url = this._Route.url.split('/').filter((item: any) => item != '');
-      if (localStorage.getItem('id') != url[1]) {
-        this.tap = 'Profile';
-      }
-    });
-  }
-
-  onDropdownItemClick(event: any) {
-    event.stopPropagation();
-  }
-
-  ExploreData(data: any) {
-    this.exploreData = data;
-    this.open = true;
-  }
-
-  closeEX() {
-    this.open = false;
-    let theDiv: NodeListOf<ChildNode> | any =
-      document.getElementById('app-explore')?.childNodes[0];
-    theDiv?.classList?.remove('vh-100');
-    theDiv?.classList?.remove('overflow-hidden');
-  }
-
-  openSidePage(data: any) {
-    if (data == 'Search') {
-      this.closeSearch = false;
-      this.closeMessage = true;
-      this.closeNotification = true;
-    } else if (data == 'Message') {
-      this.closeSearch = true;
-      this.closeMessage = false;
-      this.closeNotification = true;
-    } else if (data == 'Notification') {
-      this.closeSearch = true;
-      this.closeMessage = true;
-      this.closeNotification = false;
-      this._UserService.allNotificationSeen().subscribe((data: any) => {
-        if (data.success) {
-          this.numberOfNotifications = 0
-        }
+  ngOnInit(): void {
+    this.sharing.currentUserData
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.userData = user;
       });
+
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd =>
+            event instanceof NavigationEnd,
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
+        this.closePanels();
+      });
+
+    this.sharing.updateUserData(false);
+  }
+
+  get notificationCount(): number {
+    return (
+      this.userData?.unseenNotifications ??
+      this.userData?.notifications?.filter((item) => !item.seen).length ??
+      0
+    );
+  }
+
+  isActive(path: string): boolean {
+    return (
+      this.router.url === path ||
+      this.router.url.startsWith(`${path}/`)
+    );
+  }
+
+  go(path: string): void {
+    this.showMobileMenu = false;
+    void this.router.navigate([path]);
+  }
+
+  toggleMobileMenu(): void {
+    if (this.showMobileMenu) {
+      this.closeMobileMenu();
+      return;
+    }
+
+    this.closePanels();
+    this.showMobileMenu = true;
+  }
+
+  closeMobileMenu(): void {
+    this.showMobileMenu = false;
+  }
+
+  openNotificationsFromMenu(): void {
+    this.closeMobileMenu();
+    this.showSearch = false;
+    this.showNotifications = true;
+  }
+
+  toggleSearch(): void {
+    this.showMobileMenu = false;
+    this.showNotifications = false;
+    this.showSearch = !this.showSearch;
+  }
+
+  toggleNotifications(): void {
+    this.showMobileMenu = false;
+    this.showSearch = false;
+    this.showNotifications = !this.showNotifications;
+  }
+
+  closePanels(): void {
+    this.showSearch = false;
+    this.showNotifications = false;
+    this.showMobileMenu = false;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.closePanels();
+  }
+
+  openProfile(): void {
+    const id = this.userData?._id || this.session.userId;
+
+    if (id) {
+      this.go(`/userProfile/${id}`);
     }
   }
 
-  closeTap(data: any, id: any) {
-    if (id == 'search') {
-      this.closeSearch = data;
-    } else if (id == 'message') {
-      this.closeMessage = data;
-    } else if (id == 'notification') {
-      this.closeNotification = data;
-    }
+  logout(): void {
+    this.showMobileMenu = false;
+    this.socket.disconnect();
+    this.auth.logout();
+
+    void this.router.navigate(['/login']);
   }
 
-  closeAllTaps(tap: any) {
-    this._Route.navigate([`/userProfile/${this.userData._id}`]);
-
-    this.tap = tap;
-    this.closeNotification = true;
-    this.closeMessage = true;
-    this.closeSearch = true;
-  }
-
-  hideNavs() {
-    this.hide = true;
-  }
-
-  tapClick(tapName: String) {
-    if (tapName == 'Home') {
-      this.closeAllTaps(tapName);
-      this.closeEX();
-    } else if (tapName == 'Explore') {
-      this.closeAllTaps(tapName);
-      this.closeEX();
-    } else if (tapName == 'Reels') {
-      this.closeAllTaps(tapName);
-      this.closeEX();
-    } else if (tapName == 'Profile') {
-      this.closeAllTaps(tapName);
-      this.closeEX();
-    } else if (tapName == 'Message') {
-      this.openSidePage(tapName);
-      this.closeEX();
-    }
-  }
-
-  openChat(data: any) {
-    this.closeAllTaps('');
-    this.tap = 'Message';
-    if (data == 'closeTaps') {
-      this.ChatComponent.chat = null;
-    }
-  }
-
-  logOut() {
-    localStorage.removeItem('userToken');
-    this._Route.navigate(['/register']);
-  }
-  toProfile() {
-    this.tap = 'Profile';
-
-    this.closeNotification = true;
-    this.closeMessage = true;
-    this.closeSearch = true;
-  }
-  openN(data: any) {
-
-    if (data.type == 'chat') {
-      this.openChat('');
-    } else if (data.type == 'post') {
-      this.tap = 'Home'
-      this.HomeComp.openPostN(data.redirect)
-    } else if (data.type == 'story') {
-      let user = this.userData.following.filter((user: any) => user._id == data.data._id)
-
-      this.HomeComp.openStoryN(user[0])
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -1,4 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -36,7 +37,6 @@ import { HelpComponent } from './settingTapComponent/help/help.component';
 import { QnotificationsComponent } from './repeated/qnotifications/qnotifications.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegesterComponent } from './components/regester/regester.component';
-import { CarouselModule } from 'ngx-owl-carousel-o';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -55,10 +55,10 @@ import { YourCollectionsComponent } from './repeated/your-collections/your-colle
 import { AddStoryComponent } from './components/add-story/add-story.component';
 import { PostTimePipe } from './pipes/post-time.pipe';
 import { InstaLoadingComponent } from './repeated/insta-loading/insta-loading.component';
-import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { SLoadingComponent } from './components/sloading/sloading.component';
-import { GraphQLModule } from './graphql.module'; // Import SlickCarouselModule
 import { LazyLoadDirective } from './Directive/lazy-load.directive';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { ApiErrorInterceptor } from './core/interceptors/api-error.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -113,14 +113,10 @@ LazyLoadDirective
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    CarouselModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
     SocialLoginModule,
-    BrowserAnimationsModule,
-    SlickCarouselModule,
-    GraphQLModule
   ],
   providers: [
     {
@@ -144,8 +140,8 @@ LazyLoadDirective
         }
       } as SocialAuthServiceConfig,
     },
-    MessageComponent,
-    HomeComponent
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ApiErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

@@ -1,469 +1,1037 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  ElementRef,
   HostListener,
-  Renderer2,
-  Directive,
-  Input,
-  Output,
-  EventEmitter,
-  SimpleChanges,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
-import { SharingService } from 'src/app/services/sharing.service';
-import { OwlOptions } from 'ngx-owl-carousel-o';
-import { UserService } from 'src/app/services/user.service';
-import { PostsService } from 'src/app/services/posts.service';
-import { SocketService } from 'src/app/services/socket.service';
-import { NavComponent } from '../nav/nav.component';
-import { DisplaypostsComponent } from 'src/app/repeated/displayposts/displayposts.component';
+
+import { Router } from '@angular/router';
+
+import {
+  Subject,
+  finalize,
+  takeUntil,
+} from 'rxjs';
+
+import {
+  ContentItem,
+  CurrentUser,
+} from '../../core/models/api.models';
+
+import { SharingService } from '../../services/sharing.service';
+import { UserService } from '../../services/user.service';
+import { PostsService } from '../../services/posts.service';
+import { SocketService } from '../../services/socket.service';
+
+type FeedMedia = {
+  url: string;
+  type: 'image' | 'video';
+};
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {
-  slickConfig = {
-    autoplay: true,
-    autoplaySpeed: 2000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
-    dots: true,
-    infinite: false,
+export class HomeComponent implements OnInit, OnDestroy {
+  /* =====================================================
+     FEED STATE
+  ===================================================== */
 
-  };
+  posts: ContentItem[] = [];
 
-  customOptions: OwlOptions = {
-    loop: false,
-    mouseDrag: true,
-    touchDrag: true,
-    pullDrag: false,
-    dots: false,
-    navSpeed: 700,
-    navText: ['', ''],
-    autoWidth: true,   // << تفعيل
-    margin: 6,
-    responsive: {
-      0: { items: 2 },
-      400: { items: 2 },
-      740: { items: 3 },
-      940: { items: 9 },
-    },
-    nav: false,
-  };
-  @Output() visitProfile: EventEmitter<any> = new EventEmitter<any>();
-  posts: any[] = [];
-  page = 1;
-  limit = 5;
-  loading = false;
-  hasMore = true;
   postNavigationStates: number[] = [];
 
-  saved: any[] = [];
-  num: any = 1;
-  userData: any;
-  displayPost: any;
-  uploadFilesData: any;
-  uploadStoryData: any;
-  ifUploadStory: Boolean = false;
-  instaLoading: Boolean = false;
-  option: Boolean = false;
-  comment: any = '';
-  constructor(
-    private elementRef: ElementRef,
-    private _sharing: SharingService,
-    private _user: UserService,
-    private _post: PostsService,
-    private _socket: SocketService,
+  userData: CurrentUser | null = null;
 
-  ) {
-    if (window.innerWidth >= 767) {
-      this.marginSize = 80;
-      this.widthSize = 8;
-    } else {
-      this.marginSize = 90;
-      this.widthSize = 4;
-    }
-    this.instaLoading = true;
+  savedIds = new Set<string>();
 
-  }
-  showDiv: boolean = false;
-  mouseX: number = 0;
-  mouseY: number = 0;
-  divTop: string = '0';
-  divLeft: string = '0';
-  storyOpened: Boolean = false;
-  widthSize: any;
-  marginSize: any;
+  page = 1;
+
+  readonly limit = 8;
+
+  readonly currentYear = new Date().getFullYear();
+
+  loading = false;
+
+  hasMore = true;
+
+  instaLoading = true;
+
+  feedError: string | null = null;
+
+  /* =====================================================
+     STORIES STATE
+  ===================================================== */
+
+  storyOpened = false;
+
   storyData: any;
-  hoverData: any;
+
+  uploadFilesData: File | null = null;
+
+  uploadStoryData: any;
+
+  storyUploadError: string | null = null;
+
+  option = false;
+
+  /* =====================================================
+     POST DETAILS
+  ===================================================== */
+
+  displayPost?: ContentItem;
+
+  commentDrafts: Record<string, string> = {};
+
+  postMessages: Record<string, string> = {};
+
+  /* =====================================================
+     REQUEST STATE
+  ===================================================== */
+
+  private readonly likeInFlight = new Set<string>();
+
+  private readonly saveInFlight = new Set<string>();
+
+  private readonly commentInFlight = new Set<string>();
+
+  private readonly destroy$ = new Subject<void>();
+
+  constructor(
+    private readonly sharing: SharingService,
+    private readonly user: UserService,
+    private readonly postsService: PostsService,
+    private readonly socket: SocketService,
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
+
+  /* =====================================================
+     LIFECYCLE
+  ===================================================== */
 
   ngOnInit(): void {
+    /*
+     * Current user
+     */
+    this.sharing.currentUserData
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.userData = user;
 
-    this._sharing.currentUserData.subscribe((data: any) => {
-      if (data) {
-        console.log(data);
-        if (data._id) {
-          this.userData = data;
-          
-          this.loadPosts();
-          this.instaLoading = false
+
+        if (!user?._id) {
+          this.cdr.markForCheck();
+          return;
         }
+
+        if (!this.posts.length && !this.loading) {
+          this.loadPosts();
+        }
+
+        this.cdr.markForCheck();
+      });
+
+    /*
+     * Saved posts
+     */
+    this.sharing.currentSaved
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((saved) => {
+        const items = saved?.items ?? [];
+
+        this.savedIds = new Set(
+          items.map((item) => String(item._id)),
+        );
+
+        this.cdr.markForCheck();
+      });
+
+    /*
+     * Keep the project's existing saved-content refresh.
+     */
+    this.sharing.updateSaved(false);
+  }
+
+  /* =====================================================
+     STORIES
+  ===================================================== */
+
+  /**
+   * Groups stories by their owner.
+   *
+   * The current user's stories are excluded here because
+   * the first card already represents the current user.
+   */
+  get storyUsers(): any[] {
+    const stories = this.userData?.stories ?? [];
+
+    const groupedStories = new Map<string, any>();
+
+    for (const story of stories) {
+      const owner = story?.createdBy;
+
+      const id = owner?._id ?? owner;
+
+      if (!id) {
+        continue;
       }
 
+      const key = String(id);
 
-    });
-    // this._sharing.updateSaved();
-    // this._sharing.currentSaved.subscribe((data: any) => {
-    //   this.saved = data.saved;
-    // });
+      if (!groupedStories.has(key)) {
+        const ownerData =
+          owner && typeof owner === 'object'
+            ? owner
+            : { _id: id };
 
+        groupedStories.set(key, {
+          ...ownerData,
+          _id: id,
+          stories: [],
+        });
+      }
+
+      groupedStories.get(key).stories.push(story);
+    }
+
+    const currentUserId = this.userData?._id;
+
+    return [...groupedStories.values()]
+      .filter(
+        (entry) =>
+          String(entry._id) !== String(currentUserId),
+      )
+      .map((entry) => ({
+        ...entry,
+        userName: entry.userName || 'Instagram user',
+      }));
   }
-  loadPosts() {
-    if (this.loading || !this.hasMore) return;
+
+  /**
+   * Open an existing story group.
+   */
+  openStory(data: any): void {
+    if (!Array.isArray(data?.stories) || !data.stories.length) {
+      return;
+    }
+
+    this.option = false;
+    this.storyData = data;
+    this.storyOpened = true;
+
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Close the story viewer and release locally created
+   * object URLs used for an uploaded preview.
+   */
+  closeStory(): void {
+    this.releaseUploadPreview();
+
+    this.uploadStoryData = undefined;
+    this.uploadFilesData = null;
+    this.storyData = undefined;
+    this.storyOpened = false;
+    this.option = false;
+
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Upload a local image or video for a story preview.
+   */
+  uploadStory(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    const file = input.files?.[0];
+
+    /*
+     * Reset the input so the same file can be selected again.
+     */
+    input.value = '';
+
+    if (!file) {
+      return;
+    }
+
+    this.storyUploadError = null;
+
+    const isImage = file.type.startsWith('image/');
+
+    const isVideo = file.type.startsWith('video/');
+
+    if (!isImage && !isVideo) {
+      this.storyUploadError =
+        'Please select a valid image or video file.';
+
+      this.cdr.markForCheck();
+      return;
+    }
+
+    /*
+     * Prevent an older local preview URL from being retained.
+     */
+    this.releaseUploadPreview();
+
+    this.uploadFilesData = file;
+
+    const objectUrl = URL.createObjectURL(file);
+
+    if (isImage) {
+      this.uploadStoryData = {
+        Src: objectUrl,
+        type: 'image',
+      };
+
+      this.storyOpened = true;
+
+      this.cdr.markForCheck();
+      return;
+    }
+
+    /*
+     * Read video metadata before opening the story viewer.
+     */
+    const video = document.createElement('video');
+
+    video.preload = 'metadata';
+
+    video.onloadedmetadata = () => {
+      video.onloadedmetadata = null;
+      video.onerror = null;
+
+      const duration =
+        Number.isFinite(video.duration) && video.duration > 0
+          ? Math.min(video.duration, 30)
+          : 5;
+
+      this.uploadStoryData = {
+        Src: objectUrl,
+        type: 'video',
+        duration,
+      };
+
+      this.storyOpened = true;
+
+      /*
+       * Release the temporary metadata element.
+       * The object URL remains available to the story viewer.
+       */
+      video.removeAttribute('src');
+      video.load();
+
+      this.cdr.markForCheck();
+    };
+
+    video.onerror = () => {
+      video.onloadedmetadata = null;
+      video.onerror = null;
+
+      URL.revokeObjectURL(objectUrl);
+
+      this.uploadFilesData = null;
+      this.uploadStoryData = undefined;
+
+      video.removeAttribute('src');
+      video.load();
+
+      this.storyUploadError =
+        'The selected video could not be opened. Try another video.';
+
+      this.cdr.markForCheck();
+    };
+
+    video.src = objectUrl;
+  }
+
+  /**
+   * Revoke only the temporary URL created by this component.
+   */
+  private releaseUploadPreview(): void {
+    const url = this.uploadStoryData?.Src;
+
+    if (
+      this.uploadFilesData &&
+      typeof url === 'string' &&
+      url.startsWith('blob:')
+    ) {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  /* =====================================================
+     FEED / PAGINATION
+  ===================================================== */
+
+  loadPosts(force = false): void {
+    if (this.loading) {
+      return;
+    }
+
+    if (!this.hasMore && !force) {
+      return;
+    }
+
+    /*
+     * A failed request should not be retried on every scroll.
+     * The user can explicitly retry instead.
+     */
+    if (this.feedError && !force) {
+      return;
+    }
 
     this.loading = true;
+    this.feedError = null;
 
-    this._user.getPostsBasedOnSocialNetwork(this.page, this.limit).subscribe((res: any) => {
+    this.cdr.markForCheck();
 
-      this.posts.push(...res.posts);
-      this.hasMore = res.hasMore;
-      this.loading = false;
+    this.user
+      .getFeed(this.page, this.limit)
+      .pipe(
+        takeUntil(this.destroy$),
 
-      this.page++;
-      console.log(this.posts);
-    });
+        finalize(() => {
+          this.loading = false;
+          this.instaLoading = false;
+
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response?.success || !response.data) {
+            this.feedError =
+              'The server did not return the expected feed data.';
+
+            this.cdr.markForCheck();
+            return;
+          }
+
+          const data = response.data;
+
+          const incomingItems: ContentItem[] =
+            Array.isArray(data.items)
+              ? data.items
+              : [];
+
+          /*
+           * Avoid duplicate posts when loading another page.
+           */
+          const existingIds = new Set(
+            this.posts.map((item) => String(item._id)),
+          );
+
+          const newItems = incomingItems.filter(
+            (item) => !existingIds.has(String(item._id)),
+          );
+
+          this.posts = [...this.posts, ...newItems];
+
+          /*
+           * Prefer the backend's pagination metadata.
+           * Fall back to the number of received items.
+           */
+          this.hasMore =
+            typeof data.hasMore === 'boolean'
+              ? data.hasMore
+              : incomingItems.length >= this.limit;
+
+          const currentPage =
+            typeof data.page === 'number'
+              ? data.page
+              : this.page;
+
+          this.page = currentPage + 1;
+
+          this.initPostNavigationStates();
+
+          this.feedError = null;
+
+          this.cdr.markForCheck();
+          console.log(
+  this.posts
+
+);
+        },
+
+        error: () => {
+          this.feedError =
+            'Check your connection and try loading the feed again.';
+
+          this.cdr.markForCheck();
+        },
+      });
   }
-  trackById(index: number, post: any) {
-    return post._id || index;
-  }
-  @HostListener("window:scroll", [])
-  onScroll() {
-    const bottom =
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
 
-    if (bottom) {
+  retryFeed(): void {
+    this.feedError = null;
+
+    this.loadPosts(true);
+  }
+
+  /**
+   * Infinite scroll.
+   */
+  @HostListener('window:scroll')
+  onScroll(): void {
+    if (this.storyOpened || this.displayPost) {
+      return;
+    }
+
+    const scrollPosition =
+      window.innerHeight + window.scrollY;
+
+    const pageHeight =
+      document.documentElement.scrollHeight;
+
+    if (scrollPosition >= pageHeight - 650) {
       this.loadPosts();
     }
   }
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['posts']) {
-      this.initPostNavigationStates();
+
+  /* =====================================================
+     MEDIA
+  ===================================================== */
+
+  /**
+   * Preserve carousel positions while new feed items arrive.
+   */
+  initPostNavigationStates(): void {
+    this.postNavigationStates = this.posts.map(
+      (post, index) => {
+        const mediaCount =
+          post.type === 'reel'
+            ? 1
+            : post.postsImgAndVideos?.length || 1;
+
+        const oldIndex =
+          this.postNavigationStates[index] ?? 0;
+
+        return Math.min(
+          Math.max(oldIndex, 0),
+          mediaCount - 1,
+        );
+      },
+    );
+  }
+
+  getCurrentMedia(
+    post: ContentItem,
+    index: number,
+  ): FeedMedia | undefined {
+    if (post.type === 'reel') {
+      return post.url
+        ? {
+            url: post.url,
+            type: 'video',
+          }
+        : undefined;
     }
+
+    const mediaIndex =
+      this.postNavigationStates[index] ?? 0;
+
+    const media = post.postsImgAndVideos?.[
+      mediaIndex
+    ] as
+      | {
+          url?: string;
+          type?: string;
+        }
+      | undefined;
+
+    if (!media?.url) {
+      return undefined;
+    }
+
+    return {
+      url: media.url,
+      type: media.type === 'video' ? 'video' : 'image',
+    };
   }
-  toUser(id: any) {
-    // this._nav.tap = 'Profile'
-    // this._Displayposts.closePost()
-    this.toProfile('Profile')
-    this._sharing.toUser(id)
-  }
-  initPostNavigationStates() {
-    if (!Array.isArray(this.posts)) {
-      this.postNavigationStates = [];
+
+  toggleValue(index: number, next: number): void {
+    const post = this.posts[index];
+
+    if (!post || post.type === 'reel') {
       return;
     }
-    const old = this.postNavigationStates;
-    this.postNavigationStates = this.posts.map((p, idx) => {
-      if (old && typeof old[idx] === 'number' && old[idx] >= 0) {
-        const len = (p?.postsImgAndVideos?.length) || 0;
-        if (len === 0) return 0;
-        return Math.min(old[idx], len - 1);
-      }
-      return 0;
-    });
-  }
 
-  getCurrentMedia(post: any, index: number) {
-    const navIndex = this.postNavigationStates?.[index] ?? 0;
-    const medias = post?.postsImgAndVideos || [];
-    if (!Array.isArray(medias) || medias.length === 0) return null;
-    const idx = Math.max(0, Math.min(navIndex, medias.length - 1));
-    return medias[idx];
-  }
+    const length =
+      post.postsImgAndVideos?.length ?? 0;
 
-  toggleValue(index: number, newValue: number) {
-    const medias = this.posts?.[index]?.postsImgAndVideos;
-    const len = Array.isArray(medias) ? medias.length : 0;
-    if (len === 0) return;
-
-    const wrapped = ((newValue % len) + len) % len;
-    this.postNavigationStates[index] = wrapped;
-  }
-
-  onImgError(event: Event) {
-    const img = event.target as HTMLImageElement;
-    img.src = './assets/imgs/placeholder.png';
-    img.classList.add('img-error');
-  }
-
-  trackByPostId(index: number, item: any) {
-    return item?._id ?? index;
-  }
-
-
-  onMouseMove(event: MouseEvent) {
-    this.mouseX = event.clientX;
-    this.mouseY = event.clientY;
-    this.divTop = `${event.clientY}px`;
-    this.divLeft = `${event.clientX - 60}px`;
-  }
-  mouseleave(event: any) {
-    const relatedTargetName = (event.relatedTarget as HTMLElement).id;
-
-    if (relatedTargetName != 'dataWhenHover') {
-      this.showDiv = false;
+    if (length < 2) {
+      return;
     }
+
+    this.postNavigationStates[index] =
+      ((next % length) + length) % length;
+
+    this.cdr.markForCheck();
   }
-  mouseEnter(data: any) {
-    this.showDiv = true;
-    this.hoverData = data;
+
+  /* =====================================================
+     PROFILE NAVIGATION
+  ===================================================== */
+
+  toUser(id: string | undefined | null): void {
+    if (!id) {
+      return;
+    }
+
+    void this.router.navigate(['/userProfile', id]);
   }
-  hideDiv() {
-    this.showDiv = false;
+
+  /* =====================================================
+     LIKE
+  ===================================================== */
+
+  isLikePending(item: ContentItem): boolean {
+    return this.likeInFlight.has(String(item._id));
   }
-  ngAfterViewInit() {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.5,
+
+  like(item: ContentItem): void {
+    const id = String(item._id);
+
+    if (
+      !this.userData?._id ||
+      this.likeInFlight.has(id)
+    ) {
+      return;
+    }
+
+    const before = {
+      liked: Boolean(item.viewerLiked),
+      count: Number(item.likesCount ?? 0),
     };
 
-    const video = this.elementRef.nativeElement.querySelector('video');
+    /*
+     * Optimistic UI update.
+     */
+    item.viewerLiked = !before.liked;
 
-    if (video) {
-      const callback = (entries: any) => {
-        entries.forEach((entry: any) => {
-          if (entry.isIntersecting) {
-            video.play();
-          } else {
-            video.pause();
+    item.likesCount = Math.max(
+      0,
+      before.count + (item.viewerLiked ? 1 : -1),
+    );
+
+    this.likeInFlight.add(id);
+    delete this.postMessages[id];
+
+    this.cdr.markForCheck();
+
+    this.postsService
+      .like(item._id, item.type)
+      .pipe(
+        takeUntil(this.destroy$),
+
+        finalize(() => {
+          this.likeInFlight.delete(id);
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response?.success || !response.data) {
+            item.viewerLiked = before.liked;
+            item.likesCount = before.count;
+
+            this.postMessages[id] =
+              'Your like could not be saved. Please try again.';
+
+            this.cdr.markForCheck();
+            return;
           }
-        });
-      };
 
-      const observer = new IntersectionObserver(callback, options);
-      observer.observe(video);
-    } else {
-      console.error('Video element not found.');
-    }
-  }
+          item.viewerLiked = response.data.liked;
 
-  openStory(data: any) {
-    if (data.stories.length != 0) {
-      this.storyOpened = true;
-      this.storyData = data;
-    }
-  }
-  closeStory() {
-    this.storyOpened = false;
-    this.storyData = null;
-  }
+          item.likesCount = response.data.likesCount;
 
-  uploadStory(event: any) {
-    const file = event.target.files[0];
-    this.uploadFilesData = file;
+          /*
+           * Notify the post owner when another user likes it.
+           */
+          const ownerId = item.createdBy?._id;
 
-    if (file.type.startsWith('video/')) {
-      const video = document.createElement('video');
-      video.preload = 'metadata';
-
-      video.onloadedmetadata = () => {
-        let duration = video.duration;
-
-        if (duration > 30) {
-          console.log(
-            `Video ${file.name} is longer than 30 seconds. Truncating to 30 seconds.`
-          );
-          duration = 30;
-        }
-
-        const story: any = {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          duration: duration,
-        };
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event: any) => {
-          let data = {
-            Src: event.target.result,
-            type: file.type.split('/')[0],
-            duration: duration,
-          };
-          this.uploadStoryData = data;
-          this.storyOpened = !this.storyOpened;
-        };
-      };
-
-      video.src = URL.createObjectURL(file);
-    } else if (file.type.startsWith('image/')) {
-      const story: any = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      };
-
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event: any) => {
-        let data = {
-          Src: event.target.result,
-          type: file.type.split('/')[0],
-        };
-        this.uploadStoryData = data;
-
-        this.storyOpened = !this.storyOpened;
-      };
-    }
-  }
-  toProfile(data: any) {
-    this.visitProfile.emit(data);
-  }
-
-  like(item: any, index: any) {
-    if (item.postsImgAndVideos) {
-      let data = {
-        type: 'post',
-        _id: this.posts[index]._id,
-      };
-      this._post.like(data).subscribe((data: any) => {
-        if (data.message == 'added') {
-          this.posts[index].likes.push(this.userData._id);
-
-          this._socket.emit('notification', {
-            eventName: 'like',
-            type: 'post',
-            data: this.userData._id,
-            redirect: this.posts[index]._id,
-            to: this.posts[index].createdBy._id,
-          });
-        } else {
-          this.posts[index].likes = this.posts[index].likes.filter(
-            (element: any) => element !== this.userData._id
-          );
-        }
-      });
-    } else {
-      let data = {
-        _id: item._id,
-        type: 'reel',
-      };
-      this._post.like(data).subscribe((data: any) => {
-        if (data.success) {
-          this.posts[index].likes = data.newItem.likes;
-        }
-      });
-    }
-  }
-  savePost(item: any, index: any) {
-
-if (this.userData.savedPosts.includes(item._id)) {
-this.userData.savedPosts = this.userData.savedPosts.filter(
-  (id:any) => id !== item._id
-);
-}else{
-      this.userData.savedPosts.push(item._id)
-}
-  
-      let data = {
-        postId: item._id,
-  ref: item.type.charAt(0).toUpperCase() + item.type.slice(1),
-      };
-      console.log(data);
-      
-      this._user.savePost(data).subscribe((data: any) => {
-        if (data.success) {
-          this._sharing.updateSaved();
-        }
-      });
-   
-  }
-  addComment(item: any, index: any) {
-    if (item.postsImgAndVideos) {
-      let data = {
-        type: 'post',
-        _id: this.posts[index]._id,
-        comment: this.comment,
-      };
-      this._post.addComment(data).subscribe((data: any) => {
-        if (data.success) {
-          this._post
-            .getPostById(this.posts[index]._id)
-            .subscribe((data: any) => {
-              this.posts[index] = data.post;
-              this.comment = '';
+          if (
+            response.data.liked &&
+            ownerId &&
+            String(ownerId) !== String(this.userData?._id)
+          ) {
+            this.socket.emit('notification', {
+              eventName: 'like',
+              type: item.type,
+              data: this.userData?._id,
+              to: ownerId,
+              redirect: item._id,
             });
-          this._socket.emit('notification', {
-            eventName: 'comment',
-            type: 'post',
-            data: this.userData._id,
-            redirect: this.posts[index]._id,
-            to: this.posts[index].createdBy._id,
-          });
-        }
+          }
+
+          this.cdr.markForCheck();
+        },
+
+        error: () => {
+          item.viewerLiked = before.liked;
+          item.likesCount = before.count;
+
+          this.postMessages[id] =
+            'Unable to update your like. Try again.';
+
+          this.cdr.markForCheck();
+        },
       });
+  }
+
+  /* =====================================================
+     SAVE / UNSAVE
+  ===================================================== */
+
+  isSavePending(item: ContentItem): boolean {
+    return this.saveInFlight.has(String(item._id));
+  }
+
+  isPostSaved(item: ContentItem): boolean {
+    return this.savedIds.has(String(item._id));
+  }
+
+  savePost(item: ContentItem): void {
+    const id = String(item._id);
+
+    if (
+      !this.userData?._id ||
+      this.saveInFlight.has(id)
+    ) {
+      return;
+    }
+
+    const wasSaved = this.savedIds.has(id);
+
+    /*
+     * Optimistic UI update.
+     */
+    if (wasSaved) {
+      this.savedIds.delete(id);
     } else {
-      let data = {
-        comment: this.comment,
-        _id: this.posts[index]._id,
-        type: 'reel',
-      };
-      this._post.addComment(data).subscribe((data: any) => {
-        if (data.success) {
-          this.posts[index] = data.post;
-          this.comment = '';
-        }
+      this.savedIds.add(id);
+    }
+
+    this.saveInFlight.add(id);
+    delete this.postMessages[id];
+
+    this.cdr.markForCheck();
+
+    const contentType =
+      item.type === 'reel' ? 'Reel' : 'Post';
+
+    this.user
+      .savePost(item._id, contentType)
+      .pipe(
+        takeUntil(this.destroy$),
+
+        finalize(() => {
+          this.saveInFlight.delete(id);
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response?.success) {
+            this.restoreSavedState(id, wasSaved);
+
+            this.postMessages[id] =
+              'Unable to update saved posts. Try again.';
+
+            this.cdr.markForCheck();
+            return;
+          }
+
+          const saved =
+            response.data?.saved ?? !wasSaved;
+
+          /*
+           * Keep the shared saved-content state synchronized.
+           */
+          this.sharing.upsertSavedLocally(item, saved);
+
+          this.cdr.markForCheck();
+        },
+
+        error: () => {
+          this.restoreSavedState(id, wasSaved);
+
+          this.postMessages[id] =
+            'Unable to update saved posts. Check your connection.';
+
+          this.cdr.markForCheck();
+        },
       });
+  }
+
+  private restoreSavedState(
+    id: string,
+    wasSaved: boolean,
+  ): void {
+    if (wasSaved) {
+      this.savedIds.add(id);
+    } else {
+      this.savedIds.delete(id);
     }
   }
-isPostSaved(postId: string, type: 'post' | 'reel'): boolean {
-  const id = String(postId);
-if (type =='post') {
-  
-  const savedPosts = (this.userData?.savedPosts || []).map((p: any) =>
-    typeof p === 'string' ? p : (p._id ? String(p._id) : String(p))
-  
-);
-return savedPosts.includes(id);
-}else{
 
-  const savedReels = (this.userData?.savedReels || []).map((r: any) =>
-    typeof r === 'string' ? r : (r._id ? String(r._id) : String(r))
-  );
-  return savedReels.includes(id);
-}
+  /* =====================================================
+     COMMENTS
+  ===================================================== */
 
-
-
-}
-  openPost(post: any) {
-    console.log(post);
-    let type:any
-    if (post.postsImgAndVideos) {
-      type = 'post'
-    }else{
-      type = 'reel'
-    }
-    post.isSaved = this.isPostSaved(post._id,type)
-    console.log(post);
-    
-    this.displayPost = post;
+  isCommentPending(item: ContentItem): boolean {
+    return this.commentInFlight.has(String(item._id));
   }
-  openPostN(id: any) {
-    this._post.getPostById(id).subscribe((data: any) => {
-      this.openPost(data.post);
+
+  addComment(item: ContentItem): void {
+    const id = String(item._id);
+
+    const text = (
+      this.commentDrafts[id] ?? ''
+    ).trim();
+
+    if (
+      !text ||
+      !this.userData?._id ||
+      this.commentInFlight.has(id)
+    ) {
+      return;
+    }
+
+    this.commentInFlight.add(id);
+    delete this.postMessages[id];
+
+    this.cdr.markForCheck();
+
+    this.postsService
+      .addComment(item._id, item.type, text)
+      .pipe(
+        takeUntil(this.destroy$),
+
+        finalize(() => {
+          this.commentInFlight.delete(id);
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response?.success || !response.data) {
+            this.postMessages[id] =
+              'Your comment could not be posted. Please try again.';
+
+            this.cdr.markForCheck();
+            return;
+          }
+
+          item.commentsCount =
+            response.data.commentsCount ??
+            (item.commentsCount ?? 0) + 1;
+
+          /*
+           * Keep the draft if it somehow changed during
+           * the request.
+           */
+          if ((this.commentDrafts[id] ?? '').trim() === text) {
+            this.commentDrafts[id] = '';
+          }
+
+          const ownerId = item.createdBy?._id;
+
+          if (
+            ownerId &&
+            String(ownerId) !== String(this.userData?._id)
+          ) {
+            this.socket.emit('notification', {
+              eventName: 'comment',
+              type: item.type,
+              data: this.userData?._id,
+              to: ownerId,
+              redirect: item._id,
+            });
+          }
+
+          this.cdr.markForCheck();
+        },
+
+        error: () => {
+          this.postMessages[id] =
+            'Unable to post your comment. Please try again.';
+
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  /* =====================================================
+     SHARE
+  ===================================================== */
+
+  async sharePost(item: ContentItem): Promise<void> {
+    const id = String(item._id);
+
+    const postText = item.caption
+      ? `${item.createdBy?.userName || 'Instagram user'}: ${item.caption}`
+      : `Post by ${item.createdBy?.userName || 'Instagram user'}`;
+
+    const url = window.location.href;
+
+    delete this.postMessages[id];
+
+    try {
+      if (typeof navigator.share === 'function') {
+        await navigator.share({
+          title: 'Share post',
+          text: postText,
+          url,
+        });
+
+        this.postMessages[id] = 'Share action completed.';
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(
+          `${postText}\n\n${url}`,
+        );
+
+        this.postMessages[id] =
+          'Post text and page link copied to the clipboard.';
+      } else {
+        this.postMessages[id] =
+          'Sharing is not supported by this browser.';
+      }
+    } catch (error) {
+      const errorName =
+        (error as DOMException | undefined)?.name;
+
+      /*
+       * Canceling the native share dialog is not an error
+       * that should be shown to the user.
+       */
+      if (errorName !== 'AbortError') {
+        this.postMessages[id] =
+          'Unable to share this post from the current browser.';
+      }
+    } finally {
+      this.cdr.markForCheck();
+    }
+  }
+
+  /* =====================================================
+     POST DETAILS MODAL
+  ===================================================== */
+
+  openPost(item: ContentItem): void {
+    this.option = false;
+    this.displayPost = item;
+
+    this.cdr.markForCheck();
+  }
+
+  closePost(): void {
+    this.displayPost = undefined;
+
+    this.cdr.markForCheck();
+  }
+
+  /* =====================================================
+     IMAGE FALLBACK
+  ===================================================== */
+
+  onImgError(event: Event): void {
+    const image = event.target as HTMLImageElement;
+
+    /*
+     * Avoid retrying the fallback indefinitely if the
+     * placeholder asset itself is missing.
+     */
+    if (image.dataset['fallbackApplied'] === 'true') {
+      image.style.visibility = 'hidden';
+      return;
+    }
+
+    image.dataset['fallbackApplied'] = 'true';
+
+    image.src = './assets/imgs/placeholder.png';
+  }
+
+  /* =====================================================
+     TRACK BY
+  ===================================================== */
+
+  trackById(
+    _: number,
+    item: ContentItem,
+  ): string {
+    return String(item._id);
+  }
+
+  trackByStory(
+    _: number,
+    item: any,
+  ): string {
+    return String(item._id);
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  /* =====================================================
+     KEYBOARD
+  ===================================================== */
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    if (this.storyOpened) {
+      this.closeStory();
+      return;
+    }
+
+    if (this.displayPost) {
+      this.closePost();
+      return;
+    }
+
+    if (this.option) {
+      this.option = false;
+      this.cdr.markForCheck();
+    }
+  }
+  openMedia(item: ContentItem, event?: Event): void {
+    event?.stopPropagation();
+
+    if (item.type === 'reel') {
+      this.openReel(item);
+      return;
+    }
+
+    this.openPost(item);
+  }
+
+  openReel(item: ContentItem): void {
+    void this.router.navigate(['/reels'], {
+      state: {
+        focusReelId: String(item._id),
+        focusReel: item,
+      },
     });
   }
-  openStoryN(data: any) {
-    setTimeout(() => {
-      this.storyOpened = true;
-      console.log(this.storyOpened);
 
-      this.storyData = this.userData;
-    }, 200);
+
+  /* =====================================================
+     CLEANUP
+  ===================================================== */
+
+  ngOnDestroy(): void {
+    this.releaseUploadPreview();
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
-
 }

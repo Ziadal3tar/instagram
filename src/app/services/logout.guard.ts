@@ -1,13 +1,9 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { SessionService } from '../core/services/session.service';
 
-export const logoutGuard: CanActivateFn = (route, state) => {
-  const _Router = inject(Router);
-
-  if (localStorage.getItem("userToken") == null) {
-    return true;
-  }else{
-    _Router.navigate([`/home`]);
-    return false;
-  }
+export const logoutGuard: CanActivateFn = () => {
+  const router = inject(Router);
+  const session = inject(SessionService);
+  return session.hasToken() ? router.createUrlTree(['/home']) : true;
 };

@@ -1,20 +1,81 @@
-<div class="d-flex justify-content-center w-100 yourCollections">
-  <div class=" col-12 col-md-6 col-lg-7 position-relative row m-0 rounded-2 scrollStyle "
-    style="height: 80vh; background-color: #262626;">
-    <!-- <div class="w-100 d-flex align-items-center justify-content-between position-fixed top-0 py-3">
-      <i class="close bi bi-x-lg  m-2 cursorPointer" (click)="closeCollections()"></i>
+<div class="collection-picker-backdrop" role="presentation" (click)="closeCollections()">
+  <section
+    class="collection-picker"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="collection-picker-title"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="collection-picker__header">
+      <div class="collection-picker__heading">
+        <span class="collection-picker__eyebrow">ORGANIZE YOUR SAVED POSTS</span>
+        <h2 id="collection-picker-title">Save to collection</h2>
+        <p>Choose a collection for this post.</p>
+      </div>
+      <button
+        type="button"
+        class="collection-picker__close"
+        aria-label="Close collection picker"
+        title="Close"
+        [disabled]="saving"
+        (click)="closeCollections()"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
 
-      <button class="  btn btn-light m-0 " (click)="save()" [disabled]="!collectionSelected">Save</button>
+    <p class="collection-picker__error" *ngIf="errorMessage" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorMessage }}</span>
+    </p>
 
+    <div class="collection-picker__list" *ngIf="collections?.length; else emptyCollections">
+      <button
+        type="button"
+        class="collection-option"
+        *ngFor="let collection of collections; trackBy: trackById"
+        [class.selected]="collectionSelected === getId(collection)"
+        [attr.aria-pressed]="collectionSelected === getId(collection)"
+        [disabled]="saving"
+        (click)="select($event, collection)"
+      >
+        <span class="collection-option__icon">
+          <i class="bi bi-folder2-open" aria-hidden="true"></i>
+        </span>
+        <span class="collection-option__copy">
+          <strong>{{ collection.collectionName || 'Untitled collection' }}</strong>
+          <small>{{ collection.saved?.length || 0 }} {{ (collection.saved?.length || 0) === 1 ? 'saved post' : 'saved posts' }}</small>
+        </span>
+        <span class="collection-option__check" aria-hidden="true">
+          <i class="bi bi-check-lg"></i>
+        </span>
+      </button>
+    </div>
 
-    </div> -->
-    <!-- <div *ngFor="let item of collections"
-      class=" col-lg-4 col-md-8 col-12 align-items-center my-3 position-relative row m-0">
+    <ng-template #emptyCollections>
+      <div class="collection-picker__empty">
+        <span class="collection-picker__empty-icon"><i class="bi bi-folder-plus" aria-hidden="true"></i></span>
+        <h3>No collections yet</h3>
+        <p>Create a collection from your profile's Saved section, then you can organize posts here.</p>
+      </div>
+    </ng-template>
 
-      <div class="select " (click)="select($event ,item)"></div>
-      <app-display-collection [collections]='item'></app-display-collection>
-
-    </div> -->
-
-  </div>
+    <footer class="collection-picker__footer">
+      <span class="collection-picker__selection" *ngIf="collectionSelected">1 collection selected</span>
+      <span class="collection-picker__selection" *ngIf="!collectionSelected">Select a collection</span>
+      <div class="collection-picker__actions">
+        <button type="button" class="collection-button secondary" [disabled]="saving" (click)="closeCollections()">Cancel</button>
+        <button
+          type="button"
+          class="collection-button primary"
+          [disabled]="!collectionSelected || saving || !post?._id"
+          (click)="save()"
+        >
+          <span class="button-spinner" *ngIf="saving" aria-hidden="true"></span>
+          <i class="bi bi-bookmark-plus" *ngIf="!saving" aria-hidden="true"></i>
+          {{ saving ? 'Saving…' : 'Save post' }}
+        </button>
+      </div>
+    </footer>
+  </section>
 </div>

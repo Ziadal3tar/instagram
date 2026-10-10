@@ -1,15 +1,28 @@
-<section class=" d-flex">
-  <div class="userImage" (click)="toUser(commentDetails.userId._id)" [ngStyle]="{ 'width.px': size, 'height.px': size }"><app-user-image [size]="size" [story]="false" [data]="{profilePic:commentDetails?.userId?.profilePic}"></app-user-image>
+<article class="comment-row">
+  <div
+    class="comment-avatar"
+    [ngStyle]="{ 'width.px': size || 38, 'height.px': size || 38 }"
+    role="img"
+    [attr.aria-label]="'Profile picture of ' + (commentDetails?.userId?.userName || 'user')"
+  >
+    <app-user-image
+      [size]="size || 38"
+      [story]="false"
+      [data]="{ profilePic: commentDetails?.userId?.profilePic, userName: commentDetails?.userId?.userName }"
+    ></app-user-image>
   </div>
 
-  <div class="userData">
-    <h6 class="userName fw-bolder">{{commentDetails?.userId.userName}}: <span class="fw-normal">{{commentDetails?.comment}}
-        <br>
-        <div class=" d-flex">
-          <h6 class="fs-7 my-2 opacity-75">3d</h6>
-          <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
-        </div>
-      </span> </h6>
-  </div>
+  <div class="comment-content">
+    <p class="comment-copy">
+      <strong>{{ commentDetails?.userId?.userName || 'Instagram user' }}</strong>
+      <span>{{ commentDetails?.comment }}</span>
+    </p>
 
-</section>
+    <div class="comment-meta">
+     <span class="comment-age">
+  {{ getTimeAgo(commentDetails.updatedAt) }}
+</span>
+      <button type="button" class="reply-action">Reply</button>
+    </div>
+  </div>
+</article>

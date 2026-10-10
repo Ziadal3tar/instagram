@@ -1,116 +1,141 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { SharingService } from 'src/app/services/sharing.service';
-import { UserService } from 'src/app/services/user.service';
+import {
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  takeUntil,
+  switchMap,
+  of,
+  map,
+  catchError,
+} from 'rxjs';
+
+import { CurrentUser, UserSummary } from '../../core/models/api.models';
+import { SharingService } from '../../services/sharing.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
 })
-export class SearchComponent {
-  @Output() close: EventEmitter<any> = new EventEmitter<any>();
-  @Output() toProfile: EventEmitter<any> = new EventEmitter<any>();
-  @Output() allSearch: EventEmitter<any> = new EventEmitter<any>();
-  searchText: string = '';
-  searched: any[] = [];
-  closeSearch: Boolean = true;
-  closeSearchIcone: Boolean = false;
-  @Input() userData: any;
-  recent: Boolean = true;
+export class SearchComponent implements OnInit, OnDestroy {
+  @Input() userData: CurrentUser | null = null;
+
+  @Output() close = new EventEmitter<boolean>();
+  @Output() toProfile = new EventEmitter<string>();
+
+  searchText = '';
+  searched: UserSummary[] = [];
+  loading = false;
+  recent = true;
+  searchError = false;
+
+  private readonly search$ = new Subject<string>();
+  private readonly destroy$ = new Subject<void>();
+
   constructor(
-    private _user: UserService,
-    private _sharing: SharingService,
-    private Router: Router
+    private readonly userService: UserService,
+    private readonly sharing: SharingService,
+    private readonly router: Router,
   ) {}
+
   ngOnInit(): void {
+    this.searched = (this.userData?.visited || []) as UserSummary[];
 
-    if(window.innerWidth >= 768){
-      this.closeSearchIcone = false
-    }else{
-      this.closeSearchIcone = true
+    this.search$
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          const query = value.trim();
 
-    }
-
-    if (this.userData?.visited.length != 0) {
-      this.searched = this.userData?.visited;
-      this.recent = true;
-    }
-  }
-  clear(data: Number) {
-    if (data == 0) {
-      this.searched = [];
-    } else {
-      let newSheared = [];
-      for (let i = 0; i < this.searched.length; i++) {
-        const element = this.searched[i];
-        if (element._id != data) {
-          newSheared.push(element);
-        }
-      }
-      this.searched = newSheared;
-    }
-  }
-  Close() {
-    if(window.innerWidth >= 768){
-      this.close.emit('true');
-    }else{
-this.closeSearch = !this.closeSearch
-      const searchElement = document.getElementById('search');
-
-      if (searchElement) {
-if (this.closeSearch) {
-  searchElement.style.setProperty('height', '100%', 'important');
-
-}else(
-
-  searchElement.style.setProperty('height', '5vh', 'important')
-)
-    }
-    }
-
-  }
-  search() {
-
-    let data = {
-      text: this.searchText,
-    };
-    if (
-      this.searchText != '' &&
-      this.searchText != undefined &&
-      this.searchText != null
-    ) {
-
-      this._user.searchUser(data).subscribe(
-        (data: any) => {
-          this.recent = false;
-console.log(data);
-
-          this.searched = data;
-        },
-        (err: HttpErrorResponse) => {
-          if (
-            err.error.message ==
-            'No users found containing the specified character'
-          ) {
+          if (!query) {
+            this.loading = false;
             this.recent = true;
-            this.searched = this.userData.visited;
+            this.searchError = false;
+
+            return of({
+              users: (this.userData?.visited || []) as UserSummary[],
+              recent: true,
+            });
           }
-        }
-      );
-    } else if (this.searchText == '') {
-      this.recent = true;
-      this.searched = this.userData.visited;
-    }
+
+          this.recent = false;
+          this.loading = true;
+          this.searchError = false;
+
+          return this.userService.searchUser(query).pipe(
+            map((response) => ({
+              users: response.data?.users || [],
+              recent: false,
+            })),
+            catchError(() => {
+              this.searchError = true;
+
+              return of({
+                users: [] as UserSummary[],
+                recent: false,
+              });
+            }),
+          );
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(({ users, recent }) => {
+        this.searched = users;
+        this.recent = recent;
+        this.loading = false;
+      });
   }
-  toUserProfile(data: any) {
-    this.Router.navigate([`/userProfile/${data._id}`]);
-    this._user.visited(data._id).subscribe((x: any) => {
-      if (x.success) {
-        this._sharing.updateUserData()
-this.toProfile.emit('')
-      }
+
+  onSearch(value: string): void {
+    this.searchText = value;
+    this.search$.next(value);
+  }
+
+  clear(id?: string): void {
+    if (!id) {
+      this.searched = [];
+      return;
+    }
+
+    this.searched = this.searched.filter(
+      (item) => String(item._id) !== String(id),
+    );
+  }
+
+  closePanel(): void {
+    this.close.emit(true);
+  }
+
+  toUserProfile(user: UserSummary): void {
+    if (!user?._id) return;
+
+    this.userService.visited(user._id).subscribe({
+      complete: () => this.sharing.refreshCurrentUser(),
     });
+
+    this.closePanel();
+    this.toProfile.emit(user._id);
+
+    void this.router.navigate(['/userProfile', user._id]);
+  }
+
+  trackById(_: number, item: UserSummary): string {
+    return item._id;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

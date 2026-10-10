@@ -1,191 +1,442 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
-  HostListener,
   Input,
+  OnChanges,
+  OnDestroy,
   Output,
+  SimpleChanges,
 } from '@angular/core';
-import { PostsService } from 'src/app/services/posts.service';
-import { SharingService } from 'src/app/services/sharing.service';
-import { SocketService } from 'src/app/services/socket.service';
-import { UserService } from 'src/app/services/user.service';
+
+import {
+  Subject,
+  finalize,
+  takeUntil,
+} from 'rxjs';
+
+import { ContentItem } from '../../core/models/api.models';
+import { PostsService } from '../../services/posts.service';
+import { SharingService } from '../../services/sharing.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-display-explore',
   templateUrl: './display-explore.component.html',
   styleUrls: ['./display-explore.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DisplayExploreComponent {
+export class DisplayExploreComponent implements OnChanges, OnDestroy {
+  @Input() exploreData?: ContentItem;
 
-  @Input() exploreData: any;
+  @Output() open = new EventEmitter<boolean>();
 
-  userData: any;
-  comment: any;
-  doubleClick: boolean = false;
-  yourCollections: boolean = false;
-  @Output() open: EventEmitter<any> = new EventEmitter<any>();
+  item?: ContentItem;
+
+  comment = '';
+  detailsVisible = false;
+
+  toggleDetails(event?: Event): void {
+    event?.stopPropagation();
+    this.detailsVisible = !this.detailsVisible;
+    this.cdr.markForCheck();
+  }
+
+  isSaved = false;
   value = 0;
 
-  showDiv: boolean = false;
-  isSaved: boolean = false;
-  mouseX: number = 0;
-  mouseY: number = 0;
-  divTop: string = '0';
-  divLeft: string = '0';
-  data = {
-    name: 'ksdujfghv',
-  };
+  loading = true;
+  liking = false;
+  saving = false;
+  submittingComment = false;
+
+  actionError: string | null = null;
+  commentError: string | null = null;
+
+  private readonly destroy$ = new Subject<void>();
+
   constructor(
-    private _post: PostsService,
-    private _sharing: SharingService,
-    private _UserService: UserService,
-    private _socket: SocketService,
-  ) { }
-  ngOnInit(): void {
-    this.toggleValue(0)
-console.log(this.exploreData);
-this.isSaved =this.exploreData.isSaved
-    this._sharing.currentUserData.subscribe((data: any) => {
-      this.userData = data;
+    private readonly postService: PostsService,
+    private readonly userService: UserService,
+    private readonly sharing: SharingService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
+    this.sharing.currentSaved
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((saved) => {
+        const savedItems = saved?.items ?? [];
 
-      // this.isItemSaved()
+        if (this.item) {
+          this.isSaved = savedItems.some(
+            (entry) =>
+              String(entry._id) === String(this.item?._id),
+          );
+        }
+
+        this.cdr.markForCheck();
+      });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['exploreData']) {
+      return;
+    }
+
+    if (this.exploreData?._id) {
+      this.load();
+      return;
+    }
+
+    this.item = undefined;
+    this.loading = false;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Load the complete post details.
+   */
+ private load(): void {
+  const selectedItem = this.exploreData;
+
+  if (!selectedItem?._id) {
+    this.item = undefined;
+    this.loading = false;
+    this.cdr.markForCheck();
+    return;
+  }
+
+  this.loading = true;
+  this.item = selectedItem;
+  this.value = 0;
+  this.comment = '';
+  this.actionError = null;
+  this.commentError = null;
+
+  this.isSaved = (
+    this.sharing.currentSavedPage.items ?? []
+  ).some(
+    (entry) =>
+      String(entry._id) === String(selectedItem._id),
+  );
+
+  this.cdr.markForCheck();
+
+  this.postService
+    .getPostById(selectedItem._id, selectedItem.type)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        // Ignore the result if another post has been selected.
+        if (
+          !this.exploreData?._id ||
+          String(this.exploreData._id) !==
+            String(selectedItem._id)
+        ) {
+          return;
+        }
+
+        if (response?.success && response?.data) {
+          const data = response.data;
+
+          // The API may return the post nested inside data.post.
+          const postData = data.post ?? data;
+
+          // Normalize the comments array.
+          const comments = Array.isArray(postData.comments)
+            ? postData.comments
+            : Array.isArray(data.comments)
+              ? data.comments
+              : Array.isArray(selectedItem.comments)
+                ? selectedItem.comments
+                : [];
+
+          // Support either response shape for commentsCount.
+          const rawCount =
+            postData.commentsCount ??
+            data.commentsCount;
+
+          const parsedCount = Number(rawCount);
+
+          const commentsCount = Number.isFinite(parsedCount)
+            ? parsedCount
+            : comments.length;
+
+          // Build the final item only once.
+          this.item = {
+            ...selectedItem,
+            ...data,
+            ...postData,
+            comments,
+            commentsCount,
+          };
+
+          const savedItems =
+            this.sharing.currentSavedPage.items ?? [];
+
+          this.isSaved = savedItems.some(
+            (entry) =>
+              String(entry._id) ===
+              String(this.item?._id),
+          );
+        }
+
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+
+      error: () => {
+        // Do not show a false "No comments yet" state on failure.
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
     });
-  }
+}
 
-  toggleValue(newValue: number) {
-    const media = this.exploreData?.postsImgAndVideos || (this.exploreData ? [{ url: this.exploreData.src, type: this.exploreData.type }] : []);
-    const len = media.length || 1;
-
-    if (newValue < 0) {
-      newValue = len - 1;
-    } else if (newValue > len - 1) {
-      newValue = 0;
+  /**
+   * Normalize the current post media.
+   */
+  get media(): Array<{
+    url: string;
+    type: 'image' | 'video';
+  }> {
+    if (!this.item) {
+      return [];
     }
 
-    this.value = newValue;
-    if (media[this.value]) {
-      this.exploreData.src = media[this.value].url;
-      this.exploreData.type = media[this.value].type;
+    if (this.item.type === 'reel') {
+      return this.item.url
+        ? [
+            {
+              url: this.item.url,
+              type: 'video',
+            },
+          ]
+        : [];
     }
+
+    return this.item.postsImgAndVideos ?? [];
   }
 
-  onMouseMove(event: MouseEvent) {
-    this.mouseX = event.clientX;
-    this.mouseY = event.clientY;
-    this.divTop = `${event.clientY}px`;
-    this.divLeft = `${event.clientX - 60}px`;
+  get activeMedia() {
+    return this.media[this.value] ?? this.media[0];
   }
-  mouseleave(event: any) {
-    const relatedTargetName = (event.relatedTarget as HTMLElement).id;
-    if (relatedTargetName != 'dataWhenHover') {
-      this.showDiv = false;
+
+  /**
+   * Navigate through post media.
+   */
+  toggleValue(next: number): void {
+    const length = this.media.length;
+
+    if (length < 2) {
+      return;
     }
-  }
-  hideDiv() {
-    this.showDiv = false;
-  }
-  like() {
-    let likeIcons = Array.from(document.getElementsByClassName('like'));
-    likeIcons.forEach((icon) => {
-      icon.classList.toggle('bi-heart');
-      icon.classList.toggle('bi-heart-fill');
-      icon.classList.toggle('text-danger');
-    });
-    let data = {
-      type: 'post',
-      _id: this.exploreData._id,
-    };
-    this._post.like(data).subscribe((data: any) => {
-      if (data.message == 'added') {
-        this._socket.emit('notification', { eventName: 'like', type: 'post', data: this.userData._id, redirect: this.exploreData._id, to: this.exploreData.createdBy._id })
 
-        this.exploreData.likes.push(this.userData._id);
-      } else {
-        this.exploreData.likes = this.exploreData.likes.filter(
-          (element: any) => element !== this.userData._id
-        );
-      }
-    });
+    this.value = (next + length) % length;
+
+    this.cdr.markForCheck();
   }
-  ifDoubleClick() {
-    if (this.doubleClick) {
-      this.like();
+
+  /**
+   * Like / unlike the current post.
+   */
+  like(): void {
+    if (!this.item || this.liking || this.loading) {
+      return;
     }
-    this.doubleClick = true;
 
-    setTimeout(() => {
-      this.doubleClick = false;
-    }, 1000);
+    const selectedItem = this.item;
+
+    this.liking = true;
+    this.actionError = null;
+    this.cdr.markForCheck();
+
+    this.postService
+      .like(selectedItem._id, selectedItem.type)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.liking = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (
+            response.success &&
+            response.data &&
+            this.item &&
+            String(this.item._id) === String(selectedItem._id)
+          ) {
+            this.item = {
+              ...this.item,
+              viewerLiked: response.data.liked,
+              likesCount: response.data.likesCount,
+            };
+
+            this.cdr.markForCheck();
+          }
+        },
+
+        error: () => {
+          this.actionError =
+            'Unable to update your like. Please try again.';
+
+          this.cdr.markForCheck();
+        },
+      });
   }
-  addComment() {
-    let data = {
-      type: 'post',
-      _id: this.exploreData._id,
-      comment: this.comment,
-    };
-    this._post.addComment(data).subscribe((data: any) => {
-      if (data.success) {
-        this._post.getPostById(this.exploreData._id).subscribe((data: any) => {
-          this.exploreData = data.post;
-        });
-        this._socket.emit('notification', { eventName: 'comment', type: 'post', data: this.userData._id, redirect: this.exploreData._id, to: this.exploreData.createdBy._id })
-      }
-    });
-  }
-  // isItemSaved() {
-  //   console.log(this.exploreData);
-  //    if (this.exploreData.postsImgAndVideos) {
 
-  //     const savedPosts = (this.userData?.savedPosts || []).map((p: any) =>
-  //  p == this.exploreData._id
-  // );
-  // console.log(savedPosts.includes(this.exploreData._id));
-
-  //    }else{
-  //      const savedReels = (this.userData?.savedReels || []).map((p: any) =>
-  //  p == this.exploreData._id
-  // );
-
-  // console.log(savedReels.includes(this.exploreData._id));
-    //  }
-     
-    // let arr = this.userData?.saved?.filter((savedItem: any) => savedItem._id === this.exploreData?._id);
-    // if (arr?.length == 0) {
-    //   this.idSaved = false
-    // } else {
-    //   this.idSaved = true
-    // }
-  // }
-  savePost(item: any) {
-    console.log(item);
-    let data = {
-      postId: item._id,
-      ref: ''
+  /**
+   * Save / unsave the current post.
+   */
+  save(): void {
+    if (!this.item || this.saving || this.loading) {
+      return;
     }
-    if (item.postsImgAndVideos
+
+    const selectedItem = this.item;
+
+    this.saving = true;
+    this.actionError = null;
+    this.cdr.markForCheck();
+
+    const contentType =
+      selectedItem.type === 'reel' ? 'Reel' : 'Post';
+
+    this.userService
+      .savePost(selectedItem._id, contentType)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.saving = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response.success || !response.data) {
+            return;
+          }
+
+          const saved = response.data.saved;
+
+          this.sharing.upsertSavedLocally(
+            selectedItem,
+            saved,
+          );
+
+          if (
+            this.item &&
+            String(this.item._id) === String(selectedItem._id)
+          ) {
+            this.isSaved = saved;
+          }
+
+          this.cdr.markForCheck();
+        },
+
+        error: () => {
+          this.actionError =
+            'Unable to update saved posts. Please try again.';
+
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  /**
+   * Add a comment to the current post.
+   */
+  addComment(): void {
+    const text = this.comment.trim();
+
+    if (
+      !text ||
+      !this.item ||
+      this.submittingComment ||
+      this.loading
     ) {
-data.ref = 'Post'
-    } else {
-data.ref = 'Reel'
-
-    }
-    if (this.userData.savedPosts.includes(item._id)) {
-      this.userData.savedPosts = this.userData.savedPosts.filter(
-        (id: any) => id !== item._id
-      );
-    } else {
-      this.userData.savedPosts.push(item._id)
+      return;
     }
 
-   
-    console.log(data);
+    const selectedItem = this.item;
 
-    this._UserService.savePost(data).subscribe((data: any) => {
-      if (data.success) {
-        this._sharing.updateSaved();
-      }
-    });
+    this.submittingComment = true;
+    this.commentError = null;
+    this.actionError = null;
+    this.cdr.markForCheck();
 
+    this.postService
+      .addComment(
+        selectedItem._id,
+        selectedItem.type,
+        text,
+      )
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.submittingComment = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          if (
+            response.success &&
+            response.data &&
+            this.item &&
+            String(this.item._id) === String(selectedItem._id)
+          ) {
+            this.item = {
+              ...this.item,
+
+              commentsCount:
+                response.data.commentsCount,
+
+              comments: [
+                ...(this.item.comments ?? []),
+                response.data.comment,
+              ],
+            };
+
+            this.comment = '';
+            this.commentError = null;
+
+            this.cdr.markForCheck();
+          }
+        },
+
+        error: () => {
+          this.commentError =
+            'Unable to post your comment. Please try again.';
+
+          this.cdr.markForCheck();
+        },
+      });
   }
 
+  /**
+   * Focus the comment input from the action toolbar.
+   */
+  focusComment(input: HTMLInputElement): void {
+    input.focus();
+  }
+
+  close(): void {
+    this.open.emit(false);
+  }
+
+  trackById(index: number, item: any): string {
+    return item?._id ?? String(index);
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

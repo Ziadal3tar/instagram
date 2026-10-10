@@ -1,345 +1,676 @@
-<section id="profile" class=" row  centerCenter" *ngIf="!openCollection && !edit">
-  <div class=" col-11 col-lg-10 d-flex row m-0 py-5 centerCenter mt-3 mt-md-0">
-    <div class="col-4 centerCenter">
-      <div class="userImg" [style.background-image]="'url(' + displayData?.profilePic + ')'">
+<div class="profile-page">
+  <!-- Loading state -->
+  <section class="profile-loading" *ngIf="loading" aria-label="Loading profile" aria-busy="true">
+    <div class="loading-hero">
+      <div class="skeleton avatar-skeleton"></div>
+      <div class="loading-copy">
+        <div class="skeleton title-skeleton"></div>
+        <div class="skeleton line-skeleton"></div>
+        <div class="skeleton action-skeleton"></div>
+        <div class="skeleton stats-skeleton"></div>
+        <div class="skeleton line-skeleton short"></div>
       </div>
     </div>
-    <div class="col-8 col-lg-6 offset-lg-1">
-      <div class="col-12 py-2">
+    <div class="loading-grid">
+      <div class="skeleton tile-skeleton" *ngFor="let tile of [1, 2, 3, 4, 5, 6]"></div>
+    </div>
+  </section>
 
+  <ng-container *ngIf="!loading && profile as p">
+    <!-- Profile header -->
+    <section class="profile-hero">
+      <div class="avatar-column">
+        <div class="avatar-ring">
+          <img
+            class="avatar"
+            [src]="p.profilePic "
+            [alt]="p.userName + ' profile picture'"
+            loading="eager"
+            (error)="handleImageError($event, './assets/imgs/anne.jpg')"
+          />
+        </div>
+        <span class="owner-label" *ngIf="isOwner">
+          <i class="bi bi-person-check" aria-hidden="true"></i>
+          Your profile
+        </span>
+      </div>
 
+      <div class="profile-main">
+        <header class="profile-heading">
+          <div class="profile-identity">
+            <h1>{{ p.userName }}</h1>
+            <p class="profile-full-name" *ngIf="p.fullName">{{ p.fullName }}</p>
+          </div>
 
-        <!--
-        <button class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white d-block d-md-none"
-          (click)="edit = true"><i class="bi bi-pen-fill"></i></button> -->
+          <div class="profile-actions">
+            <ng-container *ngIf="isOwner; else otherUserActions">
+              <button type="button" class="profile-button secondary" (click)="openEdit()">
+                <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                <span>Edit profile</span>
+              </button>
+              <button type="button" class="profile-button primary" (click)="openCreate()">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                <span>Create post</span>
+              </button>
+            </ng-container>
 
+            <ng-template #otherUserActions>
+              <button
+                type="button"
+                class="profile-button primary"
+                [class.following-button]="p.isFollowing"
+                [disabled]="followLoading"
+                (click)="toggleFollow()"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="p.isFollowing ? 'bi-check2' : 'bi-person-plus'"
+                  aria-hidden="true"
+                ></i>
+                <span>{{ followLoading ? 'Updating…' : followLabel }}</span>
+              </button>
 
-        <div class="d-flex d-block d-md-none">
+              <button type="button" class="profile-button secondary" (click)="openChat()">
+                <i class="bi bi-chat-dots" aria-hidden="true"></i>
+                <span>Message</span>
+              </button>
+            </ng-template>
+          </div>
+        </header>
 
+        <div class="profile-stats" aria-label="Profile statistics">
+          <div class="stat-item">
+            <strong>{{ posts.length }}</strong>
+            <span>posts</span>
+          </div>
+          <div class="stat-item">
+            <strong>{{ p.followersCount }}</strong>
+            <span>followers</span>
+          </div>
+          <div class="stat-item">
+            <strong>{{ p.followingCount }}</strong>
+            <span>following</span>
+          </div>
+        </div>
 
-          <button *ngIf="userId == displayData?._id; else elseBlock2"
-            class="bg-gray  rounded-3 p-1 px-4 border-0 fs-7 fw-bolder text-white" (click)="edit = true"><i
-              class="bi bi-pen-fill"></i></button>
+        <div class="profile-bio" *ngIf="p.bio">
+          {{ p.bio }}
+        </div>
 
-          <ng-template #elseBlock2>
-            <button (click)="follow()" [ngClass]="{
-    'bg-gray': (follower && following)||(!follower && following),
-    'bg-success': follower && !following,
-    'bg-primary': !follower && !following
-  }" class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-block d-md-none">
+        <div class="profile-bio empty-bio" *ngIf="!p.bio && isOwner">
+          <span>Add a little about yourself.</span>
+          <button type="button" class="inline-link" (click)="openEdit()">Add bio</button>
+        </div>
+      </div>
+    </section>
 
-              {{ (follower && following) ? 'UnFollow' :
-              (!follower && following) ? 'UnFollow' :
-              (follower && !following) ? 'Follow Back' :
-              'Follow' }}
+    <!-- Profile content -->
+    <section class="profile-content">
+      <nav class="profile-tabs" aria-label="Profile sections" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          id="profile-posts-tab"
+          aria-controls="profile-content-panel"
+          [attr.aria-selected]="activeTab === 'posts'"
+          [class.active]="activeTab === 'posts'"
+          (click)="selectTab('posts')"
+        >
+          <i class="bi bi-grid-3x3" aria-hidden="true"></i>
+          <span>Posts</span>
+        </button>
 
+        <button
+          type="button"
+          role="tab"
+          id="profile-reels-tab"
+          aria-controls="profile-content-panel"
+          [attr.aria-selected]="activeTab === 'reels'"
+          [class.active]="activeTab === 'reels'"
+          (click)="selectTab('reels')"
+        >
+          <i class="bi bi-play-btn" aria-hidden="true"></i>
+          <span>Reels</span>
+        </button>
 
+        <button
+          *ngIf="isOwner"
+          type="button"
+          role="tab"
+          id="profile-saved-tab"
+          aria-controls="profile-saved-panel"
+          [attr.aria-selected]="activeTab === 'saved'"
+          [class.active]="activeTab === 'saved'"
+          (click)="selectTab('saved')"
+        >
+          <i class="bi bi-bookmark" aria-hidden="true"></i>
+          <span>Saved</span>
+        </button>
+      </nav>
 
+      <!-- Posts and Reels grid -->
+      <div
+        *ngIf="activeTab !== 'saved'"
+        id="profile-content-panel"
+        role="tabpanel"
+        [attr.aria-labelledby]="activeTab === 'posts' ? 'profile-posts-tab' : 'profile-reels-tab'"
+        class="content-grid"
+        [class.empty]="displayedContent.length === 0"
+      >
+        <button
+          class="media-card"
+          type="button"
+          *ngFor="let item of displayedContent; trackBy: trackById"
+          (click)="openContent(item)"
+          [attr.aria-label]="'Open ' + (isVideo(item) ? 'video' : 'post')"
+        >
+          <img
+            *ngIf="!isVideo(item)"
+            [src]="mediaUrl(item)"
+            [alt]="item.caption || 'Post'"
+            loading="lazy"
+            (error)="handleImageError($event, './assets/imgs/placeholder.png')"
+          />
 
+          <video
+            *ngIf="isVideo(item)"
+            [src]="mediaUrl(item)"
+            muted
+            playsinline
+            preload="metadata"
+            aria-hidden="true"
+          ></video>
+
+          <span
+            class="media-badge"
+            *ngIf="item.type === 'reel' || (item.postsImgAndVideos?.length || 0) > 1"
+          >
+            <i
+              class="bi"
+              [ngClass]="item.type === 'reel' ? 'bi-play-fill' : 'bi-images'"
+              aria-hidden="true"
+            ></i>
+          </span>
+
+          <span class="media-hover-overlay" aria-hidden="true">
+            <span><i class="bi bi-eye-fill"></i> View</span>
+          </span>
+        </button>
+
+        <div class="empty-state" *ngIf="displayedContent.length === 0">
+          <div class="empty-icon">
+            <i class="bi" [ngClass]="activeTab === 'reels' ? 'bi-play-btn' : 'bi-camera'" aria-hidden="true"></i>
+          </div>
+          <span class="empty-eyebrow">{{ activeTab === 'reels' ? 'YOUR REELS' : 'YOUR GALLERY' }}</span>
+          <h2>{{ activeTab === 'reels' ? 'No reels yet' : 'Share your first photo' }}</h2>
+          <p *ngIf="isOwner">
+            {{ activeTab === 'reels' ? 'Your short videos will appear here once you share them.' : 'When you share a photo or video, it will appear on your profile.' }}
+          </p>
+          <p *ngIf="!isOwner">
+            {{ activeTab === 'reels' ? 'This user has not shared any reels yet.' : 'This user has not shared any posts yet.' }}
+          </p>
+          <button *ngIf="isOwner" type="button" class="profile-button primary empty-action" (click)="openCreate()">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            Create post
+          </button>
+        </div>
+      </div>
+
+      <!-- Saved content and collections -->
+      <div *ngIf="activeTab === 'saved'" class="saved-area" id="profile-saved-panel" role="tabpanel" aria-labelledby="profile-saved-tab">
+        <section class="saved-section-header">
+          <div>
+            <span class="section-eyebrow">YOUR PRIVATE SPACE</span>
+            <h2>Saved</h2>
+            <p>Only you can see what you save.</p>
+          </div>
+
+          <button
+            type="button"
+            class="profile-button secondary collection-toggle"
+            (click)="showCollectionForm = !showCollectionForm"
+          >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            <span>New collection</span>
+          </button>
+        </section>
+
+        <div class="collection-action-error collection-page-error" *ngIf="collectionActionError && !selectedCollection && !showAddSavedItems" role="alert">
+          <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+          <span>{{ collectionActionError }}</span>
+        </div>
+
+        <form
+          class="collection-form"
+          *ngIf="showCollectionForm"
+          (ngSubmit)="createCollection()"
+        >
+          <div class="collection-input-wrap">
+            <i class="bi bi-folder2" aria-hidden="true"></i>
+            <input
+              name="collectionName"
+              [(ngModel)]="collectionName"
+              maxlength="20"
+              placeholder="Collection name"
+              aria-label="Collection name"
+              required
+            />
+          </div>
+          <button type="submit" class="profile-button primary" [disabled]="collectionLoading || !collectionName.trim()">
+            {{ collectionLoading ? 'Creating…' : 'Create' }}
+          </button>
+        </form>
+
+        <div class="collections-grid" *ngIf="collections.length">
+          <article class="collection-card" *ngFor="let collection of collections; trackBy: trackById">
+            <button
+              type="button"
+              class="collection-open-button"
+              (click)="openCollection(collection)"
+              [attr.aria-label]="'Open collection ' + collection.collectionName"
+            >
+              <div class="collection-media">
+                <ng-container *ngFor="let item of collectionPreview(collection); trackBy: trackById">
+                  <img
+                    *ngIf="!isVideo(item)"
+                    [src]="mediaUrl(item)"
+                    [alt]="collection.collectionName"
+                    loading="lazy"
+                    (error)="handleImageError($event, './assets/imgs/placeholder.png')"
+                  />
+                  <video
+                    *ngIf="isVideo(item)"
+                    [src]="mediaUrl(item)"
+                    muted
+                    playsinline
+                    preload="metadata"
+                    aria-hidden="true"
+                  ></video>
+                </ng-container>
+
+                <div class="collection-empty" *ngIf="collectionPreview(collection).length === 0">
+                  <i class="bi bi-folder2-open" aria-hidden="true"></i>
+                  <span *ngIf="collection.saved?.length">Loading previews…</span>
+                  <span *ngIf="!collection.saved?.length">Empty collection</span>
+                </div>
+
+                <span class="collection-count">
+                  {{ collection.saved?.length || 0 }} saved
+                </span>
+                <span class="collection-open-overlay">
+                  <i class="bi bi-folder2-open" aria-hidden="true"></i>
+                  Open collection
+                </span>
+              </div>
+
+              <div class="collection-meta">
+                <div class="collection-name-wrap">
+                  <strong>{{ collection.collectionName }}</strong>
+                  <span>{{ collection.saved?.length || 0 }} saved items</span>
+                </div>
+                <i class="bi bi-chevron-right collection-meta-chevron" aria-hidden="true"></i>
+              </div>
             </button>
-          </ng-template>
 
-          <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1"
-            *ngIf="userId != displayData?._id" (click)="openChat()">Chat</button>
-
-        </div>
-
-
-
-      </div>
-      <div class="col-12 centerBetween ">
-        <p class="userName">{{displayData?.userName}}</p>
-
-
-
-
-
-
-
-
-
-
-        <div class=" d-none d-md-flex">
-          <button *ngIf="userId == displayData?._id; else elseBlock"
-            class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 " (click)="edit = true">Edit
-            profile</button>
-          <ng-template #elseBlock>
-            <button (click)="follow()" [ngClass]="{
-    'bg-gray': (follower && following)||(!follower && following),
-    'bg-success': follower && !following,
-    'bg-primary': !follower && !following
-  }" class="bg-primary rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 d-none d-md-block">
-
-              {{ (follower && following) ? 'UnFollow' :
-              (!follower && following) ? 'UnFollow' :
-              (follower && !following) ? 'Follow Back' :
-              'Follow' }}
-
-
-
-
+            <button
+              type="button"
+              class="delete-collection-button"
+              aria-label="Delete collection"
+              title="Delete collection"
+              *ngIf="isOwner"
+              [disabled]="deletingCollectionId === collection._id"
+              (click)="$event.stopPropagation(); deleteCollection(collection)"
+            >
+              <i class="bi bi-trash3" aria-hidden="true"></i>
             </button>
-          </ng-template>
-
-          <button class="bg-gray rounded-3 py-2 border-0 fs-7 fw-bolder text-white px-4 mx-1" (click)="openChat()"
-            *ngIf="userId != displayData?._id">Chat</button>
-
+          </article>
         </div>
 
+        <div class="collections-empty-hint" *ngIf="!collections.length">
+          <i class="bi bi-folder-plus" aria-hidden="true"></i>
+          <span>Create a collection to organize the posts you save.</span>
+        </div>
 
-        <i class="bi bi-gear-fill fs-5 cursorPointer" (click)="setting = true"></i>
+        <div class="saved-grid content-grid" [class.empty]="saved.items.length === 0">
+          <button
+            class="media-card"
+            type="button"
+            *ngFor="let item of saved.items; trackBy: trackById"
+            (click)="openContent(item)"
+            [attr.aria-label]="'Open saved ' + (isVideo(item) ? 'video' : 'post')"
+          >
+            <img
+              *ngIf="!isVideo(item)"
+              [src]="mediaUrl(item)"
+              [alt]="item.caption || 'Saved post'"
+              loading="lazy"
+              (error)="handleImageError($event, './assets/imgs/placeholder.png')"
+            />
+            <video
+              *ngIf="isVideo(item)"
+              [src]="mediaUrl(item)"
+              muted
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+            ></video>
+            <span class="media-badge" *ngIf="isVideo(item)">
+              <i class="bi bi-play-fill" aria-hidden="true"></i>
+            </span>
+            <span class="media-hover-overlay" aria-hidden="true">
+              <span><i class="bi bi-eye-fill"></i> View</span>
+            </span>
+          </button>
+
+          <div class="empty-state saved-empty" *ngIf="saved.items.length === 0">
+            <div class="empty-icon"><i class="bi bi-bookmark" aria-hidden="true"></i></div>
+            <span class="empty-eyebrow">YOUR SAVED POSTS</span>
+            <h2>Save posts you love</h2>
+            <p>When you save a post, it will appear here.</p>
+          </div>
+        </div>
       </div>
-      <div class="col-12 d-md-flex d-none centerBetween my-3">
-        <p><span>{{allPosts?.length}}</span> posts</p>
-        <p><span>{{displayData?.followers?.length}}</span> followers</p>
-        <p><span>{{displayData?.following?.length}}</span> following</p>
-      </div>
-      <div class="col-12">
-        <p>{{displayData?.fullName}}</p>
-        <p class="fs-7" *ngIf="displayData?.bio">{{displayData?.bio}}</p>
+    </section>
+  </ng-container>
+
+  <!-- Collection contents modal -->
+  <div
+    class="collection-detail-modal"
+    *ngIf="selectedCollection as collection"
+    role="presentation"
+    (click)="closeCollection()"
+  >
+    <section
+      class="collection-detail-card"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="collection.collectionName + ' collection'"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="collection-detail-header">
+        <span class="collection-detail-icon">
+          <i class="bi bi-folder2-open" aria-hidden="true"></i>
+        </span>
+        <div class="collection-detail-heading">
+          <span class="section-eyebrow">SAVED COLLECTION</span>
+          <h2>{{ collection.collectionName }}</h2>
+          <p *ngIf="collectionItemsLoading">Loading saved items…</p>
+          <p *ngIf="!collectionItemsLoading">{{ selectedCollectionItems.length }} saved {{ selectedCollectionItems.length === 1 ? 'item' : 'items' }}</p>
+        </div>
+        <button
+          *ngIf="isOwner"
+          type="button"
+          class="collection-add-button"
+          (click)="openAddSavedItems()"
+          [disabled]="savingCollectionItems"
+        >
+          <i class="bi bi-plus-lg" aria-hidden="true"></i>
+          <span>Add saved posts</span>
+        </button>
+        <button
+          type="button"
+          class="collection-detail-close"
+          aria-label="Close collection"
+          title="Close collection"
+          (click)="closeCollection()"
+        >
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="collection-action-error" *ngIf="collectionActionError && !showAddSavedItems" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ collectionActionError }}</span>
       </div>
 
-    </div>
-    <div class="col-12 d-flex d-md-none align-items-center justify-content-around mt-4">
+      <div class="collection-items-loading" *ngIf="collectionItemsLoading" role="status" aria-live="polite">
+        <span class="collection-loading-spinner" aria-hidden="true"></span>
+        <span>Loading collection items…</span>
+      </div>
 
-      <p class="ws-nw fs-7 "><span>{{displayData?.posts?.length}}</span> posts</p>
-      <p class="ws-nw fs-7 "><span>{{displayData?.followers?.length}}</span> followers</p>
-      <p class="ws-nw fs-7 "><span>{{displayData?.following?.length}}</span> following</p>
-    </div>
+      <div class="collection-detail-fetch-error" *ngIf="collectionItemsError" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ collectionItemsError }}</span>
+        <button type="button" (click)="reloadSelectedCollectionItems()" [disabled]="collectionItemsLoading">
+          Retry
+        </button>
+      </div>
+
+      <div class="collection-items-warning" *ngIf="!collectionItemsLoading && unavailableCollectionItemsCount > 0" role="status">
+        {{ unavailableCollectionItemsCount }} item(s) referenced by this collection could not be loaded. They may have been deleted.
+      </div>
+
+      <div class="collection-detail-grid" *ngIf="!collectionItemsLoading" [class.empty]="selectedCollectionItems.length === 0">
+        <article
+          class="collection-detail-item"
+          *ngFor="let item of selectedCollectionItems; trackBy: trackById"
+        >
+          <button
+            type="button"
+            class="collection-item-open"
+            (click)="openCollectionContent(item)"
+            [attr.aria-label]="'Open saved ' + (isVideo(item) ? 'video' : 'post')"
+          >
+            <img
+              *ngIf="!isVideo(item)"
+              [src]="mediaUrl(item)"
+              [alt]="item.caption || collection.collectionName"
+              loading="lazy"
+              (error)="handleImageError($event, './assets/imgs/placeholder.png')"
+            />
+            <video
+              *ngIf="isVideo(item)"
+              [src]="mediaUrl(item)"
+              muted
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+            ></video>
+            <span class="collection-detail-media-badge" *ngIf="isVideo(item)">
+              <i class="bi bi-play-fill" aria-hidden="true"></i>
+            </span>
+            <span class="collection-detail-item-overlay">
+              <i class="bi bi-eye-fill" aria-hidden="true"></i>
+              View
+            </span>
+          </button>
+          <button
+            *ngIf="isOwner"
+            type="button"
+            class="remove-collection-item"
+            [disabled]="removingCollectionItemId === item._id"
+            (click)="$event.stopPropagation(); removeCollectionItem(item)"
+            [attr.aria-label]="'Remove item from ' + collection.collectionName"
+            title="Remove from collection"
+          >
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+        </article>
+
+        <div class="collection-detail-empty" *ngIf="selectedCollectionItems.length === 0">
+          <span class="collection-detail-empty-icon">
+            <i class="bi bi-bookmark" aria-hidden="true"></i>
+          </span>
+          <h3>This collection is empty</h3>
+          <p>Add posts you've already saved to organize them in this collection.</p>
+          <button
+            *ngIf="isOwner"
+            type="button"
+            class="collection-empty-add-button"
+            (click)="openAddSavedItems()"
+          >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            Add saved posts
+          </button>
+          <span *ngIf="unavailableCollectionItemsCount > 0" class="collection-resolution-note">
+            Some saved references could not be resolved to existing posts.
+          </span>
+        </div>
+      </div>
+    </section>
   </div>
 
+  <!-- Add saved posts to the currently open collection -->
+  <div
+    class="add-saved-modal"
+    *ngIf="showAddSavedItems && selectedCollection as collection"
+    role="presentation"
+    (click)="closeAddSavedItems()"
+  >
+    <section
+      class="add-saved-card"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="'Add saved posts to ' + collection.collectionName"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="add-saved-header">
+        <div class="add-saved-title-wrap">
+          <span class="section-eyebrow">ORGANIZE YOUR SAVED POSTS</span>
+          <h2>Add to {{ collection.collectionName }}</h2>
+          <p>Select one or more saved posts to add to this collection.</p>
+        </div>
+        <button
+          type="button"
+          class="collection-detail-close"
+          (click)="closeAddSavedItems()"
+          aria-label="Close add saved posts"
+        >
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </header>
 
+      <div class="collection-action-error" *ngIf="collectionActionError" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ collectionActionError }}</span>
+      </div>
 
-  <div class="col-11 col-md-9">
-    <div class="row m-0 col-12 centerCenter">
-      <ul class="d-flex list-unstyled align-items-center justify-content-between col-md-6 col-12" id="list">
-        <li (click)="tap='posts'" class="text-decoration-none fs-7 py-3 cursorPointer centerCenter"
-          [ngClass]="{'active': tap == 'posts'}" (click)="changeProfileTaps($event)">
-          <svg aria-label="" class="x1lliihq x1n2onr6 x5n08af me-1" fill="currentColor" height="12" role="img"
-            viewBox="0 0 24 24" width="12">
-            <title></title>
-            <rect fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-              stroke-width="2" width="18" x="3" y="3"></rect>
-            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              x1="9.015" x2="9.015" y1="3" y2="21"></line>
-            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              x1="14.985" x2="14.985" y1="3" y2="21"></line>
-            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              x1="21" x2="3" y1="9.015" y2="9.015"></line>
-            <line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              x1="21" x2="3" y1="14.985" y2="14.985"></line>
-          </svg>
-          <p>POSTS</p>
-        </li>
-        <li (click)="tap='saved'" class="text-decoration-none fs-7 py-3 cursorPointer" *ngIf="url == userId"
-          [ngClass]="{'active': tap == 'saved'}" (click)="changeProfileTaps($event)"><i
-            class="bi bi-bookmark-check-fill"></i> SAVED</li>
-        <li (click)="tap='tagged'" class="text-decoration-none fs-7 py-3 cursorPointer"
-          [ngClass]="{'active': tap == 'tagged'}" (click)="changeProfileTaps($event)"><i
-            class="bi bi-person-badge-fill"></i> TAGGED</li>
-      </ul>
-    </div>
+      <div class="add-saved-empty" *ngIf="loadingAddSavedItems">
+        <span class="collection-loading-spinner" aria-hidden="true"></span>
+        <h3>Loading saved posts</h3>
+        <p>Fetching the latest saved items from your account.</p>
+      </div>
+
+      <div class="add-saved-list" *ngIf="!loadingAddSavedItems && addableSavedItems.length">
+        <button
+          type="button"
+          class="add-saved-item"
+          *ngFor="let item of addableSavedItems; trackBy: trackById"
+          [class.selected]="isSelectedForCollection(item)"
+          [attr.aria-pressed]="isSelectedForCollection(item)"
+          (click)="toggleSavedItemSelection(item)"
+        >
+          <span class="add-saved-thumb">
+            <img
+              *ngIf="!isVideo(item)"
+              [src]="mediaUrl(item)"
+              [alt]="item.caption || 'Saved post'"
+              loading="lazy"
+              (error)="handleImageError($event, './assets/imgs/placeholder.png')"
+            />
+            <video
+              *ngIf="isVideo(item)"
+              [src]="mediaUrl(item)"
+              muted
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+            ></video>
+            <span class="add-saved-video-badge" *ngIf="isVideo(item)">
+              <i class="bi bi-play-fill" aria-hidden="true"></i>
+            </span>
+          </span>
+
+          <span class="add-saved-copy">
+            <strong>{{ item.caption || 'Saved post' }}</strong>
+            <small>{{ isVideo(item) ? 'Video post' : 'Photo post' }}</small>
+          </span>
+
+          <span class="add-saved-check" aria-hidden="true">
+            <i class="bi bi-check-lg"></i>
+          </span>
+        </button>
+      </div>
+
+      <div class="add-saved-empty" *ngIf="!loadingAddSavedItems && addableSavedItems.length === 0 && !saved.hasMore">
+        <span class="collection-detail-empty-icon">
+          <i class="bi bi-bookmark-check" aria-hidden="true"></i>
+        </span>
+        <h3>No saved posts available</h3>
+        <p>Save posts first, or all eligible saved posts may already be in this collection.</p>
+      </div>
+
+      <div class="add-saved-load-more" *ngIf="!loadingAddSavedItems && saved.hasMore">
+        <button type="button" (click)="loadMoreSavedItemsForCollection()" [disabled]="loadingMoreSavedItems">
+          <span class="collection-loading-spinner small" *ngIf="loadingMoreSavedItems" aria-hidden="true"></span>
+          {{ loadingMoreSavedItems ? 'Loading more…' : 'Load more saved posts' }}
+        </button>
+      </div>
+
+      <footer class="add-saved-footer">
+        <span>{{ selectedSavedIds.length }} selected</span>
+        <div>
+          <button
+            type="button"
+            class="collection-cancel-button"
+            (click)="closeAddSavedItems()"
+            [disabled]="savingCollectionItems || loadingAddSavedItems || loadingMoreSavedItems"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="collection-confirm-button"
+            (click)="addSelectedToCollection()"
+            [disabled]="!selectedSavedIds.length || savingCollectionItems || loadingAddSavedItems || loadingMoreSavedItems"
+          >
+            <i class="bi bi-check2" *ngIf="!savingCollectionItems" aria-hidden="true"></i>
+            {{ savingCollectionItems ? 'Adding…' : 'Add to collection' }}
+          </button>
+        </div>
+      </footer>
+    </section>
   </div>
 
+  <!-- Content detail modal -->
+  <div
+    class="profile-modal"
+    *ngIf="selectedContent"
+    role="presentation"
+    (click)="closeContent()"
+  >
+    <section
+      class="profile-modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Post details"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- <button
+        type="button"
+        class="profile-modal-close"
+        (click)="closeContent()"
+        aria-label="Close post details"
+        title="Close"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button> -->
+      <app-display-explore
+        [exploreData]="selectedContent"
+        (open)="closeContent()"
+      ></app-display-explore>
+    </section>
+  </div>
 
-
-
-
-  <section *ngIf="tap == 'posts'" id="posts" class="col-9">
-    <app-displayposts [data]="allPosts" *ngIf="allPosts?.length"></app-displayposts>
-
-
-    <div class="col-12 ifNoPhoto centerCenter flex-column py-5" *ngIf="displayData?.posts?.length ==0">
-      <div class="icon centerCenter"><i class="bi bi-camera fs-1 opacity-50"></i></div>
-      <h1 class=" fw-bolder">Share Photos</h1>
-      <p class="text-center">When you share photos, they will appear on your profile.</p>
-      <h6 class="text-primary cursorPointer">Share your first photo</h6>
-    </div>
+  <!-- Profile not found -->
+  <section class="not-found" *ngIf="!loading && !profile">
+    <div class="not-found-icon"><i class="bi bi-person-x" aria-hidden="true"></i></div>
+    <span class="empty-eyebrow">PROFILE UNAVAILABLE</span>
+    <h2>User not found</h2>
+    <p>This profile may have been removed or the link may be incorrect.</p>
+    <button type="button" class="profile-button secondary" routerLink="/home">
+      <i class="bi bi-arrow-left" aria-hidden="true"></i>
+      Back home
+    </button>
   </section>
-  <section *ngIf="tap == 'saved' " id="saved" class="col-lg-9 col-12">
-    <div class="col-12">
-      <div class="col-12 centerBetween">
-        <h6 class="fs-7">Only you can see what you've saved</h6>
-        <h6 class="text-primary cursorPointer" (click)="addNewCollection = !addNewCollection">+ New Collection</h6>
-      </div>
-      <div class="col-12 col-md-5 mt-3 position-relative " *ngIf="addNewCollection">
-        <input type="text" class=" w-100 p-2 rounded-0 text-white bg-transparent border-0 border-bottom"
-          [(ngModel)]="collectionName" placeholder="Collection Name">
-        <div class=" position-absolute end-0 top-0 h-100 centerCenter">
-          <button class="cursorPointer text-white btn bg-transparent border-0 z-3"
-            (click)="newCollection()">NEXT</button>
-
-        </div>
-      </div>
-
-
-
-
-
-
-
-
-
-    </div>
-    <div class=" d-flex align-items-center justify-content-start pt-5 row">
-      <div class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center"
-        (click)="openCollection = saved">
-        <div class="defaultCollection row m-0 p-0">
-          <div class=" w-50 h-50 p-0 overflow-hidden" *ngFor="let item of saved let i = index"
-            [ngClass]="{'d-none': i>=4}">
-
-
-            <div *ngIf="item.postsImgAndVideos" class="h-100">
-              <div class="w-100 h-100 m-0 img" *ngIf="item?.postsImgAndVideos[0]?.type == 'image'"
-                [style.background-image]="'url(' + item?.postsImgAndVideos[0].url + ')'"> </div>
-
-
-              <video controls autoplay *ngIf="item.postsImgAndVideos[0]?.type == 'video'">
-                <source src="{{item?.postsImgAndVideos[0].url}}" type="video/mp4">
-              </video>
-            </div>
-
-            <div *ngIf="item.url" class="h-100 position-relative">
-              <!-- <div class="w-100 h-100 m-0 img" *ngIf="item?.postsImgAndVideos[0]?.type == 'image'"
-                [style.background-image]="'url(' + item?.postsImgAndVideos[0].url + ')'"> </div> -->
-              <video>
-                <source src="{{item.url}}" type="video/mp4">
-              </video>
-            </div>
-          </div>
-          <div class="title">
-            <h4>All Saved </h4>
-          </div>
-        </div>
-
-      </div>
-
-
-    <div *ngFor="let item of displayData.collections"
-     (click)="openCollection=item"
-     class="col-lg-4 col-md-8 col-12 p-3 d-flex align-items-center justify-content-center">
-  <app-display-collection [collections]="item" ></app-display-collection>
 </div>
-    </div>
-  </section>
-  <section *ngIf="tap =='tagged'" id="tagged" class="col-9">
-    <app-displayposts [data]="displayData?.posts"></app-displayposts>
-  </section>
-</section>
-
-
-
-
-
-<!--when open collection-->
-<section id="displayCollection" class="row container d-flex justify-content-center pt-3" *ngIf="openCollection" >
-
-  <div class="col-9 d-flex">
-    <p class="cursorPointer" (click)="openCollection = undefined"><i class="bi bi-chevron-left me-2"></i>Saved</p>
-  </div>
-  <div class="col-9 pt-3">
-    <div class="centerBetween">
-      <p class="fs-5 text-capitalize">{{openCollection?.collectionName || 'All'}}</p>
-      <app-dropdown-btn *ngIf="openCollection?.collectionName" (toAddToCollection)="fromBtns($event)"
-        [lis]="['Delete collection', 'Add from saved', 'Edit collection', 'Cancel']" [indexes]="[0]"></app-dropdown-btn>
-
-    </div>
-  </div>
-  <div class="col-9 displayed">
-    <div *ngIf="openCollection?.saved?.length ==0" class="w-100 centerBetween flex-column ifEmpty">
-      <div class="centerCenter opacity-25"><i class="bi bi-save"></i></div>
-      <h2>Start Saving</h2>
-      <h5>Save photos and videos to your collection.</h5>
-      <p class="text-primary cursorPointer" (click)="toAddToCollection = true">Add to collection</p>
-    </div>
-    <!-- <app-displayposts *ngIf="openCollection?.saved?.length !=0" [data]="openCollection.saved"></app-displayposts> -->
-    <!-- <app-displayposts *ngIf="openCollection" [data]="displayData?.saved"></app-displayposts> -->
-    <app-displayposts [data]="openCollection" *ngIf="displayData?.posts?.length !=0"></app-displayposts>
-
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div id="setting" class="col-12" *ngIf="edit"><app-setting (close)="edit = false"></app-setting> </div>
-<div *ngIf="setting" id="close" (click)="closeSetting($event)"
-  class=" w-100 h-100 bg-black bg-opacity-50 position-fixed top-0 start-0 centerCenter">
-  <div id="edit" class=" col-8 col-md-5 col-lg-3 ">
-    <ul>
-      <li>Apps and Websites</li>
-      <li>QR Code</li>
-      <li>Notifications</li>
-      <li>Settings and privacy</li>
-      <li>Meta Verified</li>
-      <li>Supervision</li>
-      <li (click)="logOut()">Log Out</li>
-      <li>Cancel</li>
-    </ul>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="toAddToCollection centerBetween flex-column" *ngIf="toAddToCollection">
-  <div class="close centerStart w-100 ps-3">
-    <i class="bi bi-x-lg cursorPointer" (click)="toAddToCollection = false"></i>
-  </div>
-
-  <div class="mid w-100 row m-0 scrollStyle">
-    <div class="h-auto p-0 col-12 row m-0">
-      <div class="col-4 p-1 m-0 mt-1" *ngFor="let item of saved; trackBy: trackById" (click)="select(item._id)">
-        <!-- علامة الاختيار -->
-        <div class="ifSelect centerCenter rounded-3 m-1 pt-1" *ngIf="selected.includes(item._id)">
-          <i class="bi bi-check fs-1"></i>
-        </div>
-
-        <!-- عرض الصورة/الفيديو من postsImgAndVideos -->
-        <ng-container *ngIf="item?.postsImgAndVideos?.length > 0; else fallbackUrl">
-          <div *ngIf="item.postsImgAndVideos[0].type === 'image'" class="col-12 rounded-3 overflow-hidden">
-            <div class="img" [style.background-image]="'url(' + item.postsImgAndVideos[0].url + ')'"></div>
-          </div>
-
-          <div *ngIf="item.postsImgAndVideos[0].type === 'video'" class="col-12 rounded-3 overflow-hidden">
-            <video controls preload="metadata" muted class="w-100">
-              <source [src]="item.postsImgAndVideos[0].url" type="video/mp4" />
-            </video>
-          </div>
-        </ng-container>
-
-        <!-- fallback: لو فيه item.url منفصل -->
-        <ng-template #fallbackUrl>
-          <div *ngIf="item?.url" class="col-12 parent rounded-3 overflow-hidden">
-            <video preload="metadata" muted class="w-100">
-              <source [src]="item.url" type="video/mp4" />
-            </video>
-          </div>
-
-
-        </ng-template>
-      </div>
-    </div>
-  </div>
-
-  <div class="done cursorPointer centerCenter border-top border-opacity-25" (click)="confirmAdd()">ADD</div>
-</div>
-<app-loading *ngIf="loading"></app-loading>

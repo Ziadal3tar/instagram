@@ -1,185 +1,422 @@
-<section class="col-12 row p-4">
-  <div class="col-12">
-    <h4>How others can interact with you</h4>
-  </div>
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-chat-square-heart" aria-hidden="true"></i>
+    </span>
 
-  <div class="col-12 pt-3 customBorderBot">
-    <p class="fw-bolder my-3">Messages</p>
-    <p class="text-primary mb-3">Manage message settings</p>
-  </div>
-
-  <div class="col-12 pt-4 customBorderBot">
-    <h6>Activity Status</h6>
-    <div class="col-12 my-3 centerBetween">
-
-      <h6>Show activity status</h6>
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-      </div>
-    </div>
-    <div class="col-12 py-2 ">
-      <p class="fs-7 opacity-50">Allow accounts you follow and anyone you message to see when you were last active or
-        are currently active on Instagram. When this is turned off, you won't be able to see the activity status of
-        other accounts. <span class="fw-bolder text-decoration-underline cursorPointer">Learn more</span> <br><br>
-        You can continue to use our services if active status is off.
+    <div>
+      <span class="subpage-eyebrow">INTERACTION CONTROLS</span>
+      <h2 class="subpage-title">How others can interact with you</h2>
+      <p class="subpage-description">
+        Manage messages, mentions, tags and comment filters.
       </p>
     </div>
-  </div>
-  <div class="col-12 py-3 customBorderBot">
-    <p class="fw-bolder my-3">Story</p>
-    <p class="text-primary mb-3">Edit story settings</p>
-  </div>
-  <div class="col-12 py-3 customBorderBot">
-    <p class="fw-bolder my-3">Comments</p>
-    <p class="text-primary mb-3">Manage comment settings</p>
-  </div>
-  <div class="col-12 py-3 customBorderBot">
-    <p class=" my-3">Mentions</p>
-    <p class="fw-bolder my-3">Allow <i class="bi bi-at"></i>mentions from</p>
-    <div class="col-12">
-      <div class="customCheckbox me-3 centerStart">
-        <input class="customCheckbox " id="Everyone" class="d-none" type="checkbox">
-        <label for="Everyone" class="me-2"><span></span></label>
-        <p>Everyone</p>
+  </header>
+
+  <!-- Messages -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Messages</h3>
+        <p>Manage how people can reach you.</p>
       </div>
-      <div class="customCheckbox me-3 my-3 centerStart">
-        <input class="customCheckbox " id="People" class="d-none" type="checkbox">
-        <label for="People" class="me-2"><span></span></label>
-        <p>People You Follow</p>
-      </div>
-      <div class="customCheckbox me-3 centerStart">
-        <input class="customCheckbox " id="NoOne" class="d-none" type="checkbox">
-        <label for="NoOne" class="me-2"><span></span></label>
-        <p>No One</p>
-      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-chat-dots" aria-hidden="true"></i>
+      </span>
     </div>
-    <p class="fs-7 opacity-50 my-3 mt-5">
-      Choose who can <i class="bi bi-at"></i>mention you to link your account in their stories, comments, live videos,
-      and captions. When people try to <i class="bi bi-at"></i>mention you, they'll see if you don't allow <i
-        class="bi bi-at"></i>mentions.
-    </p>
-  </div>
-  <div class="col-12 py-3 customBorderBot">
-    <p class="fw-bolder my-3">Restricted accounts</p>
-    <p class="text-primary mb-3">See and manage accounts you’ve restricted</p>
-  </div>
 
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-envelope" aria-hidden="true"></i>
+      </span>
 
-
-
-
-
-  <div class="col-12 pt-4 customBorderBot">
-    <h6>Guides</h6>
-    <div class="col-12 my-3 centerBetween">
-
-      <h6>Allow post sharing to guides</h6>
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+      <div class="settings-row-copy">
+        <strong>Message settings</strong>
+        <p>Manage message delivery and requests.</p>
       </div>
+
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
     </div>
-    <div class="col-12 py-2 ">
-      <p class="fs-7 opacity-50">When this is on, other people can add your posts to their guides. Your username will
-        always show up with your posts.
-      </p>
+  </section>
+
+  <!-- Activity status -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Activity status</h3>
+        <p>Control when others can see your activity.</p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-activity" aria-hidden="true"></i>
+      </span>
     </div>
-  </div>
 
-
-
-
-  <div class="col-12 py-3 customBorderBot">
-    <p class="fw-bolder my-3">Who can tag you</p>
-    <div class="col-12">
-      <div class="customCheckbox me-3 centerStart">
-        <input class="customCheckbox " id="Everyone2" class="d-none" type="checkbox">
-        <label for="Everyone2" class="me-2"><span></span></label>
-        <p>Everyone</p>
+    <div class="settings-row">
+      <div class="settings-row-copy">
+        <strong>Show activity status</strong>
+        <p>
+          Allow accounts you follow and people you message to see when
+          you are active or were recently active.
+        </p>
       </div>
-      <div class="customCheckbox me-3 my-3 centerStart">
-        <input class="customCheckbox " id="People2" class="d-none" type="checkbox">
-        <label for="People2" class="me-2"><span></span></label>
-        <p>People You Follow</p>
-      </div>
-      <div class="customCheckbox me-3 centerStart">
-        <input class="customCheckbox " id="NoOne2" class="d-none" type="checkbox">
-        <label for="NoOne2" class="me-2"><span></span></label>
-        <p>No One</p>
+
+      <label class="settings-switch" for="showActivityStatus">
+        <input
+          id="showActivityStatus"
+          type="checkbox"
+          role="switch"
+        />
+        <span class="switch-track"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Stories -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Story</h3>
+        <p>Review your story interaction preferences.</p>
       </div>
     </div>
 
-  </div>
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-circle-square" aria-hidden="true"></i>
+      </span>
 
-
-
-
-  <div class="col-12 py-3 customBorderBot">
-    <p class="fw-bolder my-3">Manually approve tags</p>
-    <div class="col-12">
-      <div class="customCheckbox me-3 centerStart">
-        <input class="customCheckbox " id="Automatically" class="d-none" type="checkbox">
-        <label for="Automatically" class="me-2"><span></span></label>
-        <p>Automatically show tagged posts on your profile</p>
-      </div>
-      <div class="customCheckbox me-3 my-3 centerStart">
-        <input class="customCheckbox " id="Manually" class="d-none" type="checkbox">
-        <label for="Manually" class="me-2"><span></span></label>
-        <p>Manually approve posts when you’re tagged in them</p>
+      <div class="settings-row-copy">
+        <strong>Story settings</strong>
+        <p>Manage settings related to your stories.</p>
       </div>
 
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
     </div>
-    <p class="fs-7 opacity-50 my-3 mt-5">
-      Choose how you want photos of you added to your profile. <span class="text-primary opacity-100">Learn more</span>
-    </p>
-  </div>
+  </section>
 
-  <div class="col-12 py-4 customBorderBot">
-    <div class="col-12">
-      <p>Offensive words and phrases</p>
-      <p class="fs-7 opacity-75">Protect yourself from comments and message requests that contain offensive words,
-        phrases or emojis.
-      </p>
-    </div>
-    <div class="col-12">
-
-      <div class="col-12 my-3 centerBetween">
-
-        <h6>Hide comments</h6>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-        </div>
+  <!-- Comments -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Comments</h3>
+        <p>Control interactions on your posts and reels.</p>
       </div>
-      <p class="fs-7 opacity-75">Comments that may be offensive will automatically be hidden in a separate section of
-        your posts, reels and videos.</p>
     </div>
-    <div class="col-12">
 
-      <div class="col-12 my-3 centerBetween">
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-chat-left-text" aria-hidden="true"></i>
+      </span>
 
-        <h6>Advanced comment filtering</h6>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-        </div>
+      <div class="settings-row-copy">
+        <strong>Comment settings</strong>
+        <p>Review your comment preferences.</p>
       </div>
-      <p class="fs-7 opacity-75">Additional comments that may contain offensive words and phrases will be hidden. You
-        can always review and unhide individual comments.</p>
+
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
     </div>
-    <div class="col-12">
+  </section>
 
-      <div class="col-12 my-3 centerBetween">
-
-        <h6>Hide message requests</h6>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
-        </div>
+  <!-- Mentions -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Mentions</h3>
+        <p>Choose who can mention your account.</p>
       </div>
-      <p class="fs-7 opacity-75">Message requests that may be offensive will be moved to the hidden requests folder.
-        We’ll also filter notifications for these messages.</p>
-    </div>
-  </div>
-  <div class="col-12 pt-3 ">
-    <p class="fw-bolder my-3">Privacy and security help</p>
-    <p class="text-primary mb-3">Support</p>
-  </div>
 
+      <span class="group-heading-icon">
+        <i class="bi bi-at" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <div class="settings-choice-list">
+      <label class="settings-choice" for="mentionEveryone">
+        <span class="settings-choice-copy">
+          <strong>Everyone</strong>
+          <small>Allow mentions from any account.</small>
+        </span>
+
+        <input
+          id="mentionEveryone"
+          type="radio"
+          name="mentionPermission"
+          value="everyone"
+          checked
+        />
+        <span class="radio-visual"></span>
+      </label>
+
+      <label class="settings-choice" for="mentionFollowing">
+        <span class="settings-choice-copy">
+          <strong>People you follow</strong>
+          <small>Only allow mentions from accounts you follow.</small>
+        </span>
+
+        <input
+          id="mentionFollowing"
+          type="radio"
+          name="mentionPermission"
+          value="following"
+        />
+        <span class="radio-visual"></span>
+      </label>
+
+      <label class="settings-choice" for="mentionNobody">
+        <span class="settings-choice-copy">
+          <strong>No one</strong>
+          <small>Do not allow mentions from other accounts.</small>
+        </span>
+
+        <input
+          id="mentionNobody"
+          type="radio"
+          name="mentionPermission"
+          value="nobody"
+        />
+        <span class="radio-visual"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Restricted accounts -->
+  <section class="settings-group">
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-person-lock" aria-hidden="true"></i>
+      </span>
+
+      <div class="settings-row-copy">
+        <strong>Restricted accounts</strong>
+        <p>See and manage accounts you have restricted.</p>
+      </div>
+
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
+    </div>
+  </section>
+
+  <!-- Guides -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Guides</h3>
+        <p>Control whether other people can add your posts to guides.</p>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row-copy">
+        <strong>Allow post sharing to guides</strong>
+        <p>
+          When enabled, people can add your posts to their guides.
+          Your username remains visible with your posts.
+        </p>
+      </div>
+
+      <label class="settings-switch" for="allowGuideSharing">
+        <input
+          id="allowGuideSharing"
+          type="checkbox"
+          role="switch"
+        />
+        <span class="switch-track"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Tags -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Who can tag you</h3>
+        <p>Choose who can tag your account in their content.</p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-tags" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <div class="settings-choice-list">
+      <label class="settings-choice" for="tagEveryone">
+        <span class="settings-choice-copy">
+          <strong>Everyone</strong>
+          <small>Allow tags from any account.</small>
+        </span>
+
+        <input
+          id="tagEveryone"
+          type="radio"
+          name="tagPermission"
+          value="everyone"
+          checked
+        />
+        <span class="radio-visual"></span>
+      </label>
+
+      <label class="settings-choice" for="tagFollowing">
+        <span class="settings-choice-copy">
+          <strong>People you follow</strong>
+          <small>Allow tags only from accounts you follow.</small>
+        </span>
+
+        <input
+          id="tagFollowing"
+          type="radio"
+          name="tagPermission"
+          value="following"
+        />
+        <span class="radio-visual"></span>
+      </label>
+
+      <label class="settings-choice" for="tagNobody">
+        <span class="settings-choice-copy">
+          <strong>No one</strong>
+          <small>Do not allow tags from other accounts.</small>
+        </span>
+
+        <input
+          id="tagNobody"
+          type="radio"
+          name="tagPermission"
+          value="nobody"
+        />
+        <span class="radio-visual"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Tag approval -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Manually approve tags</h3>
+        <p>Choose how tagged posts appear on your profile.</p>
+      </div>
+    </div>
+
+    <div class="settings-choice-list">
+      <label class="settings-choice" for="automaticTags">
+        <span class="settings-choice-copy">
+          <strong>Automatically show tagged posts</strong>
+          <small>Allow tagged posts to appear on your profile automatically.</small>
+        </span>
+
+        <input
+          id="automaticTags"
+          type="radio"
+          name="tagApproval"
+          value="automatic"
+          checked
+        />
+        <span class="radio-visual"></span>
+      </label>
+
+      <label class="settings-choice" for="manualTags">
+        <span class="settings-choice-copy">
+          <strong>Manually approve posts</strong>
+          <small>Review tagged posts before they appear on your profile.</small>
+        </span>
+
+        <input
+          id="manualTags"
+          type="radio"
+          name="tagApproval"
+          value="manual"
+        />
+        <span class="radio-visual"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- Offensive content -->
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Offensive words and phrases</h3>
+        <p>
+          Manage filters for potentially offensive comments and
+          message requests.
+        </p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-shield-check" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row-copy">
+        <strong>Hide comments</strong>
+        <p>
+          Potentially offensive comments can be hidden from your posts,
+          reels and videos.
+        </p>
+      </div>
+
+      <label class="settings-switch" for="hideOffensiveComments">
+        <input
+          id="hideOffensiveComments"
+          type="checkbox"
+          role="switch"
+        />
+        <span class="switch-track"></span>
+      </label>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row-copy">
+        <strong>Advanced comment filtering</strong>
+        <p>
+          Apply additional filtering to comments that may contain
+          offensive language.
+        </p>
+      </div>
+
+      <label class="settings-switch" for="advancedCommentFiltering">
+        <input
+          id="advancedCommentFiltering"
+          type="checkbox"
+          role="switch"
+        />
+        <span class="switch-track"></span>
+      </label>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row-copy">
+        <strong>Hide message requests</strong>
+        <p>
+          Move potentially offensive message requests to a separate
+          hidden requests folder.
+        </p>
+      </div>
+
+      <label class="settings-switch" for="hideMessageRequests">
+        <input
+          id="hideMessageRequests"
+          type="checkbox"
+          role="switch"
+        />
+        <span class="switch-track"></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="settings-group">
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-life-preserver" aria-hidden="true"></i>
+      </span>
+
+      <div class="settings-row-copy">
+        <strong>Privacy and security help</strong>
+        <p>Find guidance about interacting with other accounts safely.</p>
+      </div>
+
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
+    </div>
+  </section>
 </section>

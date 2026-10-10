@@ -1,46 +1,52 @@
 import { Component } from '@angular/core';
 
+interface HelpTopic {
+  qus: string;
+  desc: string;
+  icon: string;
+}
+
 @Component({
   selector: 'app-help',
   templateUrl: './help.component.html',
   styleUrls: ['./help.component.scss'],
 })
 export class HelpComponent {
-  qus:any[]=[
+  expandedIndex: number | null = null;
+
+  readonly qus: HelpTopic[] = [
     {
-      qus:'Help Center',
-      desc:"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias debitis aut architecto totam modi natus. Asperiores quam consequuntur sapiente iusto fuga rerum magnam reiciendis culpa suscipit, optio libero vitae eligendi voluptate, ad dolor dicta unde aperiam officiis! Quasi amet est dicta corporis, maxime eveniet, iste cumque, sapiente repudiandae fugiat enim recusandae impedit natus suscipit? Odio, ipsa esse. Voluptas porro molestias dignissimos sunt optio. Blanditiis, atque repellendus ipsa et repudiandae alias quo animi cum quasi, aperiam repellat. Ipsam harum consequuntur ut?"
+      qus: 'Help Center',
+      desc:
+        'Find information about account settings, profile management, ' +
+        'posts, messages and the features available in your account.',
+      icon: 'bi-question-circle',
+    },
+    
+    {
+      qus: 'Account Status',
+      desc:
+        'Review account-related notices and learn where to look for ' +
+        'information about restrictions or feature availability.',
+        icon: 'bi-person-check',
     },
     {
-      qus:'Account Status',
-      desc:"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias debitis aut architecto totam modi natus. Asperiores quam consequuntur sapiente iusto fuga rerum magnam reiciendis culpa suscipit, optio libero vitae eligendi voluptate, ad dolor dicta unde aperiam officiis! Quasi amet est dicta corporis, maxime eveniet, iste cumque, sapiente repudiandae fugiat enim recusandae impedit natus suscipit? Odio, ipsa esse. Voluptas porro molestias dignissimos sunt optio. Blanditiis, atque repellendus ipsa et repudiandae alias quo animi cum quasi, aperiam repellat. Ipsam harum consequuntur ut?"
+      qus: 'Privacy and Security Help',
+      desc:
+        'Learn more about privacy controls, password security and ' +
+        'ways to help protect your account.',
+      icon: 'bi-shield-lock'
     },
     {
-      qus:'Privacy and Security Help',
-      desc:"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias debitis aut architecto totam modi natus. Asperiores quam consequuntur sapiente iusto fuga rerum magnam reiciendis culpa suscipit, optio libero vitae eligendi voluptate, ad dolor dicta unde aperiam officiis! Quasi amet est dicta corporis, maxime eveniet, iste cumque, sapiente repudiandae fugiat enim recusandae impedit natus suscipit? Odio, ipsa esse. Voluptas porro molestias dignissimos sunt optio. Blanditiis, atque repellendus ipsa et repudiandae alias quo animi cum quasi, aperiam repellat. Ipsam harum consequuntur ut?"
+      qus: 'Support Requests',
+      desc:
+        'Find guidance on checking the status of reports or support ' +
+        'requests submitted from your account, when this feature is available.',
+      icon: 'bi-chat-left-text'
     },
-    {
-      qus:'Support Requests',
-      desc:"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias debitis aut architecto totam modi natus. Asperiores quam consequuntur sapiente iusto fuga rerum magnam reiciendis culpa suscipit, optio libero vitae eligendi voluptate, ad dolor dicta unde aperiam officiis! Quasi amet est dicta corporis, maxime eveniet, iste cumque, sapiente repudiandae fugiat enim recusandae impedit natus suscipit? Odio, ipsa esse. Voluptas porro molestias dignissimos sunt optio. Blanditiis, atque repellendus ipsa et repudiandae alias quo animi cum quasi, aperiam repellat. Ipsam harum consequuntur ut?"
-    },
-  ]
-  active(i: Number, event: any) {
-    if (event.target.childNodes[1].classList.contains('bi-chevron-right')) {
-      event.target.childNodes[1].classList.replace(
-        'bi-chevron-right',
-        'bi-chevron-down'
-      );
-    } else {
-      event.target.childNodes[1].classList.replace(
-        'bi-chevron-down',
-        'bi-chevron-right'
-      );
-    }
-    let desc = document.getElementById(`desc${i}`);
-    if (desc?.classList.contains('active')) {
-      desc.classList.remove('active');
-    } else {
-      desc?.classList.add('active');
-    }
+  ];
+
+  active(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
   }
 }

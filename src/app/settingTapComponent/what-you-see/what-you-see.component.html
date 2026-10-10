@@ -1,33 +1,84 @@
-<section class="col-12 row p-4">
-  <div class="col-12">
-    <h4>Apps and websites</h4>
-  </div>
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-eye" aria-hidden="true"></i>
+    </span>
 
-
-
-  <div class="col-12 my-5">
-    <p>
-      Like count
-    </p>
-
-  </div>
-  <div class="col-12 centerBetween">
-    <h6>Hide like count</h6>
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+    <div>
+      <span class="subpage-eyebrow">YOUR EXPERIENCE</span>
+      <h2 class="subpage-title">What you see</h2>
+      <p class="subpage-description">
+        Customize parts of the content and experience shown to you.
+      </p>
     </div>
-  </div>
-  <div class="col-12 pt-5 pb-2 customBorderBot">
-    <p class="fs-7 opacity-50">The number of likes on posts and reels from other accounts will be hidden. You can hide
-      the number of likes and plays on your own posts and reels by going to Advanced settings before sharing. Learn more
-    </p>
-  </div>
-  <div class="col-12 customBorderBot pt-3">
-    <p class="fw-bolder my-3">Muted accounts</p>
-    <p class="text-primary mb-3">See and manage accounts whose posts and stories you've muted</p>
-  </div>
-  <div class="col-12  pt-3">
-    <p class="fw-bolder my-3">Privacy and security help</p>
-    <p class="text-primary mb-3">Support</p>
-  </div>
+  </header>
+
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Like and view counts</h3>
+        <p>Manage the visibility of engagement information.</p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-heart" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row-copy">
+        <strong>Hide like counts</strong>
+        <p>
+          Hide the number of likes on posts and reels from other accounts.
+          You can also manage this setting for your own posts when sharing.
+        </p>
+      </div>
+
+      <label class="settings-switch" for="hideLikeCount">
+        <input
+          id="hideLikeCount"
+          type="checkbox"
+          role="switch"
+        />
+        <span class="switch-track"></span>
+      </label>
+    </div>
+
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-volume-mute" aria-hidden="true"></i>
+      </span>
+
+      <div class="settings-row-copy">
+        <strong>Muted accounts</strong>
+        <p>
+          See and manage accounts whose posts and stories you've muted.
+        </p>
+      </div>
+
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
+    </div>
+  </section>
+
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>More information</h3>
+        <p>Find help with the settings that affect your experience.</p>
+      </div>
+    </div>
+
+    <div class="settings-row settings-row-link">
+      <span class="settings-row-icon">
+        <i class="bi bi-shield-check" aria-hidden="true"></i>
+      </span>
+
+      <div class="settings-row-copy">
+        <strong>Privacy and security help</strong>
+        <p>Learn more about privacy and account security.</p>
+      </div>
+
+      <i class="bi bi-chevron-right settings-row-chevron" aria-hidden="true"></i>
+    </div>
+  </section>
 </section>

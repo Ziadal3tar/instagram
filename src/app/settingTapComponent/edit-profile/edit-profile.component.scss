@@ -1,47 +1,26 @@
-#EditProfile {
-  .part1 {
-    #userImage {
-      width: 40px;
-      height: 40px;
-      background-image: url('../../../assets/imgs/MAB.jpg');
-      background-position: center;
-      background-size: cover;
-      border-radius: 50%;
-    }
-
-    p {
-      font-size: 14px;
-    }
-
-    .change {
-      &:hover {
-        color: white !important;
-        cursor: pointer;
-      }
-    }
-  }
-
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.settings-subpage {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 4px 0 16px !important;
+  color: #f5f5f7;
 }
 
-
-
-.checkbox-container{
-  label{
-    width: 30px;
-    height: 30px;
-    border: 2px solid #333;
-    border-radius: 4px;
-    margin-right: 8px;
-    display: inline-block;
-    box-sizing: border-box;
-    cursor: pointer;
-    background-color: transparent;
-    padding: 3px 4px !important;
-    i{
-    }
-  }
-  .checked{
-    background-color: #fff;
-  }
+.settings-subpage,
+.settings-subpage * {
+  box-sizing: border-box;
 }
 
+.settings-subpage h2,
+.settings-subpage h3,
+.settings-subpage h4,
+.settings-subpage p {
+  overflow-wrap: anywhere;
+}

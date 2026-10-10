@@ -1,211 +1,613 @@
-<section id="home" *ngIf="!storyOpened" class=" row m-0">
-  <div class="col-md-8 col-12 row m-0 py-3 px-0 px-md-3 mt-5 overflow-hidden ">
-    <div id="story" class="col-10 row p-0 position-relative" *ngIf="!storyOpened">
-
-
-      <owl-carousel-o [options]="customOptions">
-
-        <ng-container *ngFor="let slide of userData?.following">
-          <ng-template carouselSlide *ngIf="slide.stories.length>=1">
-            <div class="friendStory centerCenter" (click)="openStory(slide)">
-
-              <div class="borderImg bg-danger rounded-5  ">
-                <div class=" img " [style.background-image]="'url(' + slide.profilePic + ')'"></div>
-              </div>
-              <div class=" w-100 text-center">
-                <p class="name">{{slide.userName}}</p>
-              </div>
-            </div>
-          </ng-template>
-        </ng-container>
-      </owl-carousel-o>
-    </div>
-    <div class="col-2 addStoryBtn centerCenter flex-column">
-      <input type="file" id="uploadStory" class="d-none" (change)="uploadStory($event)">
-
-      <label (click)="option = !option">
-        <app-user-image [story]="true"[size]="60" [data]="userData"></app-user-image> </label>
-
-
-      <div [ngClass]="!option?'openOption':'closeOption'" class="option row m-0 "><label
-          (click)="openStory(userData)">My Stories</label><label for="uploadStory">Add story</label> </div>
-    </div>
-
-    <div id="posts" class="col-12 mt-2 px-md-5 px-0 ">
-
-
-
-      <div class="col-12 post" *ngFor="let post of posts let i = index">
-        <div class="col-12 d-flex align-items-center justify-content-between header ">
-<div class="postOwnerDetails d-flex" style="cursor:pointer" (click)="toUser(post.createdBy._id)">
-
-            <div class="postOwnerImg me-2">
-              <div class="borderImg bg-danger rounded-5  ">
-                <div (mouseleave)="mouseleave($event)" (mouseenter)="mouseEnter(post.createdBy)" (mouseenter)="onMouseMove($event)"
-                  class="img" [style.background-image]="'url(' + post?.createdBy?.profilePic + ')'"></div>
-              </div>
-            </div>
-            <div class="postOwnerName d-flex align-items-start flex-column">
-              <p class="name">{{post?.createdBy.userName}}<span class="time"><i class="bi bi-dot"></i>{{ post?.createdAt
-                  | postTime }}</span></p>
-              <p class="type">Original audio</p>
-            </div>
+<section class="home-page" *ngIf="!storyOpened">
+  <div class="feed-layout">
+    <!-- Main feed -->
+    <main class="feed">
+      <!-- Stories -->
+      <section
+        class="stories-panel"
+        *ngIf="storyUsers.length || userData"
+        aria-label="Stories"
+      >
+        <div class="stories-heading">
+          <div>
+            <h2>Stories</h2>
+            <span>Share a moment</span>
           </div>
-          <app-dropdown-btn
-            [lis]="['UnFollow', 'Add to', 'Go to post', 'Share to...', 'Copy link', 'Embed', 'About this account', 'cancel']"></app-dropdown-btn>
+
+          <span class="stories-live">
+            <span class="live-dot"></span>
+            Active
+          </span>
         </div>
 
-        <div class="content" *ngIf="!post?.url">
-  <div class="w-100 h-100 centerCenter">
+        <div class="story-list">
+          <!-- Add your story -->
+          <button
+            *ngIf="userData"
+            type="button"
+            class="story-card add"
+            [attr.aria-expanded]="option"
+            aria-label="Create or view your story"
+            (click)="option = !option"
+          >
+            <span class="story-avatar-wrap own-story-avatar">
+              <app-user-image
+                [story]="true"
+                [size]="64"
+                [data]="userData"
+              ></app-user-image>
 
-    <!-- IMAGE -->
-    <img
-      *ngIf="getCurrentMedia(post, i)?.type === 'image'"
-      [src]="getCurrentMedia(post, i)?.url"
-      loading="lazy"
-      class="cursorPointer post-media-img"
-      (click)="openPost(post)"
-      (error)="onImgError($event)"
-      alt="{{ post?.caption || 'post image' }}" />
+              <span class="add-story-badge">
+                <i class="bi bi-plus-lg"></i>
+              </span>
+            </span>
 
-    <!-- VIDEO -->
-    <video
-      *ngIf="getCurrentMedia(post, i)?.type === 'video'"
-      controls
-      preload="none"
-      class="post-media-video">
-      <source [src]="getCurrentMedia(post, i)?.url" type="video/mp4" />
-    </video>
+            <span class="story-name">Your story</span>
+            <span class="story-subtitle">Add a moment</span>
+          </button>
 
+          <input
+            type="file"
+            #storyUploadInput
+            id="uploadStory"
+            class="visually-hidden"
+            accept="image/*,video/*"
+            (change)="uploadStory($event)"
+          />
+
+          <!-- Other users' stories -->
+          <button
+            type="button"
+            class="story-card"
+            *ngFor="let slide of storyUsers; trackBy: trackByStory"
+            (click)="openStory(slide)"
+            [attr.aria-label]="'Open story by ' + (slide.userName || 'user')"
+          >
+            <span class="story-avatar-wrap">
+              <span class="story-ring">
+                <img
+                  [src]="slide.profilePic "
+                  [alt]="slide.userName || 'Story author'"
+                  loading="lazy"
+                  decoding="async"
+                  (error)="onImgError($event)"
+                />
+              </span>
+
+              <span class="story-view-indicator">
+                <i class="bi bi-play-fill"></i>
+              </span>
+            </span>
+
+            <span class="story-name">
+              {{ slide.userName || 'Instagram user' }}
+            </span>
+            <span class="story-subtitle">View story</span>
+          </button>
+        </div>
+
+        <!-- My story menu -->
+        <div
+          class="story-options"
+          *ngIf="option"
+          role="menu"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            *ngIf="userData?.stories?.length"
+            (click)="option = false; openStory(userData)"
+          >
+            <i class="bi bi-collection-play"></i>
+            <span>View my stories</span>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            (click)="option = false; storyUploadInput.click()"
+          >
+            <i class="bi bi-plus-circle"></i>
+            <span>Add a new story</span>
+          </button>
+        </div>
+
+        <p
+          class="story-upload-error"
+          *ngIf="storyUploadError"
+          role="alert"
+        >
+          <i class="bi bi-exclamation-circle"></i>
+          {{ storyUploadError }}
+        </p>
+      </section>
+
+      <!-- Initial loading skeleton -->
+      <section
+        class="feed-loading"
+        *ngIf="instaLoading"
+        aria-label="Loading feed"
+        aria-busy="true"
+      >
+        <article class="feed-skeleton" *ngFor="let skeleton of [1, 2, 3]">
+          <div class="skeleton-header">
+            <span class="skeleton skeleton-avatar"></span>
+
+            <div class="skeleton-profile">
+              <span class="skeleton skeleton-line medium"></span>
+              <span class="skeleton skeleton-line short"></span>
+            </div>
+
+            <span class="skeleton skeleton-dot"></span>
+          </div>
+
+          <div class="skeleton-media"></div>
+
+          <div class="skeleton-content">
+            <span class="skeleton skeleton-line medium"></span>
+            <span class="skeleton skeleton-line long"></span>
+            <span class="skeleton skeleton-line short"></span>
+          </div>
+        </article>
+      </section>
+
+      <!-- Feed error with retry -->
+      <section
+        class="feed-state feed-error"
+        *ngIf="!instaLoading && feedError"
+        role="alert"
+      >
+        <span class="feed-state-icon">
+          <i class="bi bi-cloud-slash"></i>
+        </span>
+
+        <h2>Couldn't load your feed</h2>
+        <p>{{ feedError }}</p>
+
+        <button type="button" class="retry-button" (click)="retryFeed()">
+          <i class="bi bi-arrow-clockwise"></i>
+          Try again
+        </button>
+      </section>
+
+      <!-- Posts -->
+      <article
+        class="post-card"
+        *ngFor="let post of posts; let i = index; trackBy: trackById"
+      >
+        <!-- Post header -->
+        <header class="post-header">
+          <button
+            type="button"
+            class="author"
+            (click)="toUser(post.createdBy?._id)"
+            [attr.aria-label]="'Open profile of ' + (post.createdBy?.userName || 'user')"
+          >
+            <span class="author-avatar">
+              <img
+                [src]="post.createdBy?.profilePic "
+                [alt]="post.createdBy?.userName || 'Profile picture'"
+                loading="lazy"
+                decoding="async"
+                (error)="onImgError($event)"
+              />
+            </span>
+
+            <span class="author-details">
+              <strong>{{ post.createdBy?.userName || 'Instagram user' }}</strong>
+
+              <small>
+                <span>{{ post.createdAt | postTime }}</span>
+                <span class="meta-dot">·</span>
+                <i
+                  class="bi"
+                  [ngClass]="post.type === 'reel' ? 'bi-camera-reels' : 'bi-globe2'"
+                  aria-hidden="true"
+                ></i>
+              </small>
+            </span>
+          </button>
+
+          <div class="post-header-actions">
+            <span class="post-type-tag" *ngIf="post.type === 'reel'">
+              <i class="bi bi-play-fill"></i>
+              Reel
+            </span>
+
+            <app-dropdown-btn
+              [lis]="[
+                'UnFollow',
+                'Add to',
+                'Go to post',
+                'Share to...',
+                'Copy link',
+                'About this account',
+                'cancel'
+              ]"
+            ></app-dropdown-btn>
+          </div>
+        </header>
+
+        <!-- Media -->
+        <div class="media-box">
+          <!-- Image -->
+          <button
+            *ngIf="getCurrentMedia(post, i)?.type === 'image'"
+            type="button"
+            class="media-click"
+            (click)="openPost(post)"
+            [attr.aria-label]="'Open post by ' + (post.createdBy?.userName || 'user')"
+          >
+            <img
+              class="post-media"
+              [src]="getCurrentMedia(post, i)?.url"
+              [alt]="post.caption || 'Post media'"
+              loading="lazy"
+              decoding="async"
+              (error)="onImgError($event)"
+            />
+          </button>
+
+          <!-- Video -->
+<video
+  *ngIf="getCurrentMedia(post, i)?.type === 'video'"
+  class="post-video"
+  [src]="getCurrentMedia(post, i)?.url"
+  controls
+  preload="metadata"
+  playsinline
+  (click)="openMedia(post, $event)"
+></video>
+
+          <!-- Missing media -->
+          <div
+            class="media-empty"
+            *ngIf="!getCurrentMedia(post, i)?.url"
+          >
+            <i class="bi bi-image"></i>
+            <span>Media unavailable</span>
+          </div>
+
+          <!-- Carousel arrows -->
+          <button
+            *ngIf="(post.postsImgAndVideos?.length || 0) > 1 && post.type !== 'reel'"
+            type="button"
+            class="media-nav prev"
+            (click)="toggleValue(i, postNavigationStates[i] - 1)"
+            aria-label="Previous photo"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
+
+          <button
+            *ngIf="(post.postsImgAndVideos?.length || 0) > 1 && post.type !== 'reel'"
+            type="button"
+            class="media-nav next"
+            (click)="toggleValue(i, postNavigationStates[i] + 1)"
+            aria-label="Next photo"
+          >
+            <i class="bi bi-chevron-right"></i>
+          </button>
+
+          <!-- Carousel counter -->
+          <span
+            class="media-counter"
+            *ngIf="(post.postsImgAndVideos?.length || 0) > 1 && post.type !== 'reel'"
+          >
+            {{ (postNavigationStates[i] || 0) + 1 }}
+            /
+            {{ post.postsImgAndVideos?.length }}
+          </span>
+
+          <!-- Carousel dots -->
+          <div
+            class="media-dots"
+            *ngIf="
+              (post.postsImgAndVideos?.length || 0) > 1 &&
+              (post.postsImgAndVideos?.length || 0) <= 8 &&
+              post.type !== 'reel'
+            "
+            aria-label="Photo navigation"
+          >
+            <button
+              type="button"
+              class="media-dot"
+              *ngFor="let mediaItem of post.postsImgAndVideos; let mediaIndex = index; trackBy: trackByIndex"
+              [class.active]="(postNavigationStates[i] || 0) === mediaIndex"
+              [attr.aria-label]="'Show photo ' + (mediaIndex + 1)"
+              [attr.aria-current]="(postNavigationStates[i] || 0) === mediaIndex ? 'true' : null"
+              (click)="toggleValue(i, mediaIndex)"
+            ></button>
+          </div>
+
+          <!-- Reel indicator -->
+          <span class="reel-indicator" *ngIf="post.type === 'reel'">
+            <i class="bi bi-play-fill"></i>
+          </span>
+        </div>
+
+        <!-- Post footer -->
+        <footer class="post-footer">
+          <!-- Actions -->
+          <div class="action-row">
+            <div class="primary-actions">
+              <button
+                type="button"
+                class="post-action like-action"
+                [class.liked]="post.viewerLiked"
+                [disabled]="isLikePending(post)"
+                [attr.aria-pressed]="!!post.viewerLiked"
+                [attr.aria-label]="post.viewerLiked ? 'Unlike post' : 'Like post'"
+                title="Like"
+                (click)="like(post)"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="post.viewerLiked ? 'bi-heart-fill' : 'bi-heart'"
+                ></i>
+              </button>
+
+              <button
+                type="button"
+                class="post-action"
+                aria-label="Comment on post"
+                title="Comment"
+                (click)="openPost(post)"
+              >
+                <i class="bi bi-chat"></i>
+              </button>
+
+              <button
+                type="button"
+                class="post-action"
+                aria-label="Share post"
+                title="Share"
+                (click)="sharePost(post)"
+              >
+                <i class="bi bi-send"></i>
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="post-action save-action"
+              [class.saved]="isPostSaved(post)"
+              [disabled]="isSavePending(post)"
+              [attr.aria-pressed]="isPostSaved(post)"
+              [attr.aria-label]="isPostSaved(post) ? 'Remove saved post' : 'Save post'"
+              title="Save"
+              (click)="savePost(post)"
+            >
+              <i
+                class="bi"
+                [ngClass]="isPostSaved(post) ? 'bi-bookmark-fill' : 'bi-bookmark'"
+              ></i>
+            </button>
+          </div>
+
+          <!-- Inline feedback -->
+          <p
+            class="post-feedback"
+            *ngIf="postMessages[post._id]"
+            role="status"
+          >
+            <i class="bi bi-info-circle"></i>
+            {{ postMessages[post._id] }}
+          </p>
+
+          <!-- Likes -->
+          <button
+            type="button"
+            class="likes"
+            (click)="openPost(post)"
+            [attr.aria-label]="'View post with ' + (post.likesCount || 0) + ' likes'"
+          >
+            {{ post.likesCount || 0 }}
+            {{ (post.likesCount || 0) === 1 ? 'like' : 'likes' }}
+          </button>
+
+          <!-- Caption -->
+          <p class="caption" *ngIf="post.caption">
+            <strong>{{ post.createdBy?.userName || 'Instagram user' }}</strong>
+            <span>{{ post.caption }}</span>
+          </p>
+
+          <!-- Comments shortcut -->
+          <button
+            type="button"
+            class="comments-link"
+            (click)="openPost(post)"
+            *ngIf="(post.commentsCount || 0) > 0"
+          >
+            View all {{ post.commentsCount }} comments
+          </button>
+
+          <button
+            type="button"
+            class="comments-link first-comment"
+            (click)="openPost(post)"
+            *ngIf="!(post.commentsCount || 0)"
+          >
+            Be the first to comment
+          </button>
+
+          <!-- Add comment -->
+          <form
+            class="comment-box"
+            (ngSubmit)="addComment(post)"
+          >
+            <i class="bi bi-chat-left-text comment-input-icon"></i>
+
+            <input
+              type="text"
+              [name]="'comment-' + post._id"
+              [(ngModel)]="commentDrafts[post._id]"
+              maxlength="1000"
+              autocomplete="off"
+              [disabled]="isCommentPending(post)"
+              [placeholder]="'Add a comment...'"
+              [attr.aria-label]="'Add a comment to ' + (post.createdBy?.userName || 'this post')"
+            />
+
+            <button
+              type="submit"
+              *ngIf="(commentDrafts[post._id] || '').trim()"
+              [disabled]="isCommentPending(post)"
+            >
+              {{ isCommentPending(post) ? 'Posting…' : 'Post' }}
+            </button>
+          </form>
+        </footer>
+      </article>
+
+      <!-- Feed end -->
+      <div class="feed-end" *ngIf="!loading && !hasMore && posts.length">
+        <span class="feed-end-icon">
+          <i class="bi bi-check2"></i>
+        </span>
+        <strong>You're all caught up</strong>
+        <span>You've seen all the posts for now.</span>
+      </div>
+
+      <!-- Load more -->
+      <div
+        class="feed-more"
+        *ngIf="loading && posts.length"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="loading-spinner"></span>
+        <span>Loading more posts…</span>
+      </div>
+
+      <!-- Empty feed -->
+      <section
+        class="feed-state feed-empty"
+        *ngIf="!loading && !instaLoading && !posts.length && !feedError"
+      >
+        <span class="feed-state-icon">
+          <i class="bi bi-camera"></i>
+        </span>
+
+        <h2>Your feed is waiting</h2>
+        <p>Follow people, discover new accounts, and start filling your feed.</p>
+
+        <button
+          type="button"
+          class="retry-button"
+          (click)="retryFeed()"
+        >
+          <i class="bi bi-arrow-clockwise"></i>
+          Refresh feed
+        </button>
+      </section>
+    </main>
+
+    <!-- Right sidebar -->
+    <aside class="home-side" *ngIf="userData">
+      <div class="sidebar-profile">
+        <button
+          type="button"
+          class="me-card"
+          (click)="toUser(userData._id)"
+          aria-label="Open your profile"
+        >
+          <span class="me-avatar">
+            <img
+              [src]="userData.profilePic "
+              [alt]="userData.userName || 'Your profile picture'"
+              loading="lazy"
+              decoding="async"
+              (error)="onImgError($event)"
+            />
+          </span>
+
+          <span class="me-details">
+            <strong>{{ userData.userName }}</strong>
+            <span>{{ userData.fullName }}</span>
+          </span>
+
+          <span class="profile-link">Profile</span>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-heading">
+          <span>Make it yours</span>
+          <i class="bi bi-stars"></i>
+        </div>
+
+        <div class="side-note">
+          <span class="side-note-icon">
+            <i class="bi bi-bookmark-heart"></i>
+          </span>
+
+          <div>
+            <strong>Save what inspires you</strong>
+            <p>Keep your favorite posts organized in your saved collection.</p>
+          </div>
+        </div>
+
+        <div class="side-note">
+          <span class="side-note-icon">
+            <i class="bi bi-chat-heart"></i>
+          </span>
+
+          <div>
+            <strong>Stay connected</strong>
+            <p>Like, comment, and share moments with your community.</p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="sidebar-footer">
+        <span>Instagram-inspired social experience</span>
+        <span>© {{ currentYear }} Social</span>
+      </footer>
+    </aside>
   </div>
+</section>
 
-  <!-- navigation -->
+<!-- Stories viewer -->
+<section
+  class="story-overlay"
+  *ngIf="storyOpened"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Story viewer"
+>
   <button
-    *ngIf="(post?.postsImgAndVideos?.length || 0) > 1"
-    class="nav-btn prev-btn"
-    (click)="toggleValue(i, postNavigationStates[i] - 1)">
-    &#10094;
+    type="button"
+    class="close-story"
+    (click)="closeStory()"
+    aria-label="Close story"
+  >
+    <i class="bi bi-x-lg"></i>
   </button>
 
-  <button
-    *ngIf="(post?.postsImgAndVideos?.length || 0) > 1"
-    class="nav-btn next-btn"
-    (click)="toggleValue(i, postNavigationStates[i] + 1)">
-    &#10095;
-  </button>
+  <app-stories
+    [uploadFiles]="uploadFilesData"
+    [uploadStoryData]="uploadStoryData"
+    [storyData]="storyData"
+    (closeStory)="closeStory()"
+  ></app-stories>
+</section>
+
+<!-- Post details modal -->
+<div
+  class="content-modal"
+  *ngIf="displayPost"
+  (click)="closePost()"
+>
+  <div
+    class="content-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Post details"
+    (click)="$event.stopPropagation()"
+  >
+    <app-display-explore
+      [exploreData]="displayPost"
+      (open)="closePost()"
+    ></app-display-explore>
+  </div>
 </div>
-
-
-        <div class="content" *ngIf="post?.url" >
-          <video controls  *ngIf="post?.url">
-            <source src="{{post?.url}}">
-          </video>
-        </div>
-
-        <div class="footer col-12">
-          <div class="col-12 d-flex align-items-center justify-content-between mt-2">
-            <div class="d-flex align-items-center justify-content-between col-4 col-md-3 col-lg-2 icons">
-              <i class="fs-5 cursorPointer"
-                [ngClass]="post.likes.includes(userData?._id)?'bi-heart-fill text-danger':'bi-heart'"
-                (click)="like(post,i)"></i>
-              <i class="fs-5 bi-send cursorPointer"></i>
-              <i class="fs-5 bi-chat cursorPointer"></i>
-            </div>
-            <div>
-              <i class="fs-5 bi  cursorPointer" id="saveIcon{{i}}" (click)="savePost(post,i)"
-                [ngClass]="isPostSaved(post._id,post.type) ? 'text-warning bi-save-fill' : 'text-white bi-save'"></i>
-            </div>
-          </div>
-          <div class="col-12">
-            <h6>Liked by {{post?.likes.length}} People</h6>
-            <h6 class="my-2"><span class="fw-bold fs-6">{{post?.createdBy.userName}}: </span>{{post?.caption}}</h6>
-            <h6 class="opacity-50 cursorPointer" (click)="openPost(post)">View all {{post?.comments.length}}
-              comments</h6>
-            <div class="position-relative centerEnd">
-              <input type="text" class="w-100  bg-black text-white border-0 border-bottom py-2"
-                (keyup.enter)="addComment(post,i)" [(ngModel)]="comment" placeholder="Add a comments...">
-              <p class="position-absolute end-0 text-primary fs-7 cursorPointer" (click)="addComment(post,i)"
-                *ngIf="comment !=''">post</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-  <div class="text-center py-3" *ngIf="loading">
-    <div class="spinner-border text-light"></div>
-  </div>
-
-    </div>
-  </div>
-
-
-  <div class="col-0 col-md-4  row m-0 p-3 mt-5 px-5 d-md-block d-none">
-    <div id="rightSide" class="col-12 d-flex align-items-start flex-column  ">
-      <div class="d-flex align-items-center justify-content-between w-100 ">
-        <div class="userDetails d-flex ">
-
-          <div class="userImg me-2">
-            <div class="borderImg bg-danger rounded-5  ">
-              <div class="img" [style.background-image]="'url(' + userData?.profilePic + ')'"></div>
-
-
-           <!-- <div (mouseleave)="mouseleave($event)" (mouseenter)="mouseEnter(post.createdBy)" (mouseenter)="onMouseMove($event)"
-                  class="img" [style.background-image]="'url(' + post?.createdBy?.profilePic + ')'"></div> -->
-
-
-            </div>
-          </div>
-          <div class="userData d-flex align-items-start justify-content-center flex-column">
-            <p class="userName">{{userData?.userName}}</p>
-            <p class="name">{{userData?.fullName}}</p>
-          </div>
-
-        </div>
-        <div class=" text-primary cursorPointer">switch</div>
-      </div>
-
-      <div class=" d-flex align-items-center justify-content-between w-100 mt-5 mb-3">
-        <p class="fs-7">Suggested for you</p>
-        <p class="fs-7 cursorPointer">See All</p>
-      </div>
-      <div class="d-flex align-items-center justify-content-between w-100 ">
-        <div class="userDetails d-flex ">
-          <div class="suggestedImg me-2">
-            <div class="borderImg bg-danger rounded-5  ">
-              <div class="img"></div>
-            </div>
-          </div>
-          <div class="userData d-flex align-items-start justify-content-center flex-column">
-            <p class="userName">mohamedkhalid74 </p>
-            <p class="name">Suggested for you</p>
-          </div>
-        </div>
-        <div class=" text-primary cursorPointer">Follow</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<div id="dataWhenHover" class="fadeIn   " *ngIf="showDiv" (mouseleave)="showDiv = false" [style.position]="'fixed'"
-  [style.top]="divTop" [style.left]="divLeft">
-  <app-hoverdata [data]="hoverData"></app-hoverdata>
-</div>
-
-
-<section id="storySec" *ngIf="storyOpened" [ngClass]="{'d-none': !storyOpened}">
-  <i class=" bi bi-x-lg position-absolute end-0 m-3 cursorPointer" (click)="closeStory()"></i>
-  <app-stories (visitProfile)="toProfile($event)" [uploadFiles]="uploadFilesData" [uploadStoryData]="uploadStoryData"
-    [storyData]="storyData" (closeStory)="storyOpened=false"></app-stories>
-</section>
-<app-insta-loading *ngIf="instaLoading"></app-insta-loading>
-
-
-<section class="w-100 h-100" *ngIf="displayPost!=undefined">
-  <i style="z-index: 9;"
-    class="bi bi-x-lg position-fixed top-0 end-0 m-3 cursorPointer fw-bolder px-5 pt-3 fs-5 d-md-block d-none"
-    (click)="displayPost = undefined"></i>
-  <app-display-explore [exploreData]="displayPost"></app-display-explore>
-</section>

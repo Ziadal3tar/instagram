@@ -1,30 +1,40 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { ApiResponse, ChatMessage, ChatSummary, UserSummary } from '../core/models/api.models';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ChatService {
-
-
-  private baseUrl = 'https://instagram-apis-s4le.onrender.com/chats';
-  // private baseUrl = 'https://instagram-apis-s4le.onrender.com/auth';
-  // private baseUrl = 'https://instagram-apis-s4le.onrender.com/auth';
+  private readonly baseUrl = `${environment.apiUrl}/chats`;
 
   constructor(private http: HttpClient) {}
-  sendMessage(data: any) {
-    return this.http.post(`${this.baseUrl}/sendMessage`, data, {
-      headers: {
-        authorization: `Bearer__${localStorage.getItem('userToken')}`,
-      },
-    });
-  }
-  getChat(data: any) {
-    return this.http.post(`${this.baseUrl}/getChat`, data, {
-      headers: {
-        authorization: `Bearer__${localStorage.getItem('userToken')}`,
-      },
-    });
-  }
 
+  sendMessage(to: string, message: string, time?: string): Observable<ApiResponse<{ chatId: string; message: ChatMessage }>> {
+    return this.http.post<ApiResponse<{ chatId: string; message: ChatMessage }>>(`${this.baseUrl}/sendMessage`, { to, message, time });
+  }
+getChat(
+  to: string,
+  limit = 50
+): Observable<
+  ApiResponse<{
+    user: UserSummary;
+    chat: ChatSummary | null;
+    limit: number;
+  }>
+> {
+  const params = new HttpParams().set('limit', limit);
+
+  return this.http.post<
+    ApiResponse<{
+      user: UserSummary;
+      chat: ChatSummary | null;
+      limit: number;
+    }>
+  >(
+    `${this.baseUrl}/getChat`,
+    { to },
+    { params }
+  );
+}
 }

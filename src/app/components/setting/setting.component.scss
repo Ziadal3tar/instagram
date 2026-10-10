@@ -1,63 +1,2001 @@
-#setting {
-  .leftTop {
-    h6 {
-      font-size: 13px;
-    }
+:host {
+  display: block;
+  min-width: 0;
+  min-height: 100%;
 
+  --settings-bg: #000;
+  --settings-panel: #0c0c0f;
+  --settings-surface: #141418;
+  --settings-surface-hover: #1b1b21;
+  --settings-border: #29292f;
+  --settings-border-soft: #222228;
+  --settings-text: #f5f5f7;
+  --settings-muted: #92929c;
+  --settings-subtle: #777781;
+  --settings-accent: #0095f6;
+  --settings-active: #202027;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.settings-page {
+  min-height: 100%;
+  padding: 36px clamp(16px, 4vw, 52px) 30px;
+  background:
+    radial-gradient(
+      ellipse at 50% 0,
+      rgb(255 255 255 / 2.5%),
+      transparent 42%
+    ),
+    var(--settings-bg);
+  color: var(--settings-text);
+  font-family: inherit;
+}
+
+.settings-shell {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+/* ==================================================
+   Page heading
+================================================== */
+
+.settings-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.back-button {
+  display: grid;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  border: 1px solid var(--settings-border);
+  border-radius: 12px;
+  background: var(--settings-panel);
+  color: #e9e9ee;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+
+  i {
+    font-size: 19px;
   }
 
-  .leftBot {
-    ul {
-      margin: 0;
-      padding: 0;
+  &:hover {
+    border-color: #474750;
+    background: var(--settings-surface-hover);
+    transform: translateX(-2px);
+  }
 
-      li {
-        list-style: none;
-        width: 100%;
-        padding: 8px 1rem;
-        height: 100%;
-        cursor: pointer;
-        transition: 0.3s;
-        height: 100%;
-        position: relative;
-        transition: 0.3s;
-        margin: 5px 0;
-        font-size: 14px;
+  &:focus-visible {
+    outline: 2px solid var(--settings-accent);
+    outline-offset: 3px;
+  }
+}
 
-        &:before {
-          content: '';
-          height: 0%;
-          width: 2px;
-          background-color: rgb(255, 255, 255);
-          position: absolute;
-          top: 0;
-          left: 0;
-          transition: 0.3s;
+.heading-copy {
+  min-width: 0;
 
-        }
+  h1 {
+    margin: 5px 0 0;
+    color: #fff;
+    font-size: clamp(25px, 3vw, 31px);
+    font-weight: 750;
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+  }
 
+  > p {
+    margin: 7px 0 0;
+    color: var(--settings-muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+}
 
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #75757f;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.3px;
+  line-height: 1.5;
 
-        &:hover {
-          background-color: rgba(114, 114, 114, 0.272);
-        }
-      }
+  i {
+    color: #51515a;
+    font-size: 8px;
+  }
 
-      .active {
-        background-color: rgba(114, 114, 114, 0.272);
+  .current {
+    color: #b5b5be;
+  }
+}
 
-        &:before {
-          content: '';
-          height: 100% !important;
-          width: 2px;
-          background-color: rgb(255, 255, 255);
-          position: absolute;
-          top: 0;
-          left: 0;
-          transition: 0.3s;
+/* ==================================================
+   Main layout
+================================================== */
 
-        }
-      }
+.settings-layout {
+  display: grid;
+  grid-template-columns: 276px minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  min-height: 680px;
+  overflow: hidden;
+  border: 1px solid var(--settings-border);
+  border-radius: 16px;
+  background: var(--settings-panel);
+  box-shadow:
+    0 18px 55px rgb(0 0 0 / 15%),
+    inset 0 1px 0 rgb(255 255 255 / 1.5%);
+}
+
+/* ==================================================
+   Sidebar
+================================================== */
+
+.settings-sidebar {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 17px 13px;
+  border-right: 1px solid var(--settings-border);
+  background: #0a0a0d;
+}
+
+/* Accounts Center card */
+
+.accounts-card {
+  padding: 15px 13px 13px;
+  border: 1px solid #303039;
+  border-radius: 12px;
+  background:
+    radial-gradient(
+      ellipse at 0 0,
+      rgb(0 149 246 / 7%),
+      transparent 65%
+    ),
+    linear-gradient(
+      145deg,
+      #17171c,
+      #101014
+    );
+}
+
+.accounts-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.accounts-brand-icon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgb(0 149 246 / 22%);
+  border-radius: 11px;
+  background: rgb(0 149 246 / 9%);
+  color: #67baff;
+
+  i {
+    font-size: 19px;
+  }
+}
+
+.accounts-brand-copy {
+  min-width: 0;
+  flex: 1;
+
+  h2 {
+    margin: 3px 0 0;
+    color: #f3f3f6;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: -0.2px;
+    line-height: 1.5;
+  }
+}
+
+.accounts-overline {
+  display: block;
+  color: #69b9ff;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.accounts-chevron {
+  color: #777781;
+  font-size: 12px;
+}
+
+.accounts-description {
+  margin: 13px 0 15px;
+  color: #9999a2;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.accounts-features {
+  display: grid;
+  gap: 3px;
+  padding-top: 11px;
+  border-top: 1px solid #2a2a31;
+}
+
+.accounts-feature {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 31px;
+  color: #c7c7ce;
+  font-size: 10px;
+  line-height: 1.5;
+
+  i {
+    flex: 0 0 15px;
+    color: #8e8e99;
+    font-size: 13px;
+  }
+}
+
+.accounts-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 11px;
+  border-top: 1px solid #2a2a31;
+  color: #73baff;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.5;
+
+  i {
+    flex: 0 0 auto;
+    font-size: 12px;
+  }
+}
+
+/* Navigation */
+
+.settings-nav {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  margin-top: 24px;
+}
+
+.nav-group-label {
+  margin: 0 0 9px;
+  padding: 0 9px;
+  color: #767680;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.4px;
+  line-height: 1.6;
+}
+
+.settings-nav-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 31px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 43px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #bdbdc6;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+
+  &::before {
+    position: absolute;
+    top: 9px;
+    bottom: 9px;
+    left: -1px;
+    width: 2px;
+    border-radius: 0 3px 3px 0;
+    background: transparent;
+    content: "";
+    transition: background 160ms ease;
+  }
+
+  &:hover:not(:disabled) {
+    background: #17171c;
+    color: #fff;
+  }
+
+  &.active {
+    border-color: #292930;
+    background: var(--settings-active);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &.active::before {
+    background: #f5f5f7;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--settings-accent);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: #62626b;
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
+
+  .nav-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.nav-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #9696a1;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+
+  i {
+    font-size: 17px;
+  }
+
+  .active & {
+    border-color: #393941;
+    background: #292930;
+    color: #fff;
+  }
+}
+
+.nav-chevron {
+  color: #62626c;
+  font-size: 9px;
+}
+
+.soon-badge {
+  padding: 3px 5px;
+  border: 1px solid #36363e;
+  border-radius: 5px;
+  color: #85858f;
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.professional-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 19px;
+  padding: 13px 9px 3px;
+  border-top: 1px solid #29292f;
+  color: #a7a7b1;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.professional-icon {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid #34343d;
+  border-radius: 8px;
+  background: #17171c;
+  color: #bcbcc6;
+
+  i {
+    font-size: 13px;
+  }
+}
+
+/* ==================================================
+   Content area
+================================================== */
+
+.settings-content {
+  min-width: 0;
+  padding: 22px 27px 30px;
+  background: var(--settings-panel);
+}
+
+.content-topline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  min-height: 29px;
+  margin-bottom: 15px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--settings-border-soft);
+  line-height: 1.5;
+}
+
+.content-status-dot {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #b58aff;
+  box-shadow: 0 0 8px rgb(181 138 255 / 25%);
+}
+
+.content-eyebrow {
+  color: #81818b;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.1px;
+}
+
+.content-separator {
+  color: #55555f;
+  font-size: 11px;
+}
+
+.content-current {
+  min-width: 0;
+  color: #d2d2da;
+  font-size: 10px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.settings-view {
+  min-width: 0;
+  width: 100%;
+  color: var(--settings-text);
+}
+
+/*
+ * Normalize the legacy child setting sections so the older
+ * Bootstrap grid styles remain consistent inside this layout.
+ */
+
+.settings-view ::ng-deep app-apps-and-websites > section,
+.settings-view ::ng-deep app-email-notifications > section,
+.settings-view ::ng-deep app-push-notifications > section,
+.settings-view ::ng-deep app-what-you-see > section,
+.settings-view ::ng-deep app-who-can-see-your-content > section,
+.settings-view ::ng-deep app-who-others > section,
+.settings-view ::ng-deep app-supervision > section,
+.settings-view ::ng-deep app-help > section,
+.settings-view ::ng-deep app-subscriptions > section {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 8px 0 !important;
+  color: var(--settings-text);
+}
+
+.settings-view ::ng-deep h4,
+.settings-view ::ng-deep h2 {
+  color: #f5f5f7;
+  font-weight: 700;
+  letter-spacing: -0.35px;
+}
+
+.settings-view ::ng-deep h4 {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.settings-view ::ng-deep h6 {
+  color: #e0e0e6;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.settings-view ::ng-deep p {
+  color: #a4a4ae;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.settings-view ::ng-deep .text-primary {
+  color: #6bb9ff !important;
+}
+
+.settings-view ::ng-deep .customBorderBot,
+.settings-view ::ng-deep .customBorderStart,
+.settings-view ::ng-deep .customBorder {
+  border-color: #2a2a31 !important;
+}
+
+.settings-view ::ng-deep .form-check-input {
+  border-color: #53535d;
+  background-color: #24242a;
+  cursor: pointer;
+  box-shadow: none;
+
+  &:checked {
+    border-color: var(--settings-accent);
+    background-color: var(--settings-accent);
+  }
+
+  &:focus {
+    border-color: #6bb9ff;
+    box-shadow: 0 0 0 3px rgb(0 149 246 / 12%);
+  }
+}
+
+/* Avoid forcing the new wrapper styles into the custom edit-profile UI. */
+.settings-view ::ng-deep app-edit-profile {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ==================================================
+   Footer
+================================================== */
+
+.settings-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 10px 0;
+  color: #686872;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.footer-separator {
+  color: #46464f;
+}
+
+/* ==================================================
+   Tablet
+================================================== */
+
+@media (max-width: 1050px) {
+  .settings-page {
+    padding-inline: 22px;
+  }
+
+  .settings-layout {
+    grid-template-columns: 245px minmax(0, 1fr);
+  }
+
+  .settings-sidebar {
+    padding-inline: 10px;
+  }
+
+  .settings-content {
+    padding-inline: 21px;
+  }
+
+  .accounts-card {
+    padding-inline: 11px;
+  }
+
+  .settings-nav-item {
+    gap: 7px;
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+}
+
+/* ==================================================
+   Mobile
+================================================== */
+
+@media (max-width: 767px) {
+  .settings-page {
+    padding: 22px 12px 20px;
+  }
+
+  .settings-heading {
+    gap: 12px;
+    margin-bottom: 19px;
+  }
+
+  .back-button {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .heading-copy h1 {
+    font-size: 24px;
+  }
+
+  .heading-copy > p {
+    font-size: 11px;
+  }
+
+  .breadcrumbs {
+    gap: 7px;
+    font-size: 8px;
+  }
+
+  .settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    border-radius: 13px;
+  }
+
+  .settings-sidebar {
+    display: flex;
+    gap: 15px;
+    padding: 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--settings-border);
+  }
+
+  /* Compact Accounts Center card */
+  .accounts-card {
+    padding: 11px 12px;
+    border-radius: 10px;
+  }
+
+  .accounts-brand-icon {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .accounts-brand-copy h2 {
+    font-size: 12px;
+  }
+
+  .accounts-description {
+    margin: 8px 0 0;
+    font-size: 10px;
+  }
+
+  .accounts-features,
+  .accounts-footer {
+    display: none;
+  }
+
+  /* Horizontal swipe navigation */
+  .settings-nav {
+    display: flex;
+    align-items: stretch;
+    gap: 7px;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #45454e transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-group-label {
+    display: none;
+  }
+
+  .settings-nav-item {
+    display: flex;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: max-content;
+    min-height: 39px;
+    gap: 7px;
+    padding: 0 11px;
+    border-color: #292930;
+    border-radius: 9px;
+    background: #131317;
+    font-size: 10px;
+    white-space: nowrap;
+
+    &::before {
+      display: none;
     }
+
+    &.active {
+      border-color: #4a4a53;
+      background: #27272e;
+    }
+
+    .nav-icon {
+      flex: 0 0 21px;
+      width: 21px;
+      height: 21px;
+      border: 0;
+      background: transparent;
+    }
+
+    .nav-icon i {
+      font-size: 14px;
+    }
+
+    .nav-chevron {
+      display: none;
+    }
+  }
+
+  .soon-badge {
+    font-size: 8px;
+  }
+
+  .professional-note {
+    display: none;
+  }
+
+  .settings-content {
+    padding: 15px 15px 24px;
+  }
+
+  .content-topline {
+    gap: 7px;
+    margin-bottom: 12px;
+    padding-bottom: 11px;
+  }
+
+  .content-eyebrow {
+    font-size: 8px;
+  }
+
+  .content-current {
+    font-size: 9px;
+  }
+
+  .settings-view ::ng-deep h4 {
+    font-size: 18px;
+  }
+
+  .settings-view ::ng-deep p {
+    font-size: 11px;
+  }
+
+  .settings-footer {
+    padding-top: 17px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 380px) {
+  .settings-page {
+    padding-inline: 8px;
+  }
+
+  .settings-sidebar {
+    padding: 9px;
+  }
+
+  .settings-content {
+    padding-inline: 11px;
+  }
+
+  .heading-copy h1 {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* ======================================================
+   Shared styling for all settings sub-pages
+   Append to setting.component.scss
+====================================================== */
+
+.settings-view ::ng-deep .settings-subpage {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 4px 0 16px !important;
+  color: #f5f5f7;
+}
+
+.settings-view ::ng-deep .settings-subpage,
+.settings-view ::ng-deep .settings-subpage * {
+  box-sizing: border-box;
+}
+
+.settings-view ::ng-deep .settings-subpage h2,
+.settings-view ::ng-deep .settings-subpage h3,
+.settings-view ::ng-deep .settings-subpage h4,
+.settings-view ::ng-deep .settings-subpage p {
+  overflow-wrap: anywhere;
+}
+
+.settings-view ::ng-deep .subpage-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 0 0 24px;
+}
+
+.settings-view ::ng-deep .subpage-icon {
+  display: grid;
+  flex: 0 0 45px;
+  width: 45px;
+  height: 45px;
+  place-items: center;
+  border: 1px solid #33333c;
+  border-radius: 12px;
+  background: #17171c;
+  color: #e8e8ef;
+}
+
+.settings-view ::ng-deep .subpage-icon i {
+  font-size: 20px;
+}
+
+.settings-view ::ng-deep .subpage-header > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-view ::ng-deep .subpage-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: #888893;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.25px;
+  line-height: 1.5;
+}
+
+.settings-view ::ng-deep .subpage-title {
+  margin: 0 !important;
+  color: #fafafa !important;
+  font-size: 21px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.55px;
+  line-height: 1.35 !important;
+}
+
+.settings-view ::ng-deep .subpage-description {
+  margin: 6px 0 0 !important;
+  color: #9696a0 !important;
+  font-size: 12px !important;
+  font-weight: 400;
+  line-height: 1.8 !important;
+}
+
+.settings-view ::ng-deep .settings-group {
+  min-width: 0;
+  margin: 0 0 18px;
+  padding: 19px;
+  overflow: hidden;
+  border: 1px solid #2a2a31;
+  border-radius: 13px;
+  background: #101014;
+}
+
+.settings-view ::ng-deep .settings-group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0 0 17px;
+}
+
+.settings-view ::ng-deep .settings-group-heading > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-view ::ng-deep .settings-group-heading h3 {
+  margin: 0 !important;
+  color: #efeff3 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+.settings-view ::ng-deep .settings-group-heading p {
+  margin: 5px 0 0 !important;
+  color: #85858f !important;
+  font-size: 11px !important;
+  line-height: 1.7 !important;
+}
+
+.settings-view ::ng-deep .group-heading-icon {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid #303039;
+  border-radius: 9px;
+  background: #19191f;
+  color: #b7b7c1;
+}
+
+.settings-view ::ng-deep .group-heading-icon i {
+  font-size: 15px;
+}
+
+/* Information banners */
+
+.settings-view ::ng-deep .settings-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 20px;
+  padding: 14px;
+  border: 1px solid #2c3540;
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      110deg,
+      rgb(0 149 246 / 7%),
+      transparent 70%
+    ),
+    #111318;
+}
+
+.settings-view ::ng-deep .banner-icon {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid #314355;
+  border-radius: 9px;
+  background: #19222d;
+  color: #82c9ff;
+}
+
+.settings-view ::ng-deep .banner-icon i {
+  font-size: 16px;
+}
+
+.settings-view ::ng-deep .settings-info-banner > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-view ::ng-deep .settings-info-banner strong {
+  display: block;
+  color: #e7e7ed;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.settings-view ::ng-deep .settings-info-banner p {
+  margin: 4px 0 0 !important;
+  color: #9999a3 !important;
+  font-size: 11px !important;
+  line-height: 1.8 !important;
+}
+
+/* Settings rows */
+
+.settings-view ::ng-deep .settings-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding: 17px 0;
+  border-top: 1px solid #28282e;
+}
+
+.settings-view ::ng-deep .settings-row:first-child {
+  border-top: 0;
+}
+
+.settings-view ::ng-deep .settings-row-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-view ::ng-deep .settings-row-copy strong {
+  display: block;
+  color: #e8e8ed;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.6;
+}
+
+.settings-view ::ng-deep .settings-row-copy p {
+  margin: 5px 0 0 !important;
+  color: #92929c !important;
+  font-size: 11px !important;
+  line-height: 1.8 !important;
+}
+
+.settings-view ::ng-deep .settings-row-icon {
+  display: grid;
+  flex: 0 0 35px;
+  width: 35px;
+  height: 35px;
+  place-items: center;
+  border: 1px solid #303038;
+  border-radius: 9px;
+  background: #19191e;
+  color: #b9b9c3;
+}
+
+.settings-view ::ng-deep .settings-row-icon i {
+  font-size: 15px;
+}
+
+.settings-view ::ng-deep .settings-row-chevron {
+  flex: 0 0 auto;
+  align-self: center;
+  color: #797983;
+  font-size: 11px;
+}
+
+.settings-view ::ng-deep .settings-inline-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: 9px;
+  background: #17171c;
+  color: #91919b;
+}
+
+.settings-view ::ng-deep .settings-inline-note > i {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #9ecfff;
+  font-size: 13px;
+}
+
+.settings-view ::ng-deep .settings-inline-note p {
+  margin: 0 !important;
+  color: inherit !important;
+  font-size: 10px !important;
+  line-height: 1.8 !important;
+}
+
+/* Switches */
+
+.settings-view ::ng-deep .settings-switch {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 43px;
+  width: 43px;
+  height: 25px;
+  align-items: center;
+  margin: 1px 0 0;
+  cursor: pointer;
+}
+
+.settings-view ::ng-deep .settings-switch input {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.settings-view ::ng-deep .switch-track {
+  position: relative;
+  display: block;
+  width: 43px;
+  height: 25px;
+  border: 1px solid #474750;
+  border-radius: 999px;
+  background: #2a2a31;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.settings-view ::ng-deep .switch-track::after {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #dedee4;
+  content: "";
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.settings-view ::ng-deep .settings-switch input:checked + .switch-track {
+  border-color: #0095f6;
+  background: #0095f6;
+}
+
+.settings-view ::ng-deep .settings-switch input:checked + .switch-track::after {
+  background: #fff;
+  transform: translateX(18px);
+}
+
+.settings-view ::ng-deep .settings-switch input:focus-visible + .switch-track {
+  outline: 2px solid #8ccfff;
+  outline-offset: 3px;
+}
+
+/* Radio choices */
+
+.settings-view ::ng-deep .settings-choice-list {
+  display: grid;
+  gap: 0;
+}
+
+.settings-view ::ng-deep .settings-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 63px;
+  padding: 12px 2px;
+  border-top: 1px solid #28282e;
+  cursor: pointer;
+}
+
+.settings-view ::ng-deep .settings-choice-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-view ::ng-deep .settings-choice-copy strong {
+  display: block;
+  color: #e8e8ed;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.6;
+}
+
+.settings-view ::ng-deep .settings-choice-copy small {
+  display: block;
+  margin-top: 4px;
+  color: #8d8d97;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.settings-view ::ng-deep .settings-choice input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.settings-view ::ng-deep .radio-visual {
+  display: grid;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border: 1px solid #656570;
+  border-radius: 50%;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.settings-view ::ng-deep .radio-visual::after {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  content: "";
+  opacity: 0;
+  transform: scale(0.7);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.settings-view ::ng-deep .settings-choice input:checked + .radio-visual {
+  border-color: #0095f6;
+  background: #0095f6;
+}
+
+.settings-view ::ng-deep .settings-choice input:checked + .radio-visual::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.settings-view ::ng-deep .settings-choice input:focus-visible + .radio-visual {
+  outline: 2px solid #8ccfff;
+  outline-offset: 3px;
+}
+
+/* Segmented tabs */
+
+.settings-view ::ng-deep .settings-segmented-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 17px;
+  padding: 4px;
+  border: 1px solid #2b2b32;
+  border-radius: 10px;
+  background: #09090c;
+}
+
+.settings-view ::ng-deep .settings-segmented-tabs button {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: #9797a1;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.settings-view ::ng-deep .settings-segmented-tabs button:hover {
+  background: #17171c;
+  color: #fff;
+}
+
+.settings-view ::ng-deep .settings-segmented-tabs button.active {
+  border-color: #35353e;
+  background: #24242b;
+  color: #fff;
+}
+
+.settings-view ::ng-deep .settings-segmented-tabs button:focus-visible {
+  outline: 2px solid #0095f6;
+  outline-offset: 2px;
+}
+
+.settings-view ::ng-deep .settings-tab-content {
+  min-width: 0;
+}
+
+/* Empty states */
+
+.settings-view ::ng-deep .settings-empty-state {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 22px;
+  border: 1px solid #29292f;
+  border-radius: 12px;
+  background:
+    radial-gradient(
+      ellipse at 50% 0,
+      rgb(255 255 255 / 3%),
+      transparent 58%
+    ),
+    #101014;
+  text-align: center;
+}
+
+.settings-view ::ng-deep .empty-state-icon {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  margin-bottom: 17px;
+  place-items: center;
+  border: 1px solid #393942;
+  border-radius: 50%;
+  background: #19191f;
+  color: #b7b7c3;
+}
+
+.settings-view ::ng-deep .empty-state-icon i {
+  font-size: 24px;
+}
+
+.settings-view ::ng-deep .empty-state-eyebrow {
+  color: #92929c;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 1.4px;
+}
+
+.settings-view ::ng-deep .settings-empty-state h3 {
+  margin: 9px 0 0 !important;
+  color: #f3f3f6 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+.settings-view ::ng-deep .settings-empty-state p {
+  max-width: 380px;
+  margin: 8px 0 0 !important;
+  color: #92929c !important;
+  font-size: 11px !important;
+  line-height: 1.9 !important;
+}
+
+.settings-view ::ng-deep .empty-state-footnote {
+  margin-top: 14px;
+  color: #74747e;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+/* Notification preference cards */
+
+.settings-view ::ng-deep .settings-option-list {
+  display: grid;
+  min-width: 0;
+}
+
+.settings-view ::ng-deep .settings-option-card {
+  min-width: 0;
+  padding: 10px 0;
+  border-top: 1px solid #28282e;
+}
+
+.settings-view ::ng-deep .settings-option-card:first-child {
+  border-top: 0;
+}
+
+.settings-view ::ng-deep .settings-option-card app-qnotifications {
+  display: block;
+  min-width: 0;
+}
+
+.settings-view ::ng-deep .settings-bottom-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 7px;
+  padding: 12px;
+  border-radius: 9px;
+  background: #141419;
+  color: #898993;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.settings-view ::ng-deep .settings-bottom-note i {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #a4a4af;
+  font-size: 13px;
+}
+
+/* Accordion: Help and subscriptions */
+
+.settings-view ::ng-deep .settings-accordion {
+  border-top: 1px solid #29292f;
+}
+
+.settings-view ::ng-deep .settings-accordion-item {
+  min-width: 0;
+  border-bottom: 1px solid #29292f;
+}
+
+.settings-view ::ng-deep .settings-accordion-item:last-child {
+  border-bottom: 0;
+}
+
+.settings-view ::ng-deep .settings-accordion-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 2px;
+  border: 0;
+  background: transparent;
+  color: #e8e8ed;
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.settings-view ::ng-deep .settings-accordion-trigger:hover {
+  color: #fff;
+}
+
+.settings-view ::ng-deep .settings-accordion-trigger:focus-visible {
+  outline: 2px solid #0095f6;
+  outline-offset: -2px;
+}
+
+.settings-view ::ng-deep .accordion-icon {
+  display: grid;
+  flex: 0 0 33px;
+  width: 33px;
+  height: 33px;
+  place-items: center;
+  border: 1px solid #303038;
+  border-radius: 9px;
+  background: #19191f;
+  color: #b6b6c0;
+}
+
+.settings-view ::ng-deep .accordion-icon i {
+  font-size: 14px;
+}
+
+.settings-view ::ng-deep .accordion-title {
+  min-width: 0;
+  flex: 1;
+  color: #e4e4ea;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.settings-view ::ng-deep .accordion-chevron {
+  flex: 0 0 auto;
+  color: #81818b;
+  font-size: 11px;
+  transition: transform 180ms ease;
+}
+
+.settings-view ::ng-deep .settings-accordion-item.expanded .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.settings-view ::ng-deep .settings-accordion-content {
+  padding: 0 8px 17px 47px;
+  animation: settings-content-in 180ms ease both;
+}
+
+.settings-view ::ng-deep .settings-accordion-content p {
+  margin: 0 !important;
+  color: #9696a0 !important;
+  font-size: 11px !important;
+  line-height: 1.9 !important;
+}
+
+@keyframes settings-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Edit profile */
+
+.settings-view ::ng-deep .profile-photo-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 15px;
+}
+
+.settings-view ::ng-deep .profile-photo-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 13px;
+}
+
+.settings-view ::ng-deep .profile-avatar {
+  position: relative;
+  flex: 0 0 65px;
+  width: 65px;
+  height: 65px;
+  overflow: hidden;
+  border: 2px solid #393942;
+  border-radius: 50%;
+  background: #19191f;
+}
+
+.settings-view ::ng-deep .profile-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settings-view ::ng-deep .avatar-edit-icon {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border: 2px solid #101014;
+  border-radius: 50%;
+  background: #292930;
+  color: #f3f3f7;
+}
+
+.settings-view ::ng-deep .avatar-edit-icon i {
+  font-size: 10px;
+}
+
+.settings-view ::ng-deep .profile-identity-copy {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.settings-view ::ng-deep .profile-identity-copy strong {
+  overflow: hidden;
+  color: #f2f2f5;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-view ::ng-deep .profile-identity-copy span {
+  overflow: hidden;
+  color: #a1a1ab;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-view ::ng-deep .profile-identity-copy small {
+  color: #797983;
+  font-size: 10px;
+}
+
+.settings-view ::ng-deep .profile-photo-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings-view ::ng-deep .settings-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 37px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.settings-view ::ng-deep .settings-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.settings-view ::ng-deep .settings-button:focus-visible {
+  outline: 2px solid #8ccfff;
+  outline-offset: 3px;
+}
+
+.settings-view ::ng-deep .settings-button:disabled,
+.settings-view ::ng-deep .settings-button.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.settings-view ::ng-deep .settings-button-primary {
+  border-color: #0095f6;
+  background: #0095f6;
+  color: #fff;
+}
+
+.settings-view ::ng-deep .settings-button-primary:hover:not(:disabled) {
+  border-color: #1877f2;
+  background: #1877f2;
+}
+
+.settings-view ::ng-deep .settings-button-secondary {
+  border-color: #393941;
+  background: #202027;
+  color: #ededf2;
+  text-decoration: none;
+}
+
+.settings-view ::ng-deep .settings-button-secondary:hover:not(.is-disabled) {
+  border-color: #50505a;
+  background: #292930;
+}
+
+.settings-view ::ng-deep .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 19px;
+}
+
+.settings-view ::ng-deep .panel-heading > div {
+  min-width: 0;
+}
+
+.settings-view ::ng-deep .panel-heading h3 {
+  margin: 5px 0 0 !important;
+  color: #eeeef3 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+.settings-view ::ng-deep .panel-heading p {
+  margin: 5px 0 0 !important;
+  color: #8f8f99 !important;
+  font-size: 11px !important;
+  line-height: 1.8 !important;
+}
+
+.settings-view ::ng-deep .panel-heading-icon {
+  color: #7f7f8a;
+  font-size: 21px;
+}
+
+.settings-view ::ng-deep .settings-field-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #d7d7de;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.settings-view ::ng-deep .settings-textarea-wrap {
+  overflow: hidden;
+  border: 1px solid #35353d;
+  border-radius: 10px;
+  background: #0c0c10;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.settings-view ::ng-deep .settings-textarea-wrap:focus-within {
+  border-color: #62626d;
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 2%);
+}
+
+.settings-view ::ng-deep .settings-textarea {
+  display: block;
+  width: 100%;
+  min-height: 125px;
+  padding: 13px;
+  resize: vertical;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #f3f3f6;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.settings-view ::ng-deep .settings-textarea::placeholder {
+  color: #767680;
+}
+
+.settings-view ::ng-deep .settings-textarea:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.settings-view ::ng-deep .textarea-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border-top: 1px solid #27272e;
+  background: #141419;
+  color: #7e7e88;
+  font-size: 10px;
+}
+
+.settings-view ::ng-deep .textarea-footer .limit-near {
+  color: #ffb46b;
+}
+
+.settings-view ::ng-deep .panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.settings-view ::ng-deep .save-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #85858f;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.settings-view ::ng-deep .save-hint i {
+  font-size: 12px;
+}
+
+.settings-view ::ng-deep .settings-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.settings-view ::ng-deep .settings-alert-error {
+  border: 1px solid rgb(255 75 90 / 22%);
+  background: rgb(255 75 90 / 7%);
+  color: #ff9ba5;
+}
+
+/* Subscriptions */
+
+.settings-view ::ng-deep .subscription-empty {
+  display: flex;
+  min-height: 290px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.settings-view ::ng-deep .subscription-empty-art {
+  position: relative;
+  display: grid;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  place-items: center;
+}
+
+.settings-view ::ng-deep .subscription-orbit {
+  position: absolute;
+  display: block;
+  border: 1px solid #303039;
+  border-radius: 50%;
+}
+
+.settings-view ::ng-deep .orbit-one {
+  inset: 2px;
+}
+
+.settings-view ::ng-deep .orbit-two {
+  inset: 13px;
+  border-style: dashed;
+  border-color: #42424c;
+}
+
+.settings-view ::ng-deep .subscription-center-icon {
+  position: relative;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid #44444e;
+  border-radius: 14px;
+  background: #202027;
+  color: #d7c2ff;
+}
+
+.settings-view ::ng-deep .subscription-center-icon i {
+  font-size: 22px;
+}
+
+.settings-view ::ng-deep .subscription-empty h3 {
+  margin: 9px 0 0 !important;
+  color: #f3f3f7 !important;
+  font-size: 16px !important;
+}
+
+.settings-view ::ng-deep .subscription-empty p {
+  max-width: 390px;
+  margin: 8px 0 0 !important;
+  color: #94949e !important;
+  font-size: 11px !important;
+  line-height: 1.9 !important;
+}
+
+.settings-view ::ng-deep .subscription-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 17px;
+  padding: 7px 10px;
+  border: 1px solid #34343c;
+  border-radius: 7px;
+  background: #18181d;
+  color: #b0b0ba;
+  font-size: 10px;
+}
+
+/* Supervision empty state */
+
+.settings-view ::ng-deep .supervision-empty {
+  display: flex;
+  min-height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+}
+
+.settings-view ::ng-deep .supervision-empty h3 {
+  max-width: 360px;
+  margin: 8px 0 0 !important;
+  color: #f2f2f6 !important;
+  font-size: 16px !important;
+}
+
+.settings-view ::ng-deep .supervision-empty p {
+  max-width: 380px;
+  margin: 9px 0 0 !important;
+  color: #94949e !important;
+  font-size: 11px !important;
+  line-height: 1.9 !important;
+}
+
+/* Responsive */
+
+@media (max-width: 767px) {
+  .settings-view ::ng-deep .settings-subpage {
+    padding: 2px 0 12px !important;
+  }
+
+  .settings-view ::ng-deep .subpage-header {
+    gap: 11px;
+    margin-bottom: 19px;
+  }
+
+  .settings-view ::ng-deep .subpage-icon {
+    flex-basis: 39px;
+    width: 39px;
+    height: 39px;
+    border-radius: 10px;
+  }
+
+  .settings-view ::ng-deep .subpage-icon i {
+    font-size: 18px;
+  }
+
+  .settings-view ::ng-deep .subpage-title {
+    font-size: 18px !important;
+  }
+
+  .settings-view ::ng-deep .subpage-description {
+    font-size: 11px !important;
+  }
+
+  .settings-view ::ng-deep .settings-group {
+    margin-bottom: 13px;
+    padding: 14px;
+    border-radius: 11px;
+  }
+
+  .settings-view ::ng-deep .settings-group-heading {
+    margin-bottom: 12px;
+  }
+
+  .settings-view ::ng-deep .settings-row {
+    gap: 10px;
+    padding: 14px 0;
+  }
+
+  .settings-view ::ng-deep .settings-row-copy strong,
+  .settings-view ::ng-deep .settings-choice-copy strong {
+    font-size: 11px;
+  }
+
+  .settings-view ::ng-deep .settings-row-copy p,
+  .settings-view ::ng-deep .settings-choice-copy small {
+    font-size: 10px !important;
+  }
+
+  .settings-view ::ng-deep .profile-photo-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .settings-view ::ng-deep .profile-photo-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .settings-view ::ng-deep .profile-photo-actions .settings-button {
+    flex: 1;
+  }
+
+  .settings-view ::ng-deep .settings-empty-state {
+    min-height: 250px;
+    padding: 24px 16px;
+  }
+
+  .settings-view ::ng-deep .settings-empty-state h3,
+  .settings-view ::ng-deep .subscription-empty h3,
+  .settings-view ::ng-deep .supervision-empty h3 {
+    font-size: 14px !important;
+  }
+
+  .settings-view ::ng-deep .subscription-empty {
+    min-height: 260px;
+    padding: 24px 16px;
+  }
+
+  .settings-view ::ng-deep .settings-accordion-content {
+    padding-left: 43px;
+  }
+
+  .settings-view ::ng-deep .panel-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settings-view ::ng-deep .panel-footer .settings-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-view ::ng-deep .settings-subpage *,
+  .settings-view ::ng-deep .settings-subpage *::before,
+  .settings-view ::ng-deep .settings-subpage *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

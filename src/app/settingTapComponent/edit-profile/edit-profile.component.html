@@ -1,71 +1,126 @@
-<section class="col-12 row p-4" id="EditProfile">
-  <div class="col-12">
-    <h4>Edit profile</h4>
-  </div>
-  <div class="col-12 centerCenter row m-0 py-4">
+<section class="settings-subpage edit-profile-page">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-person-gear" aria-hidden="true"></i>
+    </span>
 
-    <div class="col-12 col-md-10 startStart mb-5 part1">
-      <div class="col-4 p-0">
+    <div>
+      <span class="subpage-eyebrow">YOUR ACCOUNT</span>
+      <h2 class="subpage-title">Edit profile</h2>
+      <p class="subpage-description">
+        Personalize your profile and tell people a little about yourself.
+      </p>
+    </div>
+  </header>
 
-        <div id="userImage" [style.background-image]="'url(' + url + ')'" class="img me-5"></div>
-      </div>
-      <div class="col-8 p-0 ">
-        <p>{{userData.fullName}}</p>
-        <label for="changeImgInput" class="text-primary change" *ngIf="!changed">change profile photo</label>
-        <div *ngIf="changed" class=" w-100 centerBetween">
-          <i class="bi bi-check text-success fw-bolder fs-3 cursorPointer" (click)="save()"></i>
-          <i class="bi bi-x text-danger fw-bolder fs-3 cursorPointer" (click)="cancel()"></i>
-        </div>
+  <section class="setting-panel profile-photo-panel">
+    <div class="profile-photo-identity">
+      <div class="profile-avatar">
+        <img
+          [src]="previewUrl "
+          [alt]="userData?.userName || 'Profile picture'"
+        />
 
+        <span class="avatar-edit-icon">
+          <i class="bi bi-camera" aria-hidden="true"></i>
+        </span>
+      </div>
 
-        <input type="file" class="d-none" name="changeImgInput" id="changeImgInput" (change)="upload($event)">
+      <div class="profile-identity-copy">
+        <strong>{{ userData?.userName || 'Your username' }}</strong>
+        <span>{{ userData?.fullName || 'Your name' }}</span>
+        <small>Profile picture</small>
       </div>
     </div>
-    <!-- === -->
-    <div class="col-12 col-md-10 row startStart  mb-5 part2">
-      <p class="col-4 p-0 ">Website</p>
-      <div class=" col-8 p-0">
-        <input disabled="false" type="text" class=" w-100 bg-gray rounded-1 border-0 px-3 py-1 mb-2"
-          placeholder="Website">
-        <p class="fs-7 opacity-50">Editing your links is only available on mobile. Visit the Instagram app and edit your
-          profile to change the websites in your bio.</p>
-      </div>
-    </div>
-    <!-- === -->
-    <div class="col-12 col-md-10 row startStart  mb-5 part2">
-      <p class="col-4 p-0">Bio</p>
-      <div class=" col-8 p-0">
-        <textarea name="" [(ngModel)]="bio" maxlength="150"
-          class=" w-100 text-white bg-transparent rounded-1 border-1 px-3 py-1 mb-2" cols="10" rows="2"></textarea>
-        <p class="fs-7">{{bio.length}}/150</p>
-      </div>
-    </div>
-    <!-- === -->
-    <div class="col-12 col-md-10 row startStart  mb-5 part2">
-      <p class="col-4 p-0">Gender</p>
-      <div class=" col-8 p-0">
-        <p class="border rounded-2 p-1 ps-2 mb-2">Male</p>
-        <p class="fs-7">This won’t be part of your public profile.</p>
-      </div>
-    </div>
-    <!-- === -->
-    <div class="col-12 col-md-10 row startStart  mb-5 part2">
-      <p class="col-4 p-0 fs-7">Show account suggestions on profiles</p>
-      <div class=" col-8 p-0 d-flex centerCenter">
-        <div class="checkbox-container">
-          <label [ngClass]="{'checked': checked}" for="dynamicLength" class=" centerCenter">
-            <i class="bi bi-check text-black"></i>
 
-          </label>
-          <input type="checkbox" [(ngModel)]="checked" class="d-none" id="dynamicLength" />
-        </div>
-        <p class="fs-7">Choose whether people can see similar account suggestions on your profile, and whether your
-          account can be suggested on other profiles.</p>
+    <div class="profile-photo-actions">
+      <input
+        id="profilePhoto"
+        type="file"
+        accept="image/*"
+        hidden
+        [disabled]="savingImage"
+        (change)="upload($event)"
+      />
+
+      <label
+        class="settings-button settings-button-secondary"
+        for="profilePhoto"
+        [class.is-disabled]="savingImage"
+      >
+        <i class="bi bi-image" aria-hidden="true"></i>
+        Change photo
+      </label>
+
+      <button
+        *ngIf="selectedImage"
+        type="button"
+        class="settings-button settings-button-primary"
+        [disabled]="savingImage"
+        (click)="saveImage()"
+      >
+        <i class="bi bi-check2" aria-hidden="true"></i>
+        {{ savingImage ? 'Saving...' : 'Save photo' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="setting-panel profile-bio-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="subpage-eyebrow">ABOUT YOU</span>
+        <h3>Bio</h3>
+        <p>
+          Share something that helps people get to know you.
+        </p>
+      </div>
+
+      <i class="bi bi-card-text panel-heading-icon" aria-hidden="true"></i>
+    </div>
+
+    <label class="settings-field-label" for="bio">
+      Profile bio
+    </label>
+
+    <div class="settings-textarea-wrap">
+      <textarea
+        id="bio"
+        class="settings-textarea"
+        [(ngModel)]="bio"
+        maxlength="300"
+        rows="5"
+        placeholder="Tell people a little about you..."
+        [disabled]="savingBio"
+      ></textarea>
+
+      <div class="textarea-footer">
+        <span>Keep it personal and authentic.</span>
+        <span [class.limit-near]="bio.length >= 280">
+          {{ bio.length }}/300
+        </span>
       </div>
     </div>
-    <div class="col-12 col-md-10 ">
-      <button class="offset-4 btn btn-primary" (click)="submit()">Submit</button>
+
+    <div class="panel-footer">
+      <span class="save-hint">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        Your bio appears on your profile.
+      </span>
+
+      <button
+        type="button"
+        class="settings-button settings-button-primary"
+        [disabled]="savingBio"
+        (click)="saveBio()"
+      >
+        <i class="bi bi-check2" aria-hidden="true"></i>
+        {{ savingBio ? 'Saving...' : 'Save bio' }}
+      </button>
     </div>
+  </section>
+
+  <div class="settings-alert settings-alert-error" *ngIf="error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ error }}</span>
   </div>
 </section>
-<app-loading *ngIf="loading"></app-loading>

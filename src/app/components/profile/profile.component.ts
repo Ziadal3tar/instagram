@@ -1,250 +1,816 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { SharingService } from 'src/app/services/sharing.service';
-import { SocketService } from 'src/app/services/socket.service';
-import { UserService } from 'src/app/services/user.service';
-import { filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, switchMap, takeUntil } from 'rxjs';
+
+import {
+  Collection,
+  ContentItem,
+  ProfileData,
+  SavedPage,
+} from '../../core/models/api.models';
+import { SharingService } from '../../services/sharing.service';
+import { UserService } from '../../services/user.service';
+import { SocketService } from '../../services/socket.service';
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfileComponent {
-  tap: String = 'posts';
-  addNewCollection: Boolean = false;
-  SelectionStage: Boolean = false;
-  edit: Boolean = false;
-  setting: Boolean = false;
-  follower: Boolean = false;
-  following: Boolean = false;
-  toAddToCollection: Boolean = false;
-  openCollection: any;
-  selected: any = [];
-  saved: any = [];
-  allPosts: any = [];
-  displayData: any;
-  userId: any;
-  url: any;
-  collectionName: any;
+export class ProfileComponent implements OnInit, OnDestroy {
+  profile: ProfileData | null = null;
+  content: ContentItem[] = [];
+  saved: SavedPage = { page: 1, limit: 50, items: [], hasMore: false };
+  collections: Collection[] = [];
 
-  loading: boolean = true
+  activeTab: 'posts' | 'reels' | 'saved' = 'posts';
+  isOwner = false;
+  loading = true;
+  followLoading = false;
+  collectionName = '';
+  collectionLoading = false;
+  showCollectionForm = false;
+  deletingCollectionId: string | null = null;
+  editing = false;
+  selectedContent?: ContentItem;
+  selectedCollection: Collection | null = null;
+  showAddSavedItems = false;
+  selectedSavedIds: string[] = [];
+  savingCollectionItems = false;
+  removingCollectionItemId: string | null = null;
+  collectionActionError = '';
+  collectionItemsLoading = false;
+  collectionItemsError = '';
+  unavailableCollectionItemsCount = 0;
+  loadedCollectionItems: ContentItem[] = [];
+  loadingAddSavedItems = false;
+  loadingMoreSavedItems = false;
 
-  private destroy$ = new Subject<void>();
+  private readonly previewMap = new Map<string, ContentItem[]>();
+  private profileId = '';
+  private readonly destroy$ = new Subject<void>();
 
-
-  @Output() OpenChat: EventEmitter<any> = new EventEmitter<any>();
   constructor(
-    private _Route: Router,
-    private _sharing: SharingService,
-    private _userServices: UserService,
-    private _socket: SocketService,
-    private _ActivatedRoute: ActivatedRoute,
-  ) { }
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly userService: UserService,
+    private readonly sharing: SharingService,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly socket: SocketService,
+  ) {}
+
   ngOnInit(): void {
-    this.loading = true
-    if (this.saved.length == 0) {
-      console.log('f');
-
-      this._sharing.updateSaved();
-    }
-    this._sharing.currentSaved.subscribe((data: any) => {
-      this.saved = data.saved;
-    });
-
-    this._ActivatedRoute.paramMap
+    this.sharing.currentSaved
       .pipe(takeUntil(this.destroy$))
-      .subscribe((params) => {
-        const id = params.get('id');
-        this.url = id;
-        this.loading = true
-        this._sharing.updateProfileDataDisplay();
+      .subscribe((saved) => {
+        this.saved = saved;
+        this.rebuildCollectionPreviews();
+        this.cdr.markForCheck();
       });
-    this.userId = localStorage.getItem('id');
 
-    this._Route.events
+    this.sharing.currentUserData
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => {
+        this.collections = user?.collections ?? [];
+        this.rebuildCollectionPreviews();
+        this.isOwner = Boolean(
+          user?._id &&
+          this.profileId &&
+          String(user._id) === this.profileId,
+        );
+        this.cdr.markForCheck();
+      });
+
+    this.route.paramMap
       .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntil(this.destroy$)
+        switchMap((params) => {
+          this.profileId = params.get('id') || '';
+          this.loading = true;
+          this.editing = false;
+          this.activeTab = 'posts';
+          this.selectedContent = undefined;
+          this.selectedCollection = null;
+          this.loadedCollectionItems = [];
+          this.collectionItemsLoading = false;
+          this.collectionItemsError = '';
+          this.collectionActionError = '';
+          this.cdr.markForCheck();
+          return this.userService.getProfilesData(this.profileId);
+        }),
+        takeUntil(this.destroy$),
       )
-      .subscribe(() => {
-        const urlParts = this._Route.url.split('/').filter((it: any) => it !== '');
-        this.url = urlParts[1] || this.url;
-      });
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.profile = response.data.profile;
+            this.content = response.data.allPosts ?? [];
+            this.isOwner =
+              String(this.sharing.currentUser?._id) ===
+              String(this.profile?._id);
+            this.rebuildCollectionPreviews();
 
-    this._sharing.currentSaved
+            if (this.isOwner) {
+              this.sharing.updateSaved(false);
+            }
+          } else {
+            this.profile = null;
+            this.content = [];
+          }
+
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.loading = false;
+          this.profile = null;
+          this.content = [];
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  get posts(): ContentItem[] {
+    return this.content.filter((item) => item.type === 'post');
+  }
+
+  get reels(): ContentItem[] {
+    return this.content.filter((item) => item.type === 'reel');
+  }
+
+  get displayedContent(): ContentItem[] {
+    return this.activeTab === 'reels' ? this.reels : this.posts;
+  }
+
+  get followLabel(): string {
+    return this.profile?.isFollowing ? 'Following' : 'Follow';
+  }
+
+  toggleFollow(): void {
+    if (!this.profile || this.isOwner || this.followLoading) return;
+
+    const previousProfile = this.profile;
+    const wasFollowing = previousProfile.isFollowing;
+    const previousCount = previousProfile.followersCount;
+
+    // Optimistic update for responsive feedback.
+    this.profile = {
+      ...previousProfile,
+      isFollowing: !wasFollowing,
+      followersCount: Math.max(
+        0,
+        previousCount + (wasFollowing ? -1 : 1),
+      ),
+    };
+    this.followLoading = true;
+    this.cdr.markForCheck();
+
+    this.userService
+      .follow(previousProfile._id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        this.saved = data.saved;
-        console.log('saved/allPosts updated', data);
-      });
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data && this.profile) {
+            const isFollowing = response.data.isFollowing;
 
-    this._sharing.currentProfileDataDisplay
+            this.profile = {
+              ...this.profile,
+              isFollowing,
+              followersCount: Math.max(
+                0,
+                previousCount + (isFollowing ? 1 : -1),
+              ),
+            };
+
+            this.sharing.applyFollowingState(this.profile, isFollowing);
+
+            if (
+              isFollowing &&
+              this.sharing.currentUser?._id &&
+              this.profile._id !== this.sharing.currentUser._id
+            ) {
+              this.socket.emit('notification', {
+                eventName: 'follow',
+                type: 'user',
+                data: this.sharing.currentUser._id,
+                to: this.profile._id,
+                redirect: this.profile._id,
+              });
+            }
+          } else {
+            this.profile = {
+              ...previousProfile,
+              isFollowing: wasFollowing,
+              followersCount: previousCount,
+            };
+          }
+
+          this.followLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.profile = {
+            ...previousProfile,
+            isFollowing: wasFollowing,
+            followersCount: previousCount,
+          };
+          this.followLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  openChat(): void {
+    if (!this.profile || this.isOwner) return;
+
+    void this.router.navigate(['/messages'], {
+      queryParams: { to: this.profile._id },
+    });
+  }
+
+  openEdit(): void {
+    void this.router.navigate(['/settings']);
+  }
+
+  closeEdit(refresh = false): void {
+    this.editing = false;
+
+    if (refresh) {
+      this.sharing.refreshCurrentUser();
+      void this.router.navigate(['/userProfile', this.profileId]);
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  selectTab(tab: 'posts' | 'reels' | 'saved'): void {
+    if (tab === 'saved' && !this.isOwner) return;
+
+    this.activeTab = tab;
+
+    if (tab === 'saved') {
+      this.sharing.updateSaved(false);
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  openCreate(): void {
+    void this.router.navigate(['/create']);
+  }
+
+  createCollection(): void {
+    const name = this.collectionName.trim();
+    if (!name || this.collectionLoading || !this.isOwner) return;
+
+    this.collectionLoading = true;
+    this.cdr.markForCheck();
+
+    this.userService
+      .newCollection(name)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        this.displayData = data;
-        this.allPosts = data.posts || this.allPosts;
-        console.log('profile display data', data);
-        // this.loading = false
-        if (this.url == data?._id) {
-          this.loading = false
+      .subscribe({
+        next: (response) => {
+          const created = response?.data?.collection;
+          if (
+            response?.success &&
+            created?._id &&
+            typeof created.collectionName === 'string' &&
+            Array.isArray(created.saved)
+          ) {
+            this.collections = [...this.collections, created];
+            this.collectionName = '';
+            this.showCollectionForm = false;
+            this.collectionActionError = '';
+            this.sharing.refreshCurrentUser();
+            this.rebuildCollectionPreviews();
+          } else {
+            this.collectionActionError = response?.message || 'The create-collection API returned an unexpected response.';
+          }
 
-        } else {
-          this.loading = true
-
-        }
-        const to = { to: this.displayData._id };
-        this._sharing.updateChatData(to);
-
-        const myId = this.userId;
-        if (this.displayData?.followers?.includes(myId)) {
-          this.following = true;
-          this.follower = false;
-        } else if (this.displayData?.following?.includes(myId)) {
-          this.follower = true;
-          this.following = false;
-        } else {
-          this.following = false;
-          this.follower = false;
-        }
+          this.collectionLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.collectionActionError = error?.error?.message || 'Could not create the collection. Please try again.';
+          this.collectionLoading = false;
+          this.cdr.markForCheck();
+        },
       });
+  }
 
+  deleteCollection(collection: Collection): void {
+    if (!this.isOwner || this.deletingCollectionId) return;
+
+    this.deletingCollectionId = collection._id;
+    this.cdr.markForCheck();
+
+    this.userService
+      .deleteCollection(collection._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response:any) => {
+          if (response?.success && Array.isArray(response.data?.collections)) {
+            this.collections = response.data.collections;
+            this.collectionActionError = '';
+            this.sharing.refreshCurrentUser();
+            this.rebuildCollectionPreviews();
+          } else {
+            this.collectionActionError = response?.message || 'The delete-collection API returned an unexpected response.';
+          }
+
+          this.deletingCollectionId = null;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.collectionActionError = error?.error?.message || 'Could not delete the collection. Please try again.';
+          this.deletingCollectionId = null;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  /** Only globally-saved Posts can be added to a collection. */
+  get addableSavedItems(): ContentItem[] {
+    if (!this.selectedCollection) return [];
+
+    const existingIds = new Set(
+      ((this.selectedCollection.saved ?? []) as unknown[])
+        .map((entry) => this.getReferenceId(entry))
+        .filter((id): id is string => Boolean(id)),
+    );
+
+    return this.saved.items.filter((item) => {
+      const id = this.getReferenceId(item);
+      return Boolean(id) && item.type !== 'reel' && !existingIds.has(id!);
+    });
+  }
+
+  openAddSavedItems(): void {
+    if (!this.isOwner || !this.selectedCollection || this.savingCollectionItems || this.loadingAddSavedItems) return;
+
+    this.selectedSavedIds = [];
+    this.collectionActionError = '';
+    this.showAddSavedItems = true;
+    this.loadingAddSavedItems = true;
+    this.cdr.markForCheck();
+
+    // Fetch a fresh first page so the picker is based on the actual API response.
+    this.userService
+      .getSaved(1, 50)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response?.success || !response.data || !Array.isArray(response.data.items)) {
+            this.collectionActionError = response?.message || 'The saved-post API returned an unexpected response.';
+          } else {
+            const items = this.normalizeContentItems(response.data.items);
+            this.saved = {
+              ...response.data,
+              items,
+            };
+            this.rebuildCollectionPreviews();
+          }
+
+          this.loadingAddSavedItems = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.collectionActionError = error?.error?.message || 'Could not load saved posts. Please try again.';
+          this.loadingAddSavedItems = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  loadMoreSavedItemsForCollection(): void {
+    if (this.loadingMoreSavedItems || this.loadingAddSavedItems || !this.saved.hasMore) return;
+
+    this.loadingMoreSavedItems = true;
+    this.collectionActionError = '';
+    const nextPage = this.saved.page + 1;
+    this.cdr.markForCheck();
+
+    this.userService
+      .getSaved(nextPage, 50)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (!response?.success || !response.data || !Array.isArray(response.data.items)) {
+            this.collectionActionError = response?.message || 'The saved-post API returned an unexpected response.';
+            this.loadingMoreSavedItems = false;
+            this.cdr.markForCheck();
+            return;
+          }
+
+          const incoming = this.normalizeContentItems(response.data.items);
+          const merged = new Map<string, ContentItem>();
+          for (const item of [...this.saved.items, ...incoming]) {
+            const id = this.getReferenceId(item);
+            if (id && !merged.has(id)) merged.set(id, item);
+          }
+
+          this.saved = {
+            ...response.data,
+            items: Array.from(merged.values()),
+          };
+          this.loadingMoreSavedItems = false;
+          this.rebuildCollectionPreviews();
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.collectionActionError = error?.error?.message || 'Could not load more saved posts.';
+          this.loadingMoreSavedItems = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  closeAddSavedItems(): void {
+    if (this.savingCollectionItems) return;
+    this.showAddSavedItems = false;
+    this.selectedSavedIds = [];
+    this.collectionActionError = '';
+    this.cdr.markForCheck();
+  }
+
+  isSelectedForCollection(item: ContentItem): boolean {
+    return this.selectedSavedIds.includes(String(item._id));
+  }
+
+  toggleSavedItemSelection(item: ContentItem): void {
+    const id = String(item._id ?? '');
+    if (!id || this.savingCollectionItems) return;
+
+    this.selectedSavedIds = this.selectedSavedIds.includes(id)
+      ? this.selectedSavedIds.filter((selectedId) => selectedId !== id)
+      : [...this.selectedSavedIds, id];
+
+    this.cdr.markForCheck();
+  }
+
+  addSelectedToCollection(): void {
+    const collection = this.selectedCollection;
+    const selected = [...new Set(this.selectedSavedIds)];
+
+    if (!this.isOwner || !collection || !selected.length || this.savingCollectionItems) return;
+
+    const selectedItems = this.saved.items.filter((item) => selected.includes(String(item._id)));
+    this.savingCollectionItems = true;
+    this.collectionActionError = '';
+    this.cdr.markForCheck();
+
+    this.userService
+      .addToCollection({ selected, collectionId: collection._id })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const returnedCollection = response?.data?.collection;
+          if (
+            !response?.success ||
+            !returnedCollection?._id ||
+            !Array.isArray(returnedCollection.saved)
+          ) {
+            this.collectionActionError = response?.message || 'The add-to-collection API returned an unexpected response.';
+            this.savingCollectionItems = false;
+            this.cdr.markForCheck();
+            return;
+          }
+
+          this.selectedCollection = returnedCollection;
+          this.collections = this.collections.map((item) =>
+            item._id === returnedCollection._id ? returnedCollection : item,
+          );
+
+          const mergedItems = new Map<string, ContentItem>();
+          for (const item of [...this.loadedCollectionItems, ...selectedItems]) {
+            const id = this.getReferenceId(item);
+            if (id && !mergedItems.has(id)) mergedItems.set(id, item);
+          }
+          this.loadedCollectionItems = Array.from(mergedItems.values());
+          this.previewMap.set(returnedCollection._id, this.loadedCollectionItems.slice(0, 4));
+
+          this.showAddSavedItems = false;
+          this.selectedSavedIds = [];
+          this.savingCollectionItems = false;
+          this.sharing.refreshCurrentUser();
+          this.cdr.markForCheck();
+
+          // Re-fetch details to verify the saved IDs and display-ready item data returned by the server.
+          this.fetchCollectionItems(returnedCollection, false);
+        },
+        error: (error) => {
+          this.collectionActionError = error?.error?.message || 'Could not add these posts. Please try again.';
+          this.savingCollectionItems = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  removeCollectionItem(item: ContentItem): void {
+    const collection = this.selectedCollection;
+    const itemId = String(item?._id ?? '');
+
+    if (!this.isOwner || !collection || !itemId || this.removingCollectionItemId) return;
+
+    this.removingCollectionItemId = itemId;
+    this.collectionActionError = '';
+    this.cdr.markForCheck();
+
+    this.userService
+      .removeFromCollection(collection._id, itemId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const returnedCollection = response?.data?.collection;
+          if (
+            !response?.success ||
+            !returnedCollection?._id ||
+            !Array.isArray(returnedCollection.saved)
+          ) {
+            this.collectionActionError = response?.message || 'The remove-from-collection API returned an unexpected response.';
+            this.removingCollectionItemId = null;
+            this.cdr.markForCheck();
+            return;
+          }
+
+          this.selectedCollection = returnedCollection;
+          this.collections = this.collections.map((entry) =>
+            entry._id === returnedCollection._id ? returnedCollection : entry,
+          );
+          this.loadedCollectionItems = this.loadedCollectionItems.filter(
+            (entry) => this.getReferenceId(entry) !== itemId,
+          );
+          this.previewMap.set(returnedCollection._id, this.loadedCollectionItems.slice(0, 4));
+          this.removingCollectionItemId = null;
+          this.sharing.refreshCurrentUser();
+          this.cdr.markForCheck();
+
+          // Confirm the returned server state rather than assuming the local mutation succeeded.
+          this.fetchCollectionItems(returnedCollection, false);
+        },
+        error: (error) => {
+          this.collectionActionError = error?.error?.message || 'Could not remove this item. Please try again.';
+          this.removingCollectionItemId = null;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private rebuildCollectionPreviews(): void {
+    this.previewMap.clear();
+
+    for (const collection of this.collections) {
+      this.previewMap.set(
+        collection._id,
+        this.resolveCollectionItems(collection).slice(0, 4),
+      );
+    }
+  }
+
+  /** Resolve collection refs against loaded Saved/Profile items as a local fallback. */
+  private resolveCollectionItems(collection: Collection): ContentItem[] {
+    const entries = (collection.saved ?? []) as unknown[];
+    const resolved: ContentItem[] = [];
+    const seen = new Set<string>();
+
+    for (const entry of entries) {
+      const id = this.getReferenceId(entry);
+      let item: ContentItem | undefined;
+
+      if (id) {
+        item = this.saved.items.find((savedItem) => this.getReferenceId(savedItem) === id);
+        if (!item) {
+          item = this.content.find((contentItem) => this.getReferenceId(contentItem) === id);
+        }
+      }
+
+      if (!item && entry && typeof entry === 'object') {
+        const record = entry as Record<string, unknown>;
+        const hasPostMedia = Array.isArray(record['postsImgAndVideos']);
+        const hasDirectMedia = typeof record['url'] === 'string';
+
+        if (record['_id'] && (hasPostMedia || hasDirectMedia)) {
+          const detectedType = record['type'] === 'reel' || (!hasPostMedia && hasDirectMedia)
+            ? 'reel'
+            : 'post';
+          item = {
+            ...(record as unknown as ContentItem),
+            type: (record['type'] as ContentItem['type']) || detectedType,
+          };
+        }
+      }
+
+      if (!item) continue;
+      const itemId = this.getReferenceId(item) || `${resolved.length}`;
+      if (seen.has(itemId)) continue;
+      seen.add(itemId);
+      resolved.push(item);
+    }
+
+    return resolved;
+  }
+
+  private normalizeContentItems(value: unknown): ContentItem[] {
+    if (!Array.isArray(value)) return [];
+
+    const normalized: ContentItem[] = [];
+    const seen = new Set<string>();
+
+    for (const entry of value) {
+      if (!entry || typeof entry !== 'object') continue;
+      const record = entry as Record<string, unknown>;
+      const id = this.getReferenceId(record);
+      const hasPostMedia = Array.isArray(record['postsImgAndVideos']);
+      const hasDirectMedia = typeof record['url'] === 'string' && Boolean(record['url']);
+
+      if (!id || (!hasPostMedia && !hasDirectMedia) || seen.has(id)) continue;
+
+      const inferredType: ContentItem['type'] =
+        record['type'] === 'reel' || (!hasPostMedia && hasDirectMedia)
+          ? 'reel'
+          : 'post';
+
+      normalized.push({
+        ...(record as unknown as ContentItem),
+        _id: id,
+        type: inferredType,
+      });
+      seen.add(id);
+    }
+
+    return normalized;
+  }
+
+  private fetchCollectionItems(collection: Collection, showLoading: boolean): void {
+    if (showLoading) {
+      this.collectionItemsLoading = true;
+      this.collectionItemsError = '';
+      this.unavailableCollectionItemsCount = 0;
+      this.cdr.markForCheck();
+    }
+
+    this.userService
+      .getCollectionItems(collection._id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (this.selectedCollection?._id !== collection._id) return;
+
+          const data = response?.data;
+          if (
+            !response?.success ||
+            !data?.collection?._id ||
+            String(data.collection._id) !== String(collection._id) ||
+            !Array.isArray(data.collection.saved) ||
+            !Array.isArray(data.items) ||
+            !Array.isArray(data.unavailableItemIds)
+          ) {
+            if (showLoading) this.collectionItemsLoading = false;
+            this.collectionItemsError = response?.message || 'The collection API returned an unexpected data shape.';
+            this.cdr.markForCheck();
+            return;
+          }
+
+          const resolvedItems = this.normalizeContentItems(data.items);
+          this.selectedCollection = data.collection;
+          this.collections = this.collections.map((item) =>
+            item._id === data.collection._id ? data.collection : item,
+          );
+          this.loadedCollectionItems = resolvedItems;
+          this.unavailableCollectionItemsCount =
+            data.unavailableItemIds.length + Math.max(0, data.items.length - resolvedItems.length);
+          this.collectionItemsError = '';
+          if (showLoading) this.collectionItemsLoading = false;
+
+          this.rebuildCollectionPreviews();
+          this.previewMap.set(data.collection._id, resolvedItems.slice(0, 4));
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          if (this.selectedCollection?._id !== collection._id) return;
+          if (showLoading) this.collectionItemsLoading = false;
+          this.collectionItemsError = error?.error?.message || 'Could not load this collection. Please try again.';
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  reloadSelectedCollectionItems(): void {
+    if (!this.selectedCollection || this.collectionItemsLoading) return;
+    this.fetchCollectionItems(this.selectedCollection, true);
+  }
+
+  collectionPreview(collection: Collection): ContentItem[] {
+    return this.previewMap.get(collection._id) ?? this.resolveCollectionItems(collection).slice(0, 4);
+  }
+
+  get selectedCollectionItems(): ContentItem[] {
+    return this.selectedCollection ? this.loadedCollectionItems : [];
+  }
+
+  openCollection(collection: Collection): void {
+    this.selectedContent = undefined;
+    this.selectedCollection = collection;
+    this.loadedCollectionItems = this.resolveCollectionItems(collection);
+    this.collectionActionError = '';
+    this.collectionItemsError = '';
+    this.collectionItemsLoading = true;
+    this.unavailableCollectionItemsCount = 0;
+    this.cdr.markForCheck();
+    this.fetchCollectionItems(collection, true);
+  }
+
+  closeCollection(): void {
+    if (this.savingCollectionItems || this.removingCollectionItemId) return;
+    this.selectedCollection = null;
+    this.loadedCollectionItems = [];
+    this.collectionItemsLoading = false;
+    this.collectionItemsError = '';
+    this.collectionActionError = '';
+    this.showAddSavedItems = false;
+    this.cdr.markForCheck();
+  }
+
+  openCollectionContent(item: ContentItem): void {
+    this.selectedCollection = null;
+    this.loadedCollectionItems = [];
+    this.selectedContent = item;
+    this.cdr.markForCheck();
+  }
+
+  private getReferenceId(value: unknown): string | null {
+    if (typeof value === 'string' || typeof value === 'number') {
+      return String(value);
+    }
+
+    if (!value || typeof value !== 'object') return null;
+
+    const record = value as Record<string, unknown>;
+    const id = record['_id'] ?? record['id'];
+    return id == null ? null : String(id);
+  }
+
+  openContent(item: ContentItem): void {
+    this.selectedCollection = null;
+    this.selectedContent = item;
+    this.cdr.markForCheck();
+  }
+
+  closeContent(): void {
+    this.selectedContent = undefined;
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.showAddSavedItems) {
+      this.closeAddSavedItems();
+    } else if (this.selectedContent) {
+      this.closeContent();
+    } else if (this.selectedCollection) {
+      this.closeCollection();
+    }
+  }
+
+  handleImageError(event: Event, fallback: string): void {
+    const image = event.target as HTMLImageElement | null;
+    if (!image || image.getAttribute('src') === fallback) return;
+
+    image.src = fallback;
+  }
+
+  mediaUrl(item: ContentItem): string {
+    return (
+      item.postsImgAndVideos?.[0]?.url ||
+      item.url ||
+      './assets/imgs/placeholder.png'
+    );
+  }
+
+  isVideo(item: ContentItem): boolean {
+    const mediaType:any = item.postsImgAndVideos?.[0]?.type;
+
+    return (
+      item.type === 'reel' ||
+      mediaType === 'video' ||
+      mediaType === 'videos'
+    );
+  }
+
+  trackById(_: number, item: { _id: string }): string {
+    return item._id;
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  changeProfileTaps(data: any) { }
-
-
-  close() {
-    this.SelectionStage = false;
-    this.selected = [];
-    this.addNewCollection = false;
-  }
-  back() {
-    this.SelectionStage = false;
-  }
-
-  closeSetting(event: any) {
-    if (event.target.id == 'close') {
-      this.setting = false;
-    }
-  }
-  logOut() {
-    localStorage.removeItem('userToken');
-    this._Route.navigate(['/register']);
-  }
-  follow() {
-    const targetId = this.displayData._id;
-    this._userServices.follow(targetId).subscribe((res: any) => {
-      if (res.success) {
-        this._sharing.updateProfileDataDisplay();
-
-        this._socket.emit('notification', {
-          eventName: 'follow',
-          type: 'user',
-          data: localStorage.getItem('id'),
-          redirect: `/profile/${targetId}`,
-          to: targetId,
-        });
-      }
-    });
-  }
-
-  newCollection() {
-    let data = {
-      collectionName: this.collectionName,
-    };
-    this._userServices.newCollection(data).subscribe((data: any) => {
-      if (data.success) {
-        this._sharing.updateProfileDataDisplay();
-      }
-    });
-  }
-
-  trackById(index: number, item: any) {
-    return item._id || index;
-  }
-
-  select(id: string) {
-    if (!id) return;
-    const idx = this.selected.indexOf(id);
-    if (idx > -1) {
-      this.selected.splice(idx, 1);
-    } else {
-      this.selected.push(id);
-    }
-  }
-
-  confirmAdd() {
-    if (!this.openCollection?._id) {
-      console.warn('no openCollection');
-      return;
-    }
-    if (this.selected.length === 0) {
-      return;
-    }
-
-    const payload = {
-      selected: this.selected,
-      collectionId: this.openCollection._id
-    };
-
-    this._userServices.addToCollection(payload).subscribe({
-      next: (res: any) => {
-        if (res.success) {
-          this.openCollection = undefined;
-          this.toAddToCollection = false;
-          this.selected = [];
-        } else {
-          console.error(res);
-        }
-      },
-      error: (err: any) => {
-        console.error(err);
-      }
-    });
-  }
-  mapPostToItem(p: any) {
-    let media = null;
-    if (p.postsImgAndVideos && p.postsImgAndVideos.length) {
-      media = p.postsImgAndVideos[0];
-    } else if (p.url) {
-      media = { url: p.url, type: 'videos', public_id: p.public_id };
-    }
-
-    if (!media) {
-      return { _id: p._id, type: 'image', src: './assets/imgs/anne.jpg', caption: p.caption, comments: p.comments, createdAt: p.createdAt, createdBy: p.createdBy, likes: p.likes };
-    }
-
-
-    const type = (media.type === 'videos' || media.type === 'video') ? 'video' : 'image';
-    let src = media.url || media.public_id || '';
-
-    return { _id: p._id, type, src, caption: p.caption, comments: p.comments, createdAt: p.createdAt, createdBy: p.createdBy, likes: p.likes };
-  }
-  openCollectionFromItem(item: any) {
-    const saved = item?.saved ?? [];
-    return saved.map((p: any) => this.mapPostToItem(p));
-  }
-  fromBtns(data: any) {
-    console.log(data);
-    if (data == 'Add from saved') {
-      this.toAddToCollection = true
-    } else if (data = 'delete') {
-      this._userServices.deleteCollection(this.openCollection._id).subscribe((data: any) => {
-        console.log(data);
-        if (data.success) {
-          this.openCollection = undefined
-          this._sharing.updateProfileDataDisplay();
-        }
-      })
-    }
-  }
-  openChat() {
-    this.OpenChat.emit('');
   }
 }

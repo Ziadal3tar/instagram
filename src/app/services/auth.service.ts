@@ -1,33 +1,51 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Apollo } from 'apollo-angular'
-import { Observable } from 'rxjs';
-import { signUp,signIn } from '../graphQl/mutations';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { ApiResponse } from '../core/models/api.models';
+import { SessionService } from '../core/services/session.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+interface AuthData {
+  id: string;
+  token: string;
+  user?: any;
+  message?: string;
+}
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private baseUrl = 'https://instagram-apis-s4le.onrender.com/auth';
-  // private baseUrl = 'https://instagram-apis-s4le.onrender.com/auth'
-// https://insta-be-ziadal3tars-projects.vercel.app
-  constructor(private http: HttpClient,private apollo: Apollo) {}
-  register(data: any): any {
-    return this.http.post(`${this.baseUrl}/signUp`, data, {});
+  private readonly baseUrl = `${environment.apiUrl}/auth`;
 
-  }
-  logIn(data: any):any {
-    return this.http.post(`${this.baseUrl}/logIn`, data, {});
+  constructor(private http: HttpClient, private session: SessionService) {}
 
+  register(data: unknown): Observable<ApiResponse<{ id: string; user: any }>> {
+    return this.http.post<ApiResponse<{ id: string; user: any }>>(`${this.baseUrl}/signUp`, data);
+  }
 
+  logIn(data: unknown): Observable<ApiResponse<AuthData>> {
+    return this.http.post<ApiResponse<AuthData>>(`${this.baseUrl}/logIn`, data).pipe(tap((response) => this.persist(response)));
   }
-  loginWithGoogle(data: any): any {
-    return this.http.post(`${this.baseUrl}/logInWithGoogle`, data, {});
+
+  loginWithGoogle(data: unknown): Observable<ApiResponse<AuthData>> {
+    return this.http.post<ApiResponse<AuthData>>(`${this.baseUrl}/loginWithGoogle`, data).pipe(tap((response) => this.persist(response)));
   }
-  loginWithFB(data: any): any {
-    return this.http.post(`${this.baseUrl}/loginWithFB`, data, {});
+
+  loginWithFB(data: unknown): Observable<ApiResponse<AuthData>> {
+    return this.http.post<ApiResponse<AuthData>>(`${this.baseUrl}/loginWithFB`, data).pipe(tap((response) => this.persist(response)));
   }
-  logInWithFbOrGoogle(data: any): any {
-    return this.http.post(`${this.baseUrl}/logInWithFbOrGoogle`, data, {});
+
+  logInWithFbOrGoogle(data: unknown): Observable<ApiResponse<AuthData>> {
+    return this.http.post<ApiResponse<AuthData>>(`${this.baseUrl}/logInWithFbOrGoogle`, data).pipe(tap((response) => this.persist(response)));
+  }
+
+  logout(): void {
+    this.session.clear();
+  }
+
+  private persist(response: ApiResponse<AuthData>): void {
+    const data = response.data;
+    if (response.success && data?.token && data.id) {
+      this.session.setSession(data.token, data.id);
+    }
   }
 }

@@ -1,33 +1,49 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { SharingService } from './services/sharing.service';
 import { SocketService } from './services/socket.service';
+import { SessionService } from './core/services/session.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+
   constructor(
-    private _sharing: SharingService,
-    private _Socket: SocketService
-  ) {
-    if (localStorage.getItem('userToken')) {
-              this._Socket.connect(localStorage.getItem('userToken'));
+    private readonly sharing: SharingService,
+    private readonly socket: SocketService,
+    private readonly session: SessionService,
+    private readonly router: Router,
+  ) {}
 
-      this._sharing.updateUserData();
-    }
-  }
   ngOnInit(): void {
-    this._Socket.listen('notification').subscribe((data: any) => {
+    this.socket.listen<any>('notification')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => this.sharing.applyIncomingNotification(event));
 
-
-      this._sharing.updateUserData();
-      const audio = document.getElementById(
-        'backgroundAudio'
-      ) as HTMLAudioElement;
-      audio.play();
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      if (this.session.hasToken()) this.startSession();
     });
+
+    if (this.session.hasToken()) this.startSession();
+  }
+
+  private startSession(): void {
+    if (!this.session.token) return;
+    this.socket.connect();
+    this.sharing.updateUserData(false);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.socket.disconnect();
   }
 }

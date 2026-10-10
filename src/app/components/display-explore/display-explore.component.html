@@ -1,202 +1,374 @@
-<section id="explore" class="row m-0">
-  <div class="owner p-3 d-md-none  justify-content-between d-flex align-items-center ">
+<div
+  class="post-modal"
+  [class.details-visible]="detailsVisible"
+  *ngIf="item"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Post details"
+>
+  <!-- Close -->
+  <button
+    type="button"
+    class="close-btn"
+    (click)="close()"
+    aria-label="Close post"
+    title="Close"
+  >
+    <i class="bi bi-x-lg"></i>
+  </button>
 
-    <div class="userDetails d-flex align-items-center ">
+  <!-- Media section -->
+  <section class="media-pane">
+    <div class="media-stage">
+      <img
+        *ngIf="activeMedia?.type === 'image' && activeMedia?.url"
+        class="post-media"
+        [src]="activeMedia?.url"
+        [alt]="item.caption || 'Instagram post'"
+        loading="eager"
+        decoding="async"
+      />
 
-      <div class="userImg me-2">
-        <div class="borderImg bg-danger rounded-5  ">
-          <div class="img " style="background-image: url({{exploreData?.createdBy?.profilePic}});"
-            (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)"></div>
-        </div>
+      <video
+        *ngIf="activeMedia?.type === 'video' && activeMedia?.url"
+        class="post-media"
+        [src]="activeMedia?.url"
+        controls
+        autoplay
+        muted
+        playsinline
+        preload="metadata"
+      ></video>
+
+      <!-- Empty media state -->
+      <div
+        class="media-empty"
+        *ngIf="!activeMedia?.url"
+      >
+        <i class="bi bi-image"></i>
+        <span>Media unavailable</span>
       </div>
-      <div class="userData">
-        <h6 class="userName">ahmedali458 <span class="follow text-primary cursorPointer"> <i
-              class=" bi bi-dot"></i>Follow</span></h6>
+
+      <!-- Reel badge -->
+      <div
+        class="media-type-badge"
+        *ngIf="item.type === 'reel'"
+      >
+        <i class="bi bi-play-circle-fill"></i>
+        <span>REEL</span>
       </div>
 
-    </div>
-
-    <app-dropdown-btn></app-dropdown-btn>
-  </div>
-
-  <!-- media area -->
-  <div class="col-md-6 col-12 postImg p-0 position-relative" *ngIf="exploreData">
-    <!-- if there is multiple media (carousel) -->
-    <ng-container *ngIf="exploreData.postsImgAndVideos?.length">
-      <!-- image -->
-      <img loading="lazy" *ngIf="exploreData.type === 'image'" (click)="ifDoubleClick()" [src]="exploreData.src" alt="post image" />
-
-      <!-- video -->
-      <video *ngIf="exploreData.type === 'video'" (click)="ifDoubleClick()" controls autoplay
-        [attr.src]="exploreData.src" preload="metadata" playsinline muted></video>
-
-      <!-- carousel nav (show only if >1) -->
-      <button *ngIf="exploreData.postsImgAndVideos?.length > 1" class="nav-btn prev-btn"
-        (click)="toggleValue(value - 1)">
-        &#10094;
+      <!-- Previous media -->
+      <button
+        *ngIf="media.length > 1"
+        type="button"
+        class="media-nav prev"
+        (click)="toggleValue(value - 1)"
+        aria-label="Previous media"
+      >
+        <i class="bi bi-chevron-left"></i>
       </button>
-      <button *ngIf="exploreData.postsImgAndVideos?.length > 1" class="nav-btn next-btn"
-        (click)="toggleValue(value + 1)">
-        &#10095;
+
+      <!-- Next media -->
+      <button
+        *ngIf="media.length > 1"
+        type="button"
+        class="media-nav next"
+        (click)="toggleValue(value + 1)"
+        aria-label="Next media"
+      >
+        <i class="bi bi-chevron-right"></i>
       </button>
 
-    </ng-container>
-
-    <!-- fallback: single src (e.g., reel url) -->
-    <ng-container *ngIf="!exploreData.postsImgAndVideos?.length && exploreData.src">
-      <img loading="lazy"*ngIf="exploreData.type === 'image'" [src]="exploreData.src" (click)="ifDoubleClick()" />
-      <video *ngIf="exploreData.type === 'video'" controls autoplay (click)="ifDoubleClick()"
-        [attr.src]="exploreData.src" preload="metadata" playsinline muted></video>
-    </ng-container>
-
-    <!-- big heart when liked -->
-    <i [ngClass]="exploreData?.likes?.includes(userData?._id) ? 'bi-heart-fill text-danger' : 'bi-heart'"
-      class="bi bgHeart like"></i>
-  </div>
-
-  <!-- <div class="col-md-6 col-12 postImg p-0" *ngIf="exploreData?.url">
-
-
-    <video (click)="ifDoubleClick()" controls autoplay >
-      <source src="{{exploreData?.src}}" >
-    </video>
-
-    <i [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
-      class="bi bgHeart like"></i>
-  </div> -->
-
-  <div class="functions d-block d-md-none p-3">
-    <div class="justify-content-between d-flex align-items-center w-100 py-1">
-
-      <div>
-        <i (click)="like()"
-          [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
-          class="bi bi-heart me-2 cursorPointer like"></i>
-        <i class="bi bi-chat mx-2 cursorPointer"></i>
-        <i class="bi bi-send mx-2 cursorPointer"></i>
-
+      <!-- Media counter -->
+      <div
+        class="media-counter"
+        *ngIf="media.length > 1"
+      >
+        {{ value + 1 }} / {{ media.length }}
       </div>
-      <i class="bi bi-save cursorPointer" (click)="savePost(exploreData?._id)"></i>
 
+      <!-- Carousel indicators -->
+      <div
+        class="media-indicators"
+        *ngIf="media.length > 1"
+        aria-label="Choose media"
+      >
+        <button
+          *ngFor="let mediaItem of media; let i = index; trackBy: trackByIndex"
+          type="button"
+          class="indicator"
+          [class.active]="value === i"
+          [attr.aria-label]="'Show media ' + (i + 1)"
+          [attr.aria-current]="value === i ? 'true' : null"
+          (click)="toggleValue(i)"
+        ></button>
+      </div>
 
+      <!-- Mobile details toggle -->
+      <button
+        type="button"
+        class="details-toggle"
+        [attr.aria-expanded]="detailsVisible"
+        [attr.aria-label]="detailsVisible ? 'Hide post details' : 'Show post details'"
+        (click)="toggleDetails($event)"
+      >
+        <i class="bi" [ngClass]="detailsVisible ? 'bi-arrows-angle-contract' : 'bi-info-circle'"></i>
+        <span>{{ detailsVisible ? 'Hide details' : 'Details' }}</span>
+      </button>
     </div>
-    <div>
-      <p>{{exploreData?.likes?.length}} likes</p>
-      <p class="fs-7 opacity-50">3 DAYS AGO</p>
+  </section>
+
+  <!-- Post details -->
+  <section class="details-pane">
+    <!-- Author header -->
+    <header class="post-author">
+      <div class="author-info">
+        <span class="avatar-ring">
+          <img
+            [src]="item.createdBy?.profilePic "
+            [alt]="item.createdBy?.userName || 'User avatar'"
+          />
+        </span>
+
+        <div class="author-identity">
+          <strong>
+            {{ item.createdBy?.userName || 'Instagram user' }}
+          </strong>
+
+          <span *ngIf="item.createdBy?.fullName">
+            {{ item.createdBy?.fullName }}
+          </span>
+        </div>
+      </div>
+
+      <span class="post-type-label">
+        <i
+          class="bi"
+          [ngClass]="item.type === 'reel' ? 'bi-camera-reels' : 'bi-grid-1x2'"
+        ></i>
+
+        {{ item.type === 'reel' ? 'Reel' : 'Post' }}
+      </span>
+    </header>
+
+    <!-- Loading skeleton -->
+    <div
+      class="details-loading"
+      *ngIf="loading"
+      role="status"
+      aria-label="Loading post details"
+    >
+      <div class="skeleton-caption">
+        <span class="skeleton skeleton-avatar"></span>
+
+        <div class="skeleton-lines">
+          <span class="skeleton skeleton-line"></span>
+          <span class="skeleton skeleton-line short"></span>
+        </div>
+      </div>
+
+      <span class="skeleton skeleton-line"></span>
+      <span class="skeleton skeleton-line medium"></span>
+      <span class="skeleton skeleton-line short"></span>
+
+      <span class="loading-label">Loading comments...</span>
     </div>
-  </div>
-  <hr class="d-block d-md-none">
 
-  <div class="col-md-6 col-12 position-relative p-0 py-3 half2">
-    <div id="details" class=" position-relative">
-      <div class="owner px-3 justify-content-between d-md-flex d-none align-items-center ">
+    <!-- Caption and comments -->
+    <div
+      class="post-body"
+      *ngIf="!loading"
+    >
+      <!-- Caption -->
+      <article
+        class="caption-row"
+        *ngIf="item.caption"
+      >
+        <span class="caption-avatar">
+          <img
+            [src]="item.createdBy?.profilePic "
+            [alt]="item.createdBy?.userName || 'User avatar'"
+            loading="lazy"
+          />
+        </span>
 
-        <div class="userDetails d-flex align-items-center ">
-
-          <div class="userImg me-2">
-            <div class="borderImg bg-danger rounded-5  ">
-              <div class="img " style="background-image: url({{exploreData?.createdBy.profilePic}});"
-                (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
-              </div>
-            </div>
-          </div>
-          <div class="userData">
-            <h6 class="userName">{{exploreData?.createdBy.fullName}} <span class="follow text-primary cursorPointer"> <i
-                  class=" bi bi-dot"></i>Follow</span></h6>
-          </div>
-
+        <div class="caption-content">
+          <p>
+            <strong>{{ item.createdBy?.userName || 'Instagram user' }}</strong>
+            <span>{{ item.caption }}</span>
+          </p>
         </div>
+      </article>
 
-        <app-dropdown-btn></app-dropdown-btn>
-      </div>
-      <hr class="d-none d-md-block">
-      <div class="comments px-3">
-        <div class=" w-100 h-100 scrollStyle ">
-          <div class="postInfo d-flex">
-            <div class="userDetails d-flex align-items-start ">
-
-              <div class="userImg me-2">
-                <div class="borderImg  rounded-5  ">
-                  <div class="img" style="background-image: url({{exploreData?.createdBy.profilePic}});"></div>
-                </div>
-              </div>
-              <div class="userData pt-2">
-                <h6 class="userName fw-bolder">{{exploreData?.createdBy.fullName}}: <span
-                    class="fw-normal">{{exploreData?.caption}}
-                    <br>
-                    <h6 class="fs-7 my-2 opacity-75">3d</h6>
-                  </span> </h6>
-              </div>
-
-            </div>
-          </div>
-          <div class="postComments mt-2">
-            <div class="userDetails d-flex align-items-start " *ngFor="let item of exploreData?.comments">
-              <!-- <div class="userImg me-2">
-                <div class="borderImg  rounded-5  ">
-                  <div class="img" style="background-image: url({{item.userId.profilePic}});"
-                    (mouseleave)="mouseleave($event)" (mouseenter)="showDiv = true" (mouseenter)="onMouseMove($event)">
-                  </div>
-                </div>
-              </div>
-              <div class="userData pt-2">
-                <h6 class="userName fw-bolder">{{item.userId.userName}}: <span class="fw-normal">{{item.comment}}
-                    <br>
-                    <div class=" d-flex">
-                      <h6 class="fs-7 my-2 opacity-75">3d</h6>
-                      <h6 class="fs-7 my-2 opacity-75 mx-3 cursorPointer">reply</h6>
-                    </div>
-                  </span> </h6>
-              </div> -->
-              <app-comments [size]=30 [commentDetails]='item'></app-comments>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr>
-      <div class="functions px-3">
-        <div class="justify-content-between d-flex align-items-center w-100 py-1">
-
-          <div>
-            <i (click)="like()"
-              [ngClass]="exploreData?.likes?.includes(userData._id)?'bi-heart-fill text-danger':'bi-heart'"
-              class="bi me-2 cursorPointer like"></i>
-            <i class="bi bi-chat mx-2 cursorPointer"></i>
-            <i class="bi bi-send mx-2 cursorPointer"></i>
-
-          </div>
-          <i class="bi cursorPointer " [ngClass]="isSaved ?'text-warning bi-save-fill':'text-white bi-save'"
-            (click)="savePost(exploreData)"></i>
-
-
-        </div>
+      <!-- Comments heading -->
+      <div class="comments-heading">
         <div>
-          <p>{{exploreData?.likes?.length}} likes</p>
-          <p class="fs-7 opacity-50">3 DAYS AGO</p>
+          <h3>Comments</h3>
+
+          <span class="comments-count">
+            {{ item.commentsCount || item.comments?.length || 0 }}
+          </span>
         </div>
-      </div>
-      <hr>
-      <div class="addComment px-3 justify-content-between d-flex align-items-center">
-        <i class="bi bi-emoji-smile"></i>
 
-        <input type="text" class=" border-0 bg-black text-white w-100 px-3" [(ngModel)]="comment"
-          placeholder="Add a comment...">
-        <p class="fs-7 cursorPointer" (click)="addComment()">Post</p>
+        <i class="bi bi-chat-square-text" aria-hidden="true"></i>
       </div>
-    </div>
+
+  <!-- Comments -->
+<div
+  class="comments"
+  *ngIf="(item.comments?.length ?? 0) > 0"
+>
+  <article
+    class="comment"
+    *ngFor="let comment of item.comments; trackBy: trackById"
+  >
+    <app-comments
+      [size]="36"
+      [commentDetails]="comment"
+    ></app-comments>
+  </article>
+</div>
+
+<!-- Empty comments state -->
+<div
+  class="no-comments"
+  *ngIf="
+    !loading &&
+    (item.comments?.length ?? 0) === 0 &&
+    (item.commentsCount ?? 0) === 0
+  "
+>
+  <div class="empty-comments-icon">
+    <i class="bi bi-chat-dots"></i>
   </div>
-</section>
 
+  <h4>No comments yet</h4>
 
+  <p>Start the conversation by sharing your thoughts.</p>
+</div>
 
+<!-- Comments count exists, but comment data is unavailable -->
+<div
+  class="no-comments"
+  *ngIf="
+    !loading &&
+    (item.commentsCount ?? 0) > 0 &&
+    (item.comments?.length ?? 0) === 0
+  "
+>
+  <div class="empty-comments-icon">
+    <i class="bi bi-chat-dots"></i>
+  </div>
 
+  <h4>Comments unavailable</h4>
 
+  <p>We couldn't load the comments for this post.</p>
+</div>
+    </div>
 
-<app-your-collections *ngIf="yourCollections" [ref]="'Post'" [collections]="userData.collections" [post]="exploreData"
-  (close)="yourCollections = false"></app-your-collections>
+    <!-- Actions footer -->
+    <footer class="post-actions">
+      <div class="action-row">
+        <div class="primary-actions">
+          <!-- Like -->
+          <button
+            type="button"
+            class="icon-button like-button"
+            [class.liked]="item.viewerLiked"
+            [disabled]="liking || loading"
+            [attr.aria-pressed]="!!item.viewerLiked"
+            [attr.aria-label]="item.viewerLiked ? 'Unlike post' : 'Like post'"
+            title="Like"
+            (click)="like()"
+          >
+            <i
+              class="bi"
+              [ngClass]="item.viewerLiked ? 'bi-heart-fill' : 'bi-heart'"
+            ></i>
+          </button>
 
+          <!-- Comment -->
+          <button
+            type="button"
+            class="icon-button"
+            aria-label="Write a comment"
+            title="Comment"
+            (click)="focusComment(commentInput)"
+          >
+            <i class="bi bi-chat"></i>
+          </button>
+        </div>
 
-<div id="dataWhenHover" style="z-index: 9 !important;" class="fadeIn bg-danger  " *ngIf="showDiv"
-  (mouseleave)="showDiv = false" [style.position]="'fixed'" [style.top]="divTop" [style.left]="divLeft">
-  <app-hoverdata [data]="exploreData?.createdBy"></app-hoverdata>
+        <!-- Save -->
+        <button
+          type="button"
+          class="icon-button save-button"
+          [class.saved]="isSaved"
+          [disabled]="saving || loading"
+          [attr.aria-pressed]="isSaved"
+          [attr.aria-label]="isSaved ? 'Remove from saved' : 'Save post'"
+          title="Save"
+          (click)="save()"
+        >
+          <i
+            class="bi"
+            [ngClass]="isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'"
+          ></i>
+        </button>
+      </div>
+
+      <!-- Like count -->
+      <div class="likes-summary">
+        <strong>
+          {{ item.likesCount || 0 }} {{ (item.likesCount || 0) === 1 ? 'like' : 'likes' }}
+        </strong>
+      </div>
+
+      <!-- Action feedback -->
+      <p
+        class="action-feedback"
+        *ngIf="actionError"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-circle"></i>
+        {{ actionError }}
+      </p>
+
+      <!-- Add comment -->
+      <form
+        class="add-comment"
+        (ngSubmit)="addComment()"
+      >
+        <i class="bi bi-chat-left-text comment-input-icon"></i>
+
+        <input
+          #commentInput
+          type="text"
+          name="comment"
+          [(ngModel)]="comment"
+          placeholder="Add a comment..."
+          maxlength="1000"
+          autocomplete="off"
+          aria-label="Write a comment"
+          [disabled]="submittingComment || loading"
+        />
+
+        <button
+          type="submit"
+          [disabled]="!comment.trim() || submittingComment || loading"
+        >
+          {{ submittingComment ? 'Posting...' : 'Post' }}
+        </button>
+      </form>
+
+      <p
+        class="comment-error"
+        *ngIf="commentError"
+        role="alert"
+      >
+        {{ commentError }}
+      </p>
+    </footer>
+  </section>
 </div>

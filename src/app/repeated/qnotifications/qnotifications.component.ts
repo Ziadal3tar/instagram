@@ -1,57 +1,27 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 
 @Component({
   selector: 'app-qnotifications',
   templateUrl: './qnotifications.component.html',
   styleUrls: ['./qnotifications.component.scss'],
 })
-export class QnotificationsComponent {
+export class QnotificationsComponent implements OnChanges {
   @Input() data: any;
-  if2: any = ['Off', 'On'];
-  if3: any = ['Off', 'From profiles I follow', 'From everyone'];
-  @Output() value: EventEmitter<any> = new EventEmitter<any>();
-  Value: any;
-  constructor() {}
-  ngOnInit(): void {
-    this.Value = this.data.value;
+  @Output() value = new EventEmitter<any>();
 
-    let inputs = document.getElementsByTagName('input');
-    for (let i = 0; i < inputs.length; i++) {
-      const element = inputs[i];
+  readonly if2: string[] = ['Off', 'On'];
+  readonly if3: string[] = ['Off', 'From profiles I follow', 'From everyone'];
+  Value: string | null = null;
 
-      let ifIt = false;
-      for (let x = 0; x < element.classList.length; x++) {
-        const elementX = element.classList[x];
-        if (this.Value == 'Off') {
-          if (elementX == this.Value) {
-            ifIt = true;
-          }
-        }else{
-          var wordsArray = this.Value.split(' ');
-
-          if (elementX == wordsArray[1]) {
-            ifIt = true;
-          }
-        }
-
-      }
-      if (ifIt) {
-        element.checked = true;
-      }
-    }
+  ngOnChanges(): void {
+    this.Value = this.data?.value ?? null;
   }
-  check(event: any, divId: any, value: any) {
-    let id = event.target.id;
-    let inputs: any = document.getElementById(divId);
-    for (let i = 0; i < inputs?.childNodes.length; i++) {
-      const element = inputs?.childNodes[i];
-      let item: any = element?.childNodes[0]?.childNodes[0];
-      if (item?.id != id) {
-        item.checked = false;
-      } else {
-        this.Value = value;
-        this.value.emit(value);
-      }
-    }
+
+  check(event: Event, _divId: string, value: string): void {
+    const input = event.target as HTMLInputElement | null;
+    if (!input?.checked) return;
+
+    this.Value = value;
+    this.value.emit(value);
   }
 }

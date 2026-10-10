@@ -1,64 +1,74 @@
-<div class="col-12 row m-0">
-  <div class="col-6 col-sm-4 m-0 p-2 cursorPointer"
-       *ngFor="let item of data; trackBy: trackById"
-       (click)="openPost(item)">
+<section class="profile-grid" aria-label="Profile posts">
+  <button
+    *ngFor="let item of data; trackBy: trackById"
+    class="grid-item"
+    type="button"
+    (click)="openPost(item)"
+    [attr.aria-label]="'Open ' + (isVideo(item) ? 'video' : 'post')"
+  >
+    <img
+      *ngIf="!isVideo(item)"
+      [src]="mediaUrl(item)"
+      [alt]="item.caption || 'Post'"
+      loading="lazy"
+      decoding="async"
+      (error)="onImgError($event)"
+    />
+    <video
+      *ngIf="isVideo(item)"
+      [src]="mediaUrl(item)"
+      muted
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+    ></video>
 
-    <!-- media block -->
-    <div class="col-12 parent rounded-3 overflow-hidden" *ngIf="item?.postsImgAndVideos?.length">
+    <span
+      class="media-type-badge"
+      *ngIf="item.type === 'reel' || (item.postsImgAndVideos?.length || 0) > 1"
+      aria-hidden="true"
+    >
+      <i class="bi" [ngClass]="item.type === 'reel' ? 'bi-play-fill' : 'bi-images'"></i>
+    </span>
+    <span class="media-hover-overlay" aria-hidden="true">
+      <i class="bi bi-eye-fill"></i>
+      <span>View post</span>
+    </span>
+  </button>
 
-      <!-- IMAGE case -->
-      <ng-container *ngIf="item.postsImgAndVideos[0]?.type === 'image'">
-        <img
-          class="img"
-          alt="{{ item.caption || 'post image' }}"
-          src="{{item.postsImgAndVideos[0].url}}"
-          (error)="onImgError($event)"
-          loading="lazy" />
-      </ng-container>
-
-      <!-- VIDEO case -->
-      <ng-container *ngIf="item.postsImgAndVideos[0]?.type === 'video'">
-        <video
-          class="video-el"
-          [appLazyLoad]="item.postsImgAndVideos[0].url"
-          [isVideo]="true"
-          preload="none"
-          muted
-          playsinline
-          controls>
-        </video>
-      </ng-container>
-
-    </div>
-
-    <!-- fallback single url (video) -->
-    <div  class="col-12 parent rounded-3 overflow-hidden" *ngIf="!item.postsImgAndVideos?.length && item?.url">
-      <video 
-        class="video-el"
-        [appLazyLoad]="item.url"
-        [isVideo]="true"
-        preload="none"
-        muted
-        playsinline
-        controls>
-      </video>
-    </div>
-
+  <div class="profile-grid__empty" *ngIf="!data?.length">
+    <span class="empty-icon"><i class="bi bi-camera"></i></span>
+    <h3>No posts yet</h3>
+    <p>Photos and videos shared on this profile will appear here.</p>
   </div>
-</div>
-
-<section id="display_Post" *ngIf="open">
-  <i
-    style="z-index: 9;"
-    class="bi bi-x-lg position-fixed top-0 end-0 m-3 cursorPointer fw-bolder px-5 pt-3 fs-5 d-md-block d-none"
-    (click)="closePost()"></i>
-
-  <div class="d-block row d-md-none p-2 pt-3 bg-black d-flex position-relative mt-5">
-    <i (click)="closePost()" class="bi bi-arrow-left text-start position-absolute start-0 ms-3 cursorPointer"></i>
-    <p class="text-center">EXPLORE</p>
-  </div>
-
-  <app-display-explore #appDisplayExplore id="display-explore1" (open)="open = $event"
-    [exploreData]="displayPost">
-  </app-display-explore>
 </section>
+
+<div
+  class="detail-overlay"
+  *ngIf="open"
+  role="presentation"
+  (click)="closePost()"
+>
+  <button
+    type="button"
+    class="overlay-close"
+    aria-label="Close post details"
+    title="Close"
+    (click)="closePost()"
+  >
+    <i class="bi bi-x-lg" aria-hidden="true"></i>
+  </button>
+
+  <section
+    class="detail-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Post details"
+    (click)="$event.stopPropagation()"
+  >
+    <app-display-explore
+      [exploreData]="displayPost"
+      (open)="closePost()"
+    ></app-display-explore>
+  </section>
+</div>

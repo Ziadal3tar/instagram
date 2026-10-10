@@ -1,8 +1,61 @@
-<section class="col-12 row p-4" id="EmailNotifications">
-  <div class="col-12 mb-5">
-    <h4>Email Notifications</h4>
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-envelope-paper" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">EMAIL PREFERENCES</span>
+      <h2 class="subpage-title">Email notifications</h2>
+      <p class="subpage-description">
+        Choose which updates you would like to receive by email.
+      </p>
+    </div>
+  </header>
+
+  <div class="settings-info-banner">
+    <span class="banner-icon">
+      <i class="bi bi-inbox" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <strong>Your inbox, your choice</strong>
+      <p>
+        Customize the types of email updates you receive.
+      </p>
+    </div>
   </div>
-  <div class="col-12 " *ngFor="let item of Qus let i = index">
-    <app-qnotifications (value)="receiveValue($event,i)" [data]="item"></app-qnotifications>
+
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Email preferences</h3>
+        <p>Manage your communication preferences.</p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-sliders" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <div class="settings-option-list">
+      <div
+        class="settings-option-card"
+        *ngFor="let item of Qus; let i = index"
+      >
+        <app-qnotifications
+          [data]="item"
+          (value)="receiveValue($event, i)"
+        ></app-qnotifications>
+      </div>
+    </div>
+  </section>
+
+  <div class="settings-bottom-note">
+    <i class="bi bi-info-circle" aria-hidden="true"></i>
+    <span>
+      The available options depend on the notification preferences
+      supported by your account.
+    </span>
   </div>
 </section>

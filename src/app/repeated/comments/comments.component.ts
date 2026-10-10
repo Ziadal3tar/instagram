@@ -1,21 +1,44 @@
 import { Component, Input } from '@angular/core';
-import { NavComponent } from 'src/app/components/nav/nav.component';
-import { SharingService } from 'src/app/services/sharing.service';
-import { DisplaypostsComponent } from '../displayposts/displayposts.component';
 
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
-  styleUrls: ['./comments.component.scss']
+  styleUrls: ['./comments.component.scss'],
 })
 export class CommentsComponent {
-@Input() size:any
-@Input() commentDetails:any
-// constructor(private _sharing:SharingService, private _nav:NavComponent,private _Displayposts:DisplaypostsComponent){}
-  toUser(id:any){
-    // console.log(id);
-    // this._nav.tap = 'Profile'
-    // this._Displayposts.closePost()
-    // this._sharing.toUser(id)
+  @Input() size: number | string = 38;
+  @Input() commentDetails: any;
+
+  toUser(_id: string | undefined): void {
+    // Profile navigation is managed by the parent component in this project.
   }
+  getTimeAgo(date: string): string {
+  const diff = Date.now() - new Date(date).getTime();
+
+  const seconds = Math.floor(diff / 1000);
+
+  if (seconds < 60) {
+    return 'Just now';
+  }
+
+  const minutes = Math.floor(seconds / 60);
+
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+
+  if (hours < 24) {
+    return `${hours}h`;
+  }
+
+  const days = Math.floor(hours / 24);
+
+  if (days < 7) {
+    return `${days}d`;
+  }
+
+  return new Date(date).toLocaleDateString('en-GB');
+}
 }
