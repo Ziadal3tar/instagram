@@ -1,0 +1,189 @@
+<section class="auth-page auth-page--login" id="login">
+  <div class="auth-shell">
+    <aside class="auth-visual" aria-hidden="true">
+      <div class="visual-brand">
+        <span class="visual-brand-icon"><i class="bi bi-instagram"></i></span>
+        <span>Moments, shared.</span>
+      </div>
+
+      <div class="visual-copy">
+        <span class="visual-kicker">YOUR WORLD, YOUR WAY</span>
+        <h1>Every moment tells a story.</h1>
+        <p>Reconnect with friends, discover inspiration, and share the little things that make life yours.</p>
+      </div>
+
+      <div class="visual-art">
+        <span class="visual-orbit visual-orbit--one"></span>
+        <span class="visual-orbit visual-orbit--two"></span>
+        <div class="story-preview story-preview--back">
+          <span class="preview-top"><i></i><i></i><i></i></span>
+          <span class="preview-sun"></span>
+          <span class="preview-horizon"></span>
+          <span class="preview-caption">Chasing sunsets</span>
+        </div>
+        <div class="story-preview story-preview--front">
+          <span class="preview-top"><i></i><i></i><i></i></span>
+          <span class="preview-flower"><i class="bi bi-stars"></i></span>
+          <span class="preview-caption">Collect the good moments</span>
+        </div>
+        <div class="floating-note floating-note--top"><i class="bi bi-heart-fill"></i><span>Made to connect</span></div>
+        <div class="floating-note floating-note--bottom"><i class="bi bi-chat-heart-fill"></i><span>Stay close</span></div>
+      </div>
+
+      <p class="visual-footer">A place for the moments that matter.</p>
+    </aside>
+
+    <main class="auth-panel">
+      <div class="auth-form-card">
+        <a class="auth-wordmark" [routerLink]="'/home'" aria-label="Instagram home">Instagram</a>
+
+        <header class="auth-heading">
+          <span class="auth-eyebrow">WELCOME BACK</span>
+          <h2>Log in</h2>
+          <p>See photos and videos from your friends.</p>
+        </header>
+
+        <div class="auth-social-actions">
+          <button
+            type="button"
+            class="auth-social-button auth-social-button--facebook"
+            (click)="logInWithFB()"
+            [disabled]="loading"
+          >
+            <i class="bi bi-facebook" aria-hidden="true"></i>
+            <span>Continue with Facebook</span>
+          </button>
+
+          <div
+            id="g_id_onload"
+            data-client_id="1098782159208-4afkg7i8tv5e0btbk5emsk5lhre7fmaj.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+          ></div>
+          <div class="google-signin-wrap">
+            <div
+              class="g_id_signin"
+              data-type="standard"
+              data-shape="rectangular"
+              data-theme="outline"
+              data-text="signin_with"
+              data-size="large"
+              data-logo_alignment="left"
+              data-width="300"
+            ></div>
+          </div>
+        </div>
+
+        <div class="auth-divider" role="separator" aria-label="or">
+          <span></span><b>OR</b><span></span>
+        </div>
+
+        <form [formGroup]="logInForm" (ngSubmit)="logIn()" class="auth-form" novalidate>
+          <div class="auth-error" *ngIf="errorResponse" role="alert" aria-live="polite">
+            <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
+            <span>{{ errorResponse }}</span>
+          </div>
+
+          <div class="auth-field">
+            <label for="login-email">Email address</label>
+            <div class="auth-input-wrap" [class.auth-field--invalid]="logInForm.controls.email.touched && logInForm.controls.email.invalid">
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+              <input
+                id="login-email"
+                type="email"
+                formControlName="email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                inputmode="email"
+                [attr.aria-invalid]="logInForm.controls.email.touched && logInForm.controls.email.invalid"
+                [attr.aria-describedby]="logInForm.controls.email.touched && logInForm.controls.email.invalid ? (logInForm.controls.email.hasError('required') ? 'login-email-error' : 'login-email-format-error') : null"
+              />
+            </div>
+            <p class="auth-field-error" id="login-email-error" *ngIf="logInForm.controls.email.touched && logInForm.controls.email.hasError('required')">Please enter your email address.</p>
+            <p class="auth-field-error" id="login-email-format-error" *ngIf="logInForm.controls.email.touched && logInForm.controls.email.hasError('email')">Enter a valid email address.</p>
+          </div>
+
+          <div class="auth-field">
+            <label for="login-password">Password</label>
+            <div class="auth-input-wrap" [class.auth-field--invalid]="logInForm.controls.password.touched && logInForm.controls.password.invalid">
+              <i class="bi bi-lock" aria-hidden="true"></i>
+              <input
+                id="login-password"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                [attr.aria-invalid]="logInForm.controls.password.touched && logInForm.controls.password.invalid"
+                [attr.aria-describedby]="logInForm.controls.password.touched && logInForm.controls.password.invalid ? 'login-password-error' : null"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                [attr.aria-pressed]="showPassword"
+              >
+                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="auth-field-error" id="login-password-error" *ngIf="logInForm.controls.password.touched && logInForm.controls.password.hasError('required')">Please enter your password.</p>
+          </div>
+
+          <div class="auth-help-row">
+            <span class="auth-help-text"><i class="bi bi-shield-check" aria-hidden="true"></i> Your account stays yours.</span>
+            <span class="auth-help-label">Password is case-sensitive</span>
+          </div>
+
+          <button class="auth-submit-button" type="submit" [disabled]="logInForm.invalid || loading">
+            <span>{{ loading ? 'Signing in…' : 'Log in' }}</span>
+            <app-loading-btn *ngIf="loading"></app-loading-btn>
+            <i *ngIf="!loading" class="bi bi-arrow-right" aria-hidden="true"></i>
+          </button>
+        </form>
+
+        <!-- Demo account credentials -->
+        <section class="demo-account-card" aria-labelledby="demo-account-title">
+          <div class="demo-account-heading">
+            <span class="demo-account-icon" aria-hidden="true">
+              <i class="bi bi-stars"></i>
+            </span>
+            <div>
+              <h3 id="demo-account-title">Try the demo account</h3>
+              <p>Use these credentials to explore the app.</p>
+            </div>
+            <span class="demo-account-badge">Demo</span>
+          </div>
+
+          <div class="demo-credentials">
+            <div class="demo-credential-row">
+              <span class="demo-credential-label"><i class="bi bi-envelope" aria-hidden="true"></i> Email</span>
+              <code>demo@gmail.com</code>
+            </div>
+            <div class="demo-credential-row">
+              <span class="demo-credential-label"><i class="bi bi-lock" aria-hidden="true"></i> Password</span>
+              <code>Demo12345!</code>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="demo-fill-button"
+            (click)="useDemoCredentials()"
+            [disabled]="loading"
+          >
+            <i class="bi bi-magic" aria-hidden="true"></i>
+            <span>Use demo account</span>
+          </button>
+        </section>
+
+        <p class="auth-switch-copy">
+          Don't have an account?
+          <a [routerLink]="'/register'">Sign up</a>
+        </p>
+
+        <p class="auth-legal">By continuing, you agree to use this community respectfully.</p>
+      </div>
+    </main>
+  </div>
+</section>

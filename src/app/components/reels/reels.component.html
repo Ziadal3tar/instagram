@@ -1,0 +1,393 @@
+<section class="reels-page">
+  <!-- Floating page heading -->
+  <header class="reels-header">
+    <div class="reels-heading">
+      <span class="reels-heading-icon">
+        <i class="bi bi-camera-reels-fill"></i>
+      </span>
+
+      <div>
+        <h1>Reels</h1>
+        <p>Short videos. New perspectives.</p>
+      </div>
+    </div>
+
+    <div class="scroll-hint" *ngIf="reels.length">
+      <i class="bi bi-mouse"></i>
+      <span>Scroll to discover</span>
+      <i class="bi bi-arrow-down"></i>
+    </div>
+  </header>
+
+  <!-- Vertical snap-scrolling feed -->
+  <div class="reels-container" #reelsContainer>
+    <!-- Reel card -->
+    <article
+      class="reel"
+      *ngFor="let item of reels; let i = index; trackBy: trackByReel"
+      [attr.data-reel-id]="item._id"
+    >
+      <!-- Video stage -->
+      <div class="video-shell">
+        <ng-container
+          *ngIf="videoUrl(item) && !isVideoUnavailable(item); else videoFallback"
+        >
+          <video
+            #reelVideo
+            class="reel-video"
+            [src]="videoUrl(item)"
+            [attr.poster]="posterUrl(item)"
+            [muted]="isMuted(item)"
+            playsinline
+            loop
+            preload="metadata"
+            [attr.aria-label]="'Reel by ' + (item.createdBy?.userName || 'Instagram user')"
+            (click)="togglePlayback(item, reelVideo, $event)"
+            (play)="onVideoPlay(item)"
+            (pause)="onVideoPause(item)"
+            (timeupdate)="updateProgress(item, reelVideo)"
+            (error)="onVideoError(item)"
+          ></video>
+
+          <!-- Contrast gradients -->
+          <div class="video-vignette" aria-hidden="true"></div>
+
+          <!-- Tap to pause / play -->
+          <button
+            type="button"
+            class="play-toggle"
+            [class.paused]="isPaused(item)"
+            [attr.aria-label]="isPaused(item) ? 'Play reel' : 'Pause reel'"
+            (click)="togglePlayback(item, reelVideo, $event)"
+          >
+            <i
+              class="bi"
+              [ngClass]="isPaused(item) ? 'bi-play-fill' : 'bi-pause-fill'"
+            ></i>
+          </button>
+
+          <!-- Sound control -->
+          <button
+            type="button"
+            class="sound-toggle"
+            [class.sound-on]="!isMuted(item)"
+            [attr.aria-label]="isMuted(item) ? 'Unmute reel' : 'Mute reel'"
+            [title]="isMuted(item) ? 'Turn sound on' : 'Turn sound off'"
+            (click)="toggleMute(item, reelVideo, $event)"
+          >
+            <i
+              class="bi"
+              [ngClass]="isMuted(item) ? 'bi-volume-mute-fill' : 'bi-volume-up-fill'"
+            ></i>
+          </button>
+
+          <!-- Reel progress -->
+          <div class="video-progress" aria-hidden="true">
+            <span [style.width.%]="progressFor(item)"></span>
+          </div>
+        </ng-container>
+
+        <!-- Unavailable video fallback -->
+        <ng-template #videoFallback>
+          <div class="video-fallback">
+            <span class="video-fallback-icon">
+              <i
+                class="bi"
+                [ngClass]="videoUrl(item) ? 'bi-camera-video-off' : 'bi-film'"
+              ></i>
+            </span>
+
+            <h3>Video unavailable</h3>
+
+            <p>
+              This Reel could not be played right now.
+            </p>
+
+            <button
+              *ngIf="videoUrl(item)"
+              type="button"
+              class="retry-video"
+              (click)="retryVideo(item)"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+              Try again
+            </button>
+          </div>
+        </ng-template>
+
+        <!-- Reel label -->
+        <div class="reel-top-label">
+          <span class="reel-type-pill">
+            <i class="bi bi-play-fill"></i>
+            REELS
+          </span>
+
+          <span class="reel-number">
+            {{ i + 1 }}
+          </span>
+        </div>
+
+        <!-- Creator and caption -->
+        <div class="reel-info">
+          <div class="creator-row">
+            <button
+              type="button"
+              class="creator"
+              (click)="openUser(item.createdBy?._id)"
+              [attr.aria-label]="'Open profile of ' + (item.createdBy?.userName || 'Instagram user')"
+            >
+              <img
+                [src]="item.createdBy?.profilePic "
+                [alt]="item.createdBy?.userName || 'Profile picture'"
+                loading="lazy"
+                (error)="onAvatarError($event)"
+              />
+
+              <span>
+                @{{ item.createdBy?.userName || 'instagram_user' }}
+              </span>
+
+              <i
+                class="bi bi-check-circle-fill creator-check"
+                *ngIf="item.createdBy"
+                aria-label="Verified account"
+              ></i>
+            </button>
+
+            <span class="creator-content-type">
+              <i class="bi bi-camera-reels"></i>
+              Reel
+            </span>
+          </div>
+
+          <!-- Caption -->
+          <div class="caption-block" *ngIf="item.caption">
+            <p [class.expanded]="isCaptionExpanded(item)">
+              {{ item.caption }}
+            </p>
+
+            <button
+              *ngIf="item.caption.length > 110"
+              type="button"
+              class="caption-toggle"
+              (click)="toggleCaption(item, $event)"
+            >
+              {{ isCaptionExpanded(item) ? 'Show less' : 'More' }}
+            </button>
+          </div>
+
+          <!-- Like / save / playback feedback -->
+          <p
+            class="reel-feedback"
+            *ngIf="reelMessages[item._id]"
+            role="status"
+          >
+            <i class="bi bi-info-circle"></i>
+            {{ reelMessages[item._id] }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Action rail -->
+      <aside class="reel-actions" aria-label="Reel actions">
+        <!-- Like -->
+        <button
+          type="button"
+          class="action"
+          [class.active]="item.viewerLiked"
+          [class.liked]="item.viewerLiked"
+          [disabled]="isLikePending(item)"
+          [attr.aria-pressed]="!!item.viewerLiked"
+          [attr.aria-label]="item.viewerLiked ? 'Unlike reel' : 'Like reel'"
+          (click)="addReelLike(item)"
+        >
+          <span class="action-icon">
+            <i
+              class="bi"
+              [ngClass]="item.viewerLiked ? 'bi-heart-fill' : 'bi-heart'"
+            ></i>
+          </span>
+
+          <span class="action-count">
+            {{ formatCount(item.likesCount) }}
+          </span>
+        </button>
+
+        <!-- Comments -->
+        <button
+          type="button"
+          class="action"
+          [class.active]="displayComments === i"
+          [attr.aria-label]="'View ' + (item.commentsCount || 0) + ' comments'"
+          [attr.aria-expanded]="displayComments === i"
+          (click)="openComments(i, item)"
+        >
+          <span class="action-icon">
+            <i class="bi bi-chat"></i>
+          </span>
+
+          <span class="action-count">
+            {{ formatCount(item.commentsCount) }}
+          </span>
+        </button>
+
+        <!-- Save -->
+        <button
+          type="button"
+          class="action"
+          [class.active]="isSaved(item)"
+          [class.saved]="isSaved(item)"
+          [disabled]="isSavePending(item)"
+          [attr.aria-pressed]="isSaved(item)"
+          [attr.aria-label]="isSaved(item) ? 'Remove from saved' : 'Save reel'"
+          (click)="saveReel(item)"
+        >
+          <span class="action-icon">
+            <i
+              class="bi"
+              [ngClass]="isSaved(item) ? 'bi-bookmark-fill' : 'bi-bookmark'"
+            ></i>
+          </span>
+
+          <span class="action-label">
+            {{ isSaved(item) ? 'Saved' : 'Save' }}
+          </span>
+        </button>
+
+        <!-- Creator profile -->
+        <button
+          type="button"
+          class="avatar-button"
+          (click)="openUser(item.createdBy?._id)"
+          [attr.aria-label]="'Open ' + (item.createdBy?.userName || 'creator') + ' profile'"
+        >
+          <img
+            [src]="item.createdBy?.profilePic "
+            [alt]="item.createdBy?.userName || 'Creator profile'"
+            loading="lazy"
+            (error)="onAvatarError($event)"
+          />
+
+          <span class="avatar-profile-badge">
+            <i class="bi bi-person-fill"></i>
+          </span>
+        </button>
+      </aside>
+
+      <!-- Backdrop behind the comments drawer -->
+      <button
+        *ngIf="displayComments === i"
+        type="button"
+        class="comments-backdrop"
+        aria-label="Close comments"
+        (click)="closeComments()"
+      ></button>
+
+      <!-- Comments drawer -->
+      <div
+        class="comments-drawer"
+        [class.open]="displayComments === i"
+        [attr.aria-hidden]="displayComments !== i"
+      >
+        <app-reels-comments
+          *ngIf="displayComments === i"
+          [reel]="item"
+          (closeComments)="closeComments()"
+        ></app-reels-comments>
+      </div>
+    </article>
+
+    <!-- Initial loading -->
+    <div
+      class="reels-initial-loading"
+      *ngIf="loading && !reels.length"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="loading-preview">
+        <span class="loading-preview-gradient"></span>
+
+        <div class="loading-preview-content">
+          <span class="loading-spinner"></span>
+          <strong>Loading Reels</strong>
+          <span>Getting your next videos ready</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <section
+      class="reels-status"
+      *ngIf="!loading && !reels.length && !loadError"
+    >
+      <span class="reels-status-icon">
+        <i class="bi bi-camera-reels"></i>
+      </span>
+
+      <h2>No reels yet</h2>
+
+      <p>
+        When Reels are published, they will appear here.
+      </p>
+
+      <button type="button" class="status-button" (click)="refresh()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Refresh Reels
+      </button>
+    </section>
+
+    <!-- Initial loading error -->
+    <section
+      class="reels-status reels-error"
+      *ngIf="!loading && !reels.length && loadError"
+      role="alert"
+    >
+      <span class="reels-status-icon">
+        <i class="bi bi-cloud-slash"></i>
+      </span>
+
+      <h2>Unable to load Reels</h2>
+
+      <p>{{ loadError }}</p>
+
+      <button type="button" class="status-button" (click)="retryLoad()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Try again
+      </button>
+    </section>
+
+    <!-- Pagination error -->
+    <div
+      class="reels-load-error"
+      *ngIf="!loading && reels.length && loadError"
+      role="alert"
+    >
+      <span>{{ loadError }}</span>
+
+      <button type="button" (click)="retryLoad()">
+        <i class="bi bi-arrow-clockwise"></i>
+        Retry
+      </button>
+    </div>
+
+    <!-- Loading next page -->
+    <div
+      class="reels-loading"
+      *ngIf="loadingPage && reels.length"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="loading-spinner"></span>
+      <span>Loading more Reels...</span>
+    </div>
+
+    <!-- End of content -->
+    <div
+      class="reels-end"
+      *ngIf="reels.length && !hasMore && !loadingPage && !loadError"
+    >
+      <i class="bi bi-check-circle"></i>
+      <span>You're all caught up</span>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,233 @@
+<!-- Story viewer -->
+<section
+  *ngIf="storyData && storyData.stories?.length"
+  id="stories"
+  class="stories-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Story viewer"
+>
+  <button
+    type="button"
+    class="stories-backdrop-close"
+    aria-label="Close story viewer"
+    (click)="close()"
+  ></button>
+
+  <article class="story-frame story-viewer">
+    <div class="story-media story-media--viewer">
+      <div
+        *ngIf="storyData?.stories[imgId]?.type === 'image'"
+        class="story-media-image"
+        [style.background-image]="'url(' + storyData?.stories[imgId]?.url + ')'"
+      ></div>
+
+      <video
+        #storyVideo
+        *ngIf="storyData?.stories[imgId]?.type === 'video'"
+        class="story-media-video"
+        [src]="storyData?.stories[imgId]?.url"
+        [muted]="isMuted"
+        autoplay
+        playsinline
+        controls
+      ></video>
+
+      <div
+        *ngIf="storyData?.stories[imgId]?.caption"
+        class="story-caption"
+        [class.story-caption--centered]="!storyData?.stories[imgId]?.left && !storyData?.stories[imgId]?.top"
+        [style.left]="storyData?.stories[imgId]?.left || '50%'"
+        [style.top]="storyData?.stories[imgId]?.top || '50%'"
+        [style.background-color]="storyData?.stories[imgId]?.color || 'rgba(0, 0, 0, 0.65)'"
+      >
+        {{ storyData?.stories[imgId]?.caption }}
+      </div>
+
+      <button
+        type="button"
+        class="story-nav story-nav--previous"
+        aria-label="Previous story"
+        (click)="prev()"
+      ></button>
+      <button
+        type="button"
+        class="story-nav story-nav--next"
+        aria-label="Next story"
+        (click)="next()"
+      ></button>
+    </div>
+
+    <header class="story-header">
+      <div class="story-progress" aria-label="Story progress">
+        <div
+          *ngFor="let item of storyData?.stories; let i = index"
+          class="story-progress-segment"
+          [class.is-complete]="i < imgId"
+          [class.is-current]="i === imgId"
+        >
+          <span *ngIf="i === imgId && !isPaused" class="story-progress-fill"></span>
+        </div>
+      </div>
+
+      <div class="story-header-row">
+        <button type="button" class="story-user" (click)="toProfile()" aria-label="Open profile">
+          <app-user-image [story]="false" [size]="40" [data]="storyData"></app-user-image>
+          <span class="story-user-name">{{ storyData?.userName }}</span>
+        </button>
+
+        <div class="story-header-actions">
+          <button
+            type="button"
+            class="story-icon-button"
+            (click)="togglePlayback()"
+            [attr.aria-label]="isPaused ? 'Resume story' : 'Pause story'"
+          >
+            <i class="bi" [ngClass]="isPaused ? 'bi-play-fill' : 'bi-pause-fill'"></i>
+          </button>
+          <button
+            type="button"
+            class="story-icon-button"
+            (click)="toggleMute()"
+            [attr.aria-label]="isMuted ? 'Unmute story' : 'Mute story'"
+          >
+            <i class="bi" [ngClass]="isMuted ? 'bi-volume-mute-fill' : 'bi-volume-up-fill'"></i>
+          </button>
+          <app-dropdown-btn></app-dropdown-btn>
+          <button type="button" class="story-icon-button" aria-label="Close story" (click)="close()">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <footer class="story-footer">
+      <label class="story-reply-field">
+        <span class="visually-hidden">Reply to {{ storyData?.userName }}</span>
+        <input
+          type="text"
+          [(ngModel)]="replyMessage"
+          [placeholder]="'Reply to ' + (storyData?.userName || 'this story') + '…'"
+          autocomplete="off"
+        />
+      </label>
+      <button
+        type="button"
+        class="story-icon-button story-reaction-button"
+        [class.is-liked]="isLiked"
+        [attr.aria-label]="isLiked ? 'Unlike story' : 'Like story'"
+        (click)="toggleLike()"
+      >
+        <i class="bi" [ngClass]="isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
+      </button>
+      <button type="button" class="story-icon-button" aria-label="Reply to story" (click)="focusReply()">
+        <i class="bi bi-chat"></i>
+      </button>
+    </footer>
+  </article>
+</section>
+
+<!-- Create story -->
+<section
+  *ngIf="!storyData"
+  id="stories"
+  class="stories-overlay stories-overlay--create"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Create a story"
+>
+  <button
+    type="button"
+    class="stories-backdrop-close"
+    aria-label="Close story creator"
+    (click)="close()"
+  ></button>
+
+  <article class="story-frame story-creator">
+    <header class="creator-header">
+      <div class="creator-heading">
+        <span class="creator-eyebrow">STORY</span>
+        <h2>Create a story</h2>
+      </div>
+      <div class="creator-actions">
+        <button
+          type="button"
+          class="creator-publish-button"
+          [disabled]="loading || !uploadFiles"
+          (click)="addStory()"
+        >
+          <span *ngIf="!loading">Share</span>
+          <app-loading-btn *ngIf="loading"></app-loading-btn>
+        </button>
+        <button type="button" class="creator-close-button" aria-label="Close creator" (click)="close()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </header>
+
+    <div #storyCanvas class="story-media story-media--creator">
+      <div
+        *ngIf="uploadStoryData?.type === 'image'"
+        class="story-media-image"
+        [style.background-image]="'url(' + uploadStoryData?.Src + ')'"
+      ></div>
+
+      <video
+        #storyVideo
+        *ngIf="uploadStoryData?.type === 'video'"
+        class="story-media-video"
+        [src]="uploadStoryData?.Src"
+        autoplay
+        muted
+        loop
+        playsinline
+        controls
+      ></video>
+
+      <div
+        class="story-caption story-caption--draggable"
+        [class.story-caption--centered]="!offsetX && !offsetY"
+        *ngIf="captionStory"
+        [style.left]="offsetX || '50%'"
+        [style.top]="offsetY || '50%'"
+        [style.background-color]="captionColor || 'rgba(0, 0, 0, 0.65)'"
+        (mousedown)="onMouseDown($event)"
+        (touchstart)="onTouchStart($event)"
+      >
+        {{ captionStory }}
+      </div>
+
+      <div class="creator-preview-hint" *ngIf="!uploadStoryData?.Src">
+        <i class="bi bi-image"></i>
+        <span>Your story preview will appear here</span>
+      </div>
+    </div>
+
+    <footer class="creator-footer">
+      <label class="creator-caption-field">
+        <span class="visually-hidden">Story caption</span>
+        <i class="bi bi-type"></i>
+        <input
+          type="text"
+          [(ngModel)]="captionStory"
+          maxlength="120"
+          placeholder="Add a caption…"
+          autocomplete="off"
+        />
+      </label>
+      <div class="creator-footer-actions">
+        <span class="caption-char-count">{{ captionStory?.length || 0 }}/120</span>
+        <input
+          type="color"
+          id="story-caption-color"
+          class="story-color-input"
+          aria-label="Choose caption background color"
+          [(ngModel)]="captionColor"
+        />
+        <label for="story-caption-color" class="story-color-button" title="Caption background color">
+          <i class="bi bi-palette-fill"></i>
+        </label>
+      </div>
+    </footer>
+  </article>
+</section>

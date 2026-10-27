@@ -1,0 +1,121 @@
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-grid-1x2" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">CONNECTED SERVICES</span>
+      <h2 class="subpage-title">Apps and websites</h2>
+      <p class="subpage-description">
+        Review applications that have access to your account information.
+      </p>
+    </div>
+  </header>
+
+  <div class="settings-info-banner">
+    <span class="banner-icon">
+      <i class="bi bi-shield-check" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <strong>Manage your account access</strong>
+      <p>
+        Connected apps may access information you authorize.
+        Review your connections regularly.
+      </p>
+    </div>
+  </div>
+
+  <div class="settings-segmented-tabs" role="tablist" aria-label="Application status">
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTap === 'Active'"
+      [class.active]="activeTap === 'Active'"
+      (click)="setActiveTab('Active')"
+    >
+      <span>Active</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTap === 'Expired'"
+      [class.active]="activeTap === 'Expired'"
+      (click)="setActiveTab('Expired')"
+    >
+      <span>Expired</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="activeTap === 'Removed'"
+      [class.active]="activeTap === 'Removed'"
+      (click)="setActiveTab('Removed')"
+    >
+      <span>Removed</span>
+    </button>
+  </div>
+
+  <div class="settings-tab-content" role="tabpanel">
+    <ng-container [ngSwitch]="activeTap">
+
+      <div *ngSwitchCase="'Active'" class="settings-empty-state">
+        <span class="empty-state-icon">
+          <i class="bi bi-plug" aria-hidden="true"></i>
+        </span>
+
+        <span class="empty-state-eyebrow">ACTIVE CONNECTIONS</span>
+        <h3>No connected apps</h3>
+
+        <p>
+          You have not authorized any applications to access your
+          Instagram account.
+        </p>
+
+        <span class="empty-state-footnote">
+          New connections will appear here.
+        </span>
+      </div>
+
+      <div *ngSwitchCase="'Expired'" class="settings-empty-state">
+        <span class="empty-state-icon">
+          <i class="bi bi-clock-history" aria-hidden="true"></i>
+        </span>
+
+        <span class="empty-state-eyebrow">EXPIRED CONNECTIONS</span>
+        <h3>No expired apps</h3>
+
+        <p>
+          Apps that have not been used recently and have lost access
+          to your non-public information will appear here.
+        </p>
+
+        <span class="empty-state-footnote">
+          There are no expired applications to display.
+        </span>
+      </div>
+
+      <div *ngSwitchCase="'Removed'" class="settings-empty-state">
+        <span class="empty-state-icon">
+          <i class="bi bi-plug-fill" aria-hidden="true"></i>
+        </span>
+
+        <span class="empty-state-eyebrow">REMOVED CONNECTIONS</span>
+        <h3>No removed apps</h3>
+
+        <p>
+          Applications disconnected from your account will appear
+          here for reference.
+        </p>
+
+        <span class="empty-state-footnote">
+          There are no removed applications to display.
+        </span>
+      </div>
+
+    </ng-container>
+  </div>
+</section>

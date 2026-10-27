@@ -1,0 +1,11 @@
+.spinner-border {
+  --bs-spinner-width: 1.2rem;
+  --bs-spinner-height: 1.2rem;
+  --bs-spinner-vertical-align: -0.125em;
+  --bs-spinner-border-width: 0.25em;
+  --bs-spinner-animation-speed: 0.75s;
+  --bs-spinner-animation-name: spinner-border;
+  border: var(--bs-spinner-border-width) solid white;
+  border-right-color: transparent;
+  margin: 0 10px;
+}

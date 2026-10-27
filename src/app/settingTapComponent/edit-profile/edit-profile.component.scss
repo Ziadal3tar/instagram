@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.settings-subpage {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 4px 0 16px !important;
+  color: #f5f5f7;
+}
+
+.settings-subpage,
+.settings-subpage * {
+  box-sizing: border-box;
+}
+
+.settings-subpage h2,
+.settings-subpage h3,
+.settings-subpage h4,
+.settings-subpage p {
+  overflow-wrap: anywhere;
+}

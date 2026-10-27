@@ -1,0 +1,294 @@
+<section id="setting" class="settings-page">
+  <div class="settings-shell">
+
+    <!-- Page heading -->
+    <header class="settings-heading">
+      <button
+        type="button"
+        class="back-button"
+        (click)="Close()"
+        aria-label="Back to profile"
+        title="Back to profile"
+      >
+        <i class="bi bi-arrow-left" aria-hidden="true"></i>
+      </button>
+
+      <div class="heading-copy">
+        <div class="breadcrumbs">
+          <span>PROFILE</span>
+          <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          <span class="current">SETTINGS</span>
+        </div>
+
+        <h1>Settings</h1>
+        <p>Manage your account, privacy and preferences.</p>
+      </div>
+    </header>
+
+    <!-- Settings layout -->
+    <div class="settings-layout">
+
+      <!-- Sidebar -->
+      <aside class="settings-sidebar">
+
+        <!-- Accounts Center -->
+        <section class="accounts-card">
+          <div class="accounts-card-heading">
+            <span class="accounts-brand-icon">
+              <i class="bi bi-person-badge" aria-hidden="true"></i>
+            </span>
+
+            <div class="accounts-brand-copy">
+              <span class="accounts-overline">META</span>
+              <h2>Accounts Center</h2>
+            </div>
+
+            <i
+              class="bi bi-chevron-right accounts-chevron"
+              aria-hidden="true"
+            ></i>
+          </div>
+
+          <p class="accounts-description">
+            Manage your connected experiences and account settings
+            across Meta technologies.
+          </p>
+
+          <div class="accounts-features">
+            <div class="accounts-feature">
+              <i class="bi bi-person" aria-hidden="true"></i>
+              <span>Personal details</span>
+            </div>
+
+            <div class="accounts-feature">
+              <i class="bi bi-shield-lock" aria-hidden="true"></i>
+              <span>Password and security</span>
+            </div>
+
+            <div class="accounts-feature">
+              <i class="bi bi-badge-ad" aria-hidden="true"></i>
+              <span>Ad preferences</span>
+            </div>
+          </div>
+
+          <div class="accounts-footer">
+            <span>See more in Accounts Center</span>
+            <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+          </div>
+        </section>
+
+        <!-- Main settings navigation -->
+        <nav class="settings-nav" aria-label="Settings navigation">
+          <p class="nav-group-label">YOUR SETTINGS</p>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Edit profile'"
+            [attr.aria-current]="activeTap === 'Edit profile' ? 'page' : null"
+            (click)="setActiveTab('Edit profile')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-person-circle" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Edit profile</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Apps and websites'"
+            [attr.aria-current]="activeTap === 'Apps and websites' ? 'page' : null"
+            (click)="setActiveTab('Apps and websites')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-grid" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Apps and websites</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Email notifications'"
+            [attr.aria-current]="activeTap === 'Email notifications' ? 'page' : null"
+            (click)="setActiveTab('Email notifications')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Email notifications</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Push notifications'"
+            [attr.aria-current]="activeTap === 'Push notifications' ? 'page' : null"
+            (click)="setActiveTab('Push notifications')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-bell" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Push notifications</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'What you see'"
+            [attr.aria-current]="activeTap === 'What you see' ? 'page' : null"
+            (click)="setActiveTab('What you see')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-eye" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">What you see</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Who can see your content'"
+            [attr.aria-current]="activeTap === 'Who can see your content' ? 'page' : null"
+            (click)="setActiveTab('Who can see your content')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-lock" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Who can see your content</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'How others can interact with you'"
+            [attr.aria-current]="activeTap === 'How others can interact with you' ? 'page' : null"
+            (click)="setActiveTab('How others can interact with you')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-chat-dots" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">How others can interact with you</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item is-disabled"
+            disabled
+            title="This setting is currently unavailable"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-people" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Supervision</span>
+            <span class="soon-badge">Soon</span>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Help'"
+            [attr.aria-current]="activeTap === 'Help' ? 'page' : null"
+            (click)="setActiveTab('Help')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-question-circle" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Help</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <button
+            type="button"
+            class="settings-nav-item"
+            [class.active]="activeTap === 'Subscriptions'"
+            [attr.aria-current]="activeTap === 'Subscriptions' ? 'page' : null"
+            (click)="setActiveTab('Subscriptions')"
+          >
+            <span class="nav-icon">
+              <i class="bi bi-stars" aria-hidden="true"></i>
+            </span>
+            <span class="nav-text">Subscriptions</span>
+            <i class="bi bi-chevron-right nav-chevron" aria-hidden="true"></i>
+          </button>
+
+          <div class="professional-note">
+            <span class="professional-icon">
+              <i class="bi bi-briefcase" aria-hidden="true"></i>
+            </span>
+
+            <span>Switch to professional account</span>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Active settings content -->
+      <main class="settings-content">
+        <div class="content-topline">
+          <span class="content-status-dot"></span>
+          <span class="content-eyebrow">ACCOUNT SETTINGS</span>
+          <span class="content-separator">/</span>
+          <span class="content-current">{{ activeTap }}</span>
+        </div>
+
+        <div class="settings-view">
+
+          <app-edit-profile
+            *ngIf="activeTap === 'Edit profile'"
+          ></app-edit-profile>
+
+          <app-apps-and-websites
+            *ngIf="activeTap === 'Apps and websites'"
+          ></app-apps-and-websites>
+
+          <app-email-notifications
+            *ngIf="activeTap === 'Email notifications'"
+          ></app-email-notifications>
+
+          <app-push-notifications
+            *ngIf="activeTap === 'Push notifications'"
+          ></app-push-notifications>
+
+          <app-what-you-see
+            *ngIf="activeTap === 'What you see'"
+          ></app-what-you-see>
+
+          <app-who-can-see-your-content
+            *ngIf="activeTap === 'Who can see your content'"
+          ></app-who-can-see-your-content>
+
+          <app-who-others
+            *ngIf="activeTap === 'How others can interact with you'"
+          ></app-who-others>
+
+          <app-supervision
+            *ngIf="activeTap === 'Supervision'"
+          ></app-supervision>
+
+          <app-help
+            *ngIf="activeTap === 'Help'"
+          ></app-help>
+
+          <app-subscriptions
+            *ngIf="activeTap === 'Subscriptions'"
+          ></app-subscriptions>
+
+        </div>
+      </main>
+    </div>
+
+    <footer class="settings-footer">
+      <span>Instagram</span>
+      <span class="footer-separator">·</span>
+      <span>Settings and preferences</span>
+    </footer>
+  </div>
+</section>

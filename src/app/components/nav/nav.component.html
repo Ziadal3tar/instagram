@@ -1,0 +1,303 @@
+<div class="app-shell">
+  <header class="mobile-header">
+    <div class="brand mobile-brand">Instagram</div>
+
+    <div class="mobile-actions">
+      <!-- <button
+        type="button"
+        aria-label="Create post"
+        title="Create"
+        (click)="go('/create')"
+      >
+        <i class="bi bi-plus-square" aria-hidden="true"></i>
+      </button>
+
+      <button
+        type="button"
+        class="mobile-notifications-button"
+        [class.active]="showNotifications"
+        [attr.aria-expanded]="showNotifications"
+        aria-label="Notifications"
+        title="Notifications"
+        (click)="toggleNotifications()"
+      >
+        <i class="bi bi-heart" aria-hidden="true"></i>
+
+        <span class="mobile-count" *ngIf="notificationCount > 0">
+          {{ notificationCount > 99 ? '99+' : notificationCount }}
+        </span>
+      </button> -->
+
+      <button
+        type="button"
+        class="mobile-menu-toggle"
+        [class.active]="showMobileMenu"
+        [attr.aria-expanded]="showMobileMenu"
+        aria-controls="mobile-quick-menu"
+        aria-label="Open menu"
+        title="Menu"
+        (click)="toggleMobileMenu()"
+      >
+        <i class="bi bi-list" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div
+      class="mobile-quick-menu"
+      id="mobile-quick-menu"
+      *ngIf="showMobileMenu"
+      aria-label="Quick actions"
+    >
+      <button type="button" (click)="go('/settings')">
+        <span class="quick-menu-icon"><i class="bi bi-gear" aria-hidden="true"></i></span>
+        <span>Settings</span>
+        <i class="bi bi-chevron-right quick-menu-chevron" aria-hidden="true"></i>
+      </button>
+
+      <button type="button" (click)="openNotificationsFromMenu()">
+        <span class="quick-menu-icon"><i class="bi bi-bell" aria-hidden="true"></i></span>
+        <span>Notifications</span>
+        <span class="quick-menu-count" *ngIf="notificationCount > 0">
+          {{ notificationCount > 99 ? '99+' : notificationCount }}
+        </span>
+      </button>
+
+      <button type="button" (click)="go('/create')">
+        <span class="quick-menu-icon"><i class="bi bi-plus-square" aria-hidden="true"></i></span>
+        <span>Create</span>
+        <i class="bi bi-chevron-right quick-menu-chevron" aria-hidden="true"></i>
+      </button>
+
+      <div class="quick-menu-divider" role="separator"></div>
+
+      <button type="button" class="quick-menu-logout" (click)="logout()">
+        <span class="quick-menu-icon"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></span>
+        <span>Log out</span>
+      </button>
+    </div>
+  </header>
+
+  <button
+    class="mobile-menu-backdrop"
+    type="button"
+    *ngIf="showMobileMenu"
+    (click)="closeMobileMenu()"
+    aria-label="Close menu"
+    tabindex="-1"
+  ></button>
+
+  <aside class="sidebar">
+    <button
+      class="brand desktop-brand"
+      type="button"
+      (click)="go('/home')"
+      aria-label="Instagram home"
+      title="Instagram home"
+    >
+      <span class="brand-full">Instagram</span>
+      <i class="bi bi-instagram brand-icon" aria-hidden="true"></i>
+    </button>
+
+    <nav class="main-nav" aria-label="Primary navigation">
+      <button
+        type="button"
+        [class.active]="isActive('/home')"
+        (click)="go('/home')"
+        title="Home"
+      >
+        <i class="bi bi-house-door" aria-hidden="true"></i>
+        <span>Home</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="showSearch"
+        [attr.aria-expanded]="showSearch"
+        aria-controls="search-drawer"
+        (click)="toggleSearch()"
+        title="Search"
+      >
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <span>Search</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="isActive('/explore')"
+        (click)="go('/explore')"
+        title="Explore"
+      >
+        <i class="bi bi-compass" aria-hidden="true"></i>
+        <span>Explore</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="isActive('/reels')"
+        (click)="go('/reels')"
+        title="Reels"
+      >
+        <i class="bi bi-play-btn" aria-hidden="true"></i>
+        <span>Reels</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="isActive('/messages')"
+        (click)="go('/messages')"
+        title="Messages"
+      >
+        <i class="bi bi-chat" aria-hidden="true"></i>
+        <span>Messages</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="showNotifications"
+        [attr.aria-expanded]="showNotifications"
+        aria-controls="notification-drawer"
+        (click)="toggleNotifications()"
+        title="Notifications"
+      >
+        <span class="icon-wrap">
+          <i class="bi bi-bell" aria-hidden="true"></i>
+
+          <span class="count" *ngIf="notificationCount > 0">
+            {{ notificationCount > 99 ? '99+' : notificationCount }}
+          </span>
+        </span>
+
+        <span>Notifications</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="isActive('/create')"
+        (click)="go('/create')"
+        title="Create"
+      >
+        <i class="bi bi-plus-square" aria-hidden="true"></i>
+        <span>Create</span>
+      </button>
+
+      <button
+        type="button"
+        [class.active]="isActive('/userProfile')"
+        (click)="openProfile()"
+        title="Profile"
+      >
+        <span
+          class="profile-thumb"
+          [style.background-image]="'url(' + (userData?.profilePic ) + ')'"
+        ></span>
+
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button
+        type="button"
+        [class.active]="isActive('/settings')"
+        (click)="go('/settings')"
+        title="Settings"
+      >
+        <i class="bi bi-gear" aria-hidden="true"></i>
+        <span>Settings</span>
+      </button>
+
+      <button type="button" (click)="logout()" title="Log out">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+        <span>Log out</span>
+      </button>
+    </div>
+  </aside>
+
+  <button
+    class="panel-backdrop"
+    type="button"
+    *ngIf="showSearch || showNotifications"
+    (click)="closePanels()"
+    aria-label="Close open panel"
+  ></button>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <div
+    class="overlay-panel search-overlay"
+    id="search-drawer"
+    *ngIf="showSearch"
+  >
+    <app-search
+      [userData]="userData"
+      (close)="showSearch = false"
+    ></app-search>
+  </div>
+
+  <div
+    class="overlay-panel notification-overlay"
+    id="notification-drawer"
+    *ngIf="showNotifications"
+  >
+    <app-notification
+      (close)="showNotifications = false"
+    ></app-notification>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button
+      type="button"
+      [class.active]="isActive('/home')"
+      (click)="go('/home')"
+      aria-label="Home"
+      title="Home"
+    >
+      <i class="bi bi-house-door" aria-hidden="true"></i>
+    </button>
+
+    <button
+      type="button"
+      [class.active]="isActive('/explore')"
+      (click)="go('/explore')"
+      aria-label="Explore"
+      title="Explore"
+    >
+      <i class="bi bi-search" aria-hidden="true"></i>
+    </button>
+
+    <button
+      type="button"
+      [class.active]="isActive('/create')"
+      (click)="go('/create')"
+      aria-label="Create"
+      title="Create"
+    >
+      <i class="bi bi-plus-square" aria-hidden="true"></i>
+    </button>
+
+    <button
+      type="button"
+      [class.active]="isActive('/messages')"
+      (click)="go('/messages')"
+      aria-label="Messages"
+      title="Messages"
+    >
+      <i class="bi bi-chat" aria-hidden="true"></i>
+    </button>
+
+    <button
+      type="button"
+      [class.active]="isActive('/userProfile')"
+      (click)="openProfile()"
+      aria-label="Profile"
+      title="Profile"
+    >
+      <span
+        class="profile-thumb small"
+        [style.background-image]="'url(' + (userData?.profilePic ) + ')'"
+      ></span>
+    </button>
+  </nav>
+</div>

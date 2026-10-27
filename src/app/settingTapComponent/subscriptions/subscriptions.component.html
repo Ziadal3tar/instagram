@@ -1,0 +1,82 @@
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-stars" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">MEMBERSHIPS</span>
+      <h2 class="subpage-title">Subscriptions</h2>
+      <p class="subpage-description">
+        Review your subscription status and related information.
+      </p>
+    </div>
+  </header>
+
+  <section class="settings-group subscription-empty">
+    <div class="subscription-empty-art">
+      <span class="subscription-orbit orbit-one"></span>
+      <span class="subscription-orbit orbit-two"></span>
+
+      <span class="subscription-center-icon">
+        <i class="bi bi-stars" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <span class="empty-state-eyebrow">YOUR MEMBERSHIPS</span>
+    <h3>No active subscriptions</h3>
+
+    <p>
+      You don't have any active subscriptions at the moment.
+      When subscription information is available, you can review it here.
+    </p>
+
+    <span class="subscription-status">
+      <span class="status-dot"></span>
+      No active plans
+    </span>
+  </section>
+
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Help and support</h3>
+        <p>Find information about subscriptions.</p>
+      </div>
+
+      <span class="group-heading-icon">
+        <i class="bi bi-life-preserver" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <article class="settings-accordion-item" [class.expanded]="showHelp">
+      <button
+        type="button"
+        class="settings-accordion-trigger"
+        [attr.aria-expanded]="showHelp"
+        aria-controls="subscription-help-description"
+        (click)="toggleHelp()"
+      >
+        <span class="accordion-icon">
+          <i class="bi bi-question-circle" aria-hidden="true"></i>
+        </span>
+
+        <span class="accordion-title">Subscription help</span>
+
+        <i class="bi bi-chevron-down accordion-chevron" aria-hidden="true"></i>
+      </button>
+
+      <div
+        id="subscription-help-description"
+        class="settings-accordion-content"
+        *ngIf="showHelp"
+      >
+        <p>
+          There are currently no active subscriptions to manage from this
+          page. Subscription availability and management options depend on
+          the features supported by your application.
+        </p>
+      </div>
+    </article>
+  </section>
+</section>

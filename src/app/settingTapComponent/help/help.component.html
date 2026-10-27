@@ -1,0 +1,77 @@
+<section class="settings-subpage">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-question-circle" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">SUPPORT</span>
+      <h2 class="subpage-title">Help</h2>
+      <p class="subpage-description">
+        Find guidance for managing and protecting your account.
+      </p>
+    </div>
+  </header>
+
+  <div class="settings-info-banner">
+    <span class="banner-icon">
+      <i class="bi bi-life-preserver" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <strong>How can we help?</strong>
+      <p>
+        Browse the topics below for information about your account.
+      </p>
+    </div>
+  </div>
+
+  <section class="settings-group">
+    <div class="settings-group-heading">
+      <div>
+        <h3>Help topics</h3>
+        <p>Choose a topic to view more information.</p>
+      </div>
+    </div>
+
+    <div class="settings-accordion">
+      <article
+        class="settings-accordion-item"
+        *ngFor="let item of qus; let i = index"
+        [class.expanded]="expandedIndex === i"
+      >
+        <button
+          type="button"
+          class="settings-accordion-trigger"
+          [attr.aria-expanded]="expandedIndex === i"
+          [attr.aria-controls]="'help-description-' + i"
+          (click)="active(i)"
+        >
+          <span class="accordion-icon">
+         <i
+  class="bi"
+  [ngClass]="item.icon"
+  aria-hidden="true"
+></i>
+          </span>
+
+          <span class="accordion-title">{{ item.qus }}</span>
+
+          <i
+            class="bi bi-chevron-down accordion-chevron"
+            aria-hidden="true"
+          ></i>
+        </button>
+
+        <div
+          class="settings-accordion-content"
+          [id]="'help-description-' + i"
+          [attr.aria-hidden]="expandedIndex !== i"
+          *ngIf="expandedIndex === i"
+        >
+          <p>{{ item.desc }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,74 @@
+<section class="profile-grid" aria-label="Profile posts">
+  <button
+    *ngFor="let item of data; trackBy: trackById"
+    class="grid-item"
+    type="button"
+    (click)="openPost(item)"
+    [attr.aria-label]="'Open ' + (isVideo(item) ? 'video' : 'post')"
+  >
+    <img
+      *ngIf="!isVideo(item)"
+      [src]="mediaUrl(item)"
+      [alt]="item.caption || 'Post'"
+      loading="lazy"
+      decoding="async"
+      (error)="onImgError($event)"
+    />
+    <video
+      *ngIf="isVideo(item)"
+      [src]="mediaUrl(item)"
+      muted
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+    ></video>
+
+    <span
+      class="media-type-badge"
+      *ngIf="item.type === 'reel' || (item.postsImgAndVideos?.length || 0) > 1"
+      aria-hidden="true"
+    >
+      <i class="bi" [ngClass]="item.type === 'reel' ? 'bi-play-fill' : 'bi-images'"></i>
+    </span>
+    <span class="media-hover-overlay" aria-hidden="true">
+      <i class="bi bi-eye-fill"></i>
+      <span>View post</span>
+    </span>
+  </button>
+
+  <div class="profile-grid__empty" *ngIf="!data?.length">
+    <span class="empty-icon"><i class="bi bi-camera"></i></span>
+    <h3>No posts yet</h3>
+    <p>Photos and videos shared on this profile will appear here.</p>
+  </div>
+</section>
+
+<div
+  class="detail-overlay"
+  *ngIf="open"
+  role="presentation"
+  (click)="closePost()"
+>
+  <button
+    type="button"
+    class="overlay-close"
+    aria-label="Close post details"
+    title="Close"
+    (click)="closePost()"
+  >
+    <i class="bi bi-x-lg" aria-hidden="true"></i>
+  </button>
+
+  <section
+    class="detail-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Post details"
+    (click)="$event.stopPropagation()"
+  >
+    <app-display-explore
+      [exploreData]="displayPost"
+      (open)="closePost()"
+    ></app-display-explore>
+  </section>
+</div>

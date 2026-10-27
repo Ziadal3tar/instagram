@@ -1,0 +1,509 @@
+<section id="create" class="create-page">
+  <div class="create-shell">
+
+    <!-- Page heading -->
+    <header class="page-heading">
+      <div class="heading-icon">
+        <i class="bi bi-plus-square-dotted" aria-hidden="true"></i>
+      </div>
+
+      <div class="heading-copy">
+        <span class="eyebrow">SHARE YOUR MOMENTS</span>
+        <h1>Create</h1>
+        <p>Bring your moments to life and share them with your community.</p>
+      </div>
+    </header>
+
+    <!-- Main creator card -->
+    <section class="creator-card">
+
+      <!-- Tabs -->
+      <nav class="creator-tabs" role="tablist" aria-label="Content type">
+        <button
+          class="creator-tab"
+          type="button"
+          role="tab"
+          id="posts-tab"
+          aria-controls="posts-panel"
+          [attr.aria-selected]="activeTap === 'Posts'"
+          [class.active]="activeTap === 'Posts'"
+          [disabled]="loading"
+          (click)="setActiveTab('Posts')"
+        >
+          <i class="bi bi-images" aria-hidden="true"></i>
+          <span>Post</span>
+          <small>Photos & videos</small>
+        </button>
+
+        <button
+          class="creator-tab"
+          type="button"
+          role="tab"
+          id="reels-tab"
+          aria-controls="reels-panel"
+          [attr.aria-selected]="activeTap === 'Reels'"
+          [class.active]="activeTap === 'Reels'"
+          [disabled]="loading"
+          (click)="setActiveTab('Reels')"
+        >
+          <i class="bi bi-play-btn" aria-hidden="true"></i>
+          <span>Reel</span>
+          <small>Short-form video</small>
+        </button>
+      </nav>
+
+      <!-- ==================== POSTS ==================== -->
+      <div
+        *ngIf="activeTap === 'Posts'"
+        class="creator-body"
+        id="posts-panel"
+        role="tabpanel"
+        aria-labelledby="posts-tab"
+      >
+        <input
+          #postInput
+          type="file"
+          id="selectPost"
+          class="file-input"
+          accept="image/*,video/*"
+          multiple
+          [disabled]="loading"
+          (change)="uploadPost($event)"
+        />
+
+        <!-- Upload errors -->
+        <div
+          class="upload-error"
+          *ngIf="ErrorResponse"
+          role="alert"
+          aria-live="polite"
+        >
+          <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+          <span>{{ ErrorResponse }}</span>
+
+          <button
+            type="button"
+            aria-label="Dismiss error"
+            (click)="ErrorResponse = ''; cdr.markForCheck()"
+          >
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Empty upload state -->
+        <div
+          *ngIf="!postsSrc.length"
+          class="dropzone"
+          [class.is-dragging]="isDraggingPost"
+          (dragover)="onPostDragOver($event)"
+          (dragleave)="onPostDragLeave($event)"
+          (drop)="onPostDrop($event)"
+        >
+          <div class="dropzone-content">
+            <div class="upload-artwork">
+              <span class="artwork-back">
+                <i class="bi bi-image" aria-hidden="true"></i>
+              </span>
+
+              <span class="artwork-front">
+                <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <span class="dropzone-label">START CREATING</span>
+
+            <h2>Share your moments</h2>
+
+            <p class="drop-description">
+              Drag photos and videos here, or choose files from your device.
+            </p>
+
+            <label
+              for="selectPost"
+              class="primary-button select-button"
+              [class.disabled]="loading"
+            >
+              <i class="bi bi-folder2-open" aria-hidden="true"></i>
+              Select from computer
+            </label>
+
+            <div class="upload-hints">
+              <span><i class="bi bi-images" aria-hidden="true"></i> Photos & videos</span>
+              <span><i class="bi bi-collection" aria-hidden="true"></i> Up to 10 files</span>
+              <span><i class="bi bi-shield-check" aria-hidden="true"></i> 15 MB per file</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected media and post editor -->
+        <div *ngIf="postsSrc.length" class="composer-layout">
+
+          <!-- Media preview -->
+          <section class="media-preview">
+            <div class="preview-toolbar">
+              <div>
+                <span class="eyebrow">YOUR CONTENT</span>
+                <h2>Media preview</h2>
+              </div>
+
+              <span class="media-counter">
+                <i class="bi bi-collection" aria-hidden="true"></i>
+                {{ postsFiles.length }}/10
+              </span>
+            </div>
+
+            <div
+              class="media-grid"
+              [ngClass]="{
+                'single-media': postsSrc.length === 1,
+                'two-media': postsSrc.length === 2
+              }"
+            >
+              <div
+                class="media-tile"
+                *ngFor="let item of postsSrc; let i = index"
+                [class.hidden-tile]="i >= 4"
+              >
+                <img
+  *ngIf="postsFiles[i] && !postsFiles[i].type.startsWith('video/')"
+  [src]="item"
+  [alt]="'Selected image ' + (i + 1)"
+/>
+
+                <video
+  *ngIf="postsFiles[i]?.type?.startsWith('video/')"
+  [src]="item"
+  controls
+  muted
+  playsinline
+  preload="metadata"
+  [attr.aria-label]="'Selected video ' + (i + 1)"
+></video>
+
+                <span class="media-kind">
+                  <i
+                    class="bi"
+                    [ngClass]="
+  postsFiles[i]?.type?.startsWith('video/')
+    ? 'bi-play-circle-fill'
+    : 'bi-image'
+"
+                    aria-hidden="true"
+                  ></i>
+
+                  {{
+  postsFiles[i]?.type?.startsWith('video/')
+    ? 'Video'
+    : 'Photo'
+}}
+                </span>
+
+                <div
+                  *ngIf="i === 3 && postsSrc.length > 4"
+                  class="extra-count-overlay"
+                >
+                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                  <strong>{{ postsSrc.length - 4 }}</strong>
+                  <span>more files</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="media-preview-footer">
+              <div class="preview-status">
+                <span class="status-dot"></span>
+                <span>Ready to share</span>
+              </div>
+
+              <label
+                for="selectPost"
+                class="text-button"
+                [class.disabled]="loading"
+              >
+                <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                Change media
+              </label>
+            </div>
+          </section>
+
+          <!-- Caption and publishing -->
+          <aside class="post-details">
+            <div class="section-heading">
+              <span class="eyebrow">MAKE IT YOURS</span>
+              <h2>Write a caption</h2>
+              <p>Add a little context to your post.</p>
+            </div>
+
+            <div class="caption-field">
+              <textarea
+                id="post-caption"
+                [(ngModel)]="captionPost"
+                maxlength="2200"
+                placeholder="Write a caption..."
+                aria-label="Post caption"
+                [disabled]="loading"
+              ></textarea>
+
+              <div class="caption-footer">
+                <span>Tell your story</span>
+                <span
+                  [class.limit-near]="captionPost.length >= 2000"
+                >
+                  {{ captionPost.length }}/2,200
+                </span>
+              </div>
+            </div>
+
+            <div class="publishing-info">
+              <span class="info-icon">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+              </span>
+
+              <div>
+                <strong>Review before sharing</strong>
+                <p>Your selected media will be included in your post.</p>
+              </div>
+            </div>
+
+            <div class="publish-actions">
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="clearPost()"
+                [disabled]="loading"
+              >
+                Discard
+              </button>
+
+              <button
+                type="button"
+                class="primary-button publish-button"
+                (click)="addPost()"
+                [disabled]="!postsFiles.length || loading"
+              >
+                <span>{{ loading ? 'Sharing...' : 'Share post' }}</span>
+
+                <app-loading-btn *ngIf="loading"></app-loading-btn>
+
+                <i
+                  *ngIf="!loading"
+                  class="bi bi-arrow-up-right"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- ==================== REELS ==================== -->
+      <div
+        *ngIf="activeTap === 'Reels'"
+        class="creator-body"
+        id="reels-panel"
+        role="tabpanel"
+        aria-labelledby="reels-tab"
+      >
+        <input
+          #reelInput
+          type="file"
+          id="selectReel"
+          class="file-input"
+          accept="video/*"
+          [disabled]="loading"
+          (change)="uploadReel($event)"
+        />
+
+        <div
+          class="upload-error"
+          *ngIf="ErrorResponse"
+          role="alert"
+          aria-live="polite"
+        >
+          <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+          <span>{{ ErrorResponse }}</span>
+
+          <button
+            type="button"
+            aria-label="Dismiss error"
+            (click)="ErrorResponse = ''; cdr.markForCheck()"
+          >
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Empty Reel upload state -->
+        <div
+          *ngIf="!reel"
+          class="dropzone reel-dropzone"
+          [class.is-dragging]="isDraggingReel"
+          (dragover)="onReelDragOver($event)"
+          (dragleave)="onReelDragLeave($event)"
+          (drop)="onReelDrop($event)"
+        >
+          <div class="dropzone-content">
+            <div class="upload-artwork reel-artwork">
+              <span class="artwork-back">
+                <i class="bi bi-film" aria-hidden="true"></i>
+              </span>
+
+              <span class="artwork-front">
+                <i class="bi bi-play-fill" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <span class="dropzone-label">CREATE YOUR REEL</span>
+
+            <h2>Bring your video to life</h2>
+
+            <p class="drop-description">
+              Upload a video, preview it, add a caption, and share your Reel.
+            </p>
+
+            <label
+              for="selectReel"
+              class="primary-button select-button"
+              [class.disabled]="loading"
+            >
+              <i class="bi bi-camera-video" aria-hidden="true"></i>
+              Select a video
+            </label>
+
+            <div class="upload-hints">
+              <span><i class="bi bi-film" aria-hidden="true"></i> Video files</span>
+              <span><i class="bi bi-file-earmark" aria-hidden="true"></i> Up to 80 MB</span>
+              <span><i class="bi bi-phone" aria-hidden="true"></i> Vertical friendly</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reel preview and composer -->
+        <div *ngIf="reel" class="reel-editor">
+
+          <section class="reel-preview">
+            <div class="preview-toolbar">
+              <div>
+                <span class="eyebrow">YOUR CONTENT</span>
+                <h2>Reel preview</h2>
+              </div>
+
+              <span class="media-counter">
+                <i class="bi bi-play-circle" aria-hidden="true"></i>
+                Video
+              </span>
+            </div>
+
+            <div class="reel-video-frame">
+              <video
+                [src]="reel"
+                controls
+                playsinline
+                preload="metadata"
+                aria-label="Reel video preview"
+              ></video>
+
+              <button
+                type="button"
+                class="remove-media-button"
+                aria-label="Remove selected video"
+                title="Remove video"
+                (click)="clearReel()"
+                [disabled]="loading"
+              >
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="media-preview-footer">
+              <div class="preview-status">
+                <span class="status-dot"></span>
+                <span>Video selected</span>
+              </div>
+
+              <label
+                for="selectReel"
+                class="text-button"
+                [class.disabled]="loading"
+              >
+                <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                Change video
+              </label>
+            </div>
+          </section>
+
+          <aside class="reel-details">
+            <div class="section-heading">
+              <span class="eyebrow">MAKE IT YOURS</span>
+              <h2>Describe your Reel</h2>
+              <p>Give viewers a reason to stop and watch.</p>
+            </div>
+
+            <div class="caption-field">
+              <textarea
+                id="reel-caption"
+                [(ngModel)]="captionReel"
+                maxlength="2200"
+                placeholder="Write a caption for your Reel..."
+                aria-label="Reel caption"
+                [disabled]="loading"
+              ></textarea>
+
+              <div class="caption-footer">
+                <span>Keep it authentic</span>
+                <span
+                  [class.limit-near]="captionReel.length >= 2000"
+                >
+                  {{ captionReel.length }}/2,200
+                </span>
+              </div>
+            </div>
+
+            <div class="publishing-info">
+              <span class="info-icon">
+                <i class="bi bi-play-circle" aria-hidden="true"></i>
+              </span>
+
+              <div>
+                <strong>Ready for your audience</strong>
+                <p>Preview your video before publishing.</p>
+              </div>
+            </div>
+
+            <div class="publish-actions">
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="clearReel()"
+                [disabled]="loading"
+              >
+                Discard
+              </button>
+
+              <button
+                type="button"
+                class="primary-button publish-button"
+                (click)="addReel()"
+                [disabled]="!reelFile || loading"
+              >
+                <span>{{ loading ? 'Publishing...' : 'Share Reel' }}</span>
+
+                <app-loading-btn *ngIf="loading"></app-loading-btn>
+
+                <i
+                  *ngIf="!loading"
+                  class="bi bi-arrow-up-right"
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <i class="bi bi-stars" aria-hidden="true"></i>
+      <span>Make it meaningful. Make it yours.</span>
+    </footer>
+  </div>
+</section>

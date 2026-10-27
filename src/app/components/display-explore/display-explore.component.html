@@ -1,0 +1,374 @@
+<div
+  class="post-modal"
+  [class.details-visible]="detailsVisible"
+  *ngIf="item"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Post details"
+>
+  <!-- Close -->
+  <button
+    type="button"
+    class="close-btn"
+    (click)="close()"
+    aria-label="Close post"
+    title="Close"
+  >
+    <i class="bi bi-x-lg"></i>
+  </button>
+
+  <!-- Media section -->
+  <section class="media-pane">
+    <div class="media-stage">
+      <img
+        *ngIf="activeMedia?.type === 'image' && activeMedia?.url"
+        class="post-media"
+        [src]="activeMedia?.url"
+        [alt]="item.caption || 'Instagram post'"
+        loading="eager"
+        decoding="async"
+      />
+
+      <video
+        *ngIf="activeMedia?.type === 'video' && activeMedia?.url"
+        class="post-media"
+        [src]="activeMedia?.url"
+        controls
+        autoplay
+        muted
+        playsinline
+        preload="metadata"
+      ></video>
+
+      <!-- Empty media state -->
+      <div
+        class="media-empty"
+        *ngIf="!activeMedia?.url"
+      >
+        <i class="bi bi-image"></i>
+        <span>Media unavailable</span>
+      </div>
+
+      <!-- Reel badge -->
+      <div
+        class="media-type-badge"
+        *ngIf="item.type === 'reel'"
+      >
+        <i class="bi bi-play-circle-fill"></i>
+        <span>REEL</span>
+      </div>
+
+      <!-- Previous media -->
+      <button
+        *ngIf="media.length > 1"
+        type="button"
+        class="media-nav prev"
+        (click)="toggleValue(value - 1)"
+        aria-label="Previous media"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <!-- Next media -->
+      <button
+        *ngIf="media.length > 1"
+        type="button"
+        class="media-nav next"
+        (click)="toggleValue(value + 1)"
+        aria-label="Next media"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <!-- Media counter -->
+      <div
+        class="media-counter"
+        *ngIf="media.length > 1"
+      >
+        {{ value + 1 }} / {{ media.length }}
+      </div>
+
+      <!-- Carousel indicators -->
+      <div
+        class="media-indicators"
+        *ngIf="media.length > 1"
+        aria-label="Choose media"
+      >
+        <button
+          *ngFor="let mediaItem of media; let i = index; trackBy: trackByIndex"
+          type="button"
+          class="indicator"
+          [class.active]="value === i"
+          [attr.aria-label]="'Show media ' + (i + 1)"
+          [attr.aria-current]="value === i ? 'true' : null"
+          (click)="toggleValue(i)"
+        ></button>
+      </div>
+
+      <!-- Mobile details toggle -->
+      <button
+        type="button"
+        class="details-toggle"
+        [attr.aria-expanded]="detailsVisible"
+        [attr.aria-label]="detailsVisible ? 'Hide post details' : 'Show post details'"
+        (click)="toggleDetails($event)"
+      >
+        <i class="bi" [ngClass]="detailsVisible ? 'bi-arrows-angle-contract' : 'bi-info-circle'"></i>
+        <span>{{ detailsVisible ? 'Hide details' : 'Details' }}</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Post details -->
+  <section class="details-pane">
+    <!-- Author header -->
+    <header class="post-author">
+      <div class="author-info">
+        <span class="avatar-ring">
+          <img
+            [src]="item.createdBy?.profilePic "
+            [alt]="item.createdBy?.userName || 'User avatar'"
+          />
+        </span>
+
+        <div class="author-identity">
+          <strong>
+            {{ item.createdBy?.userName || 'Instagram user' }}
+          </strong>
+
+          <span *ngIf="item.createdBy?.fullName">
+            {{ item.createdBy?.fullName }}
+          </span>
+        </div>
+      </div>
+
+      <span class="post-type-label">
+        <i
+          class="bi"
+          [ngClass]="item.type === 'reel' ? 'bi-camera-reels' : 'bi-grid-1x2'"
+        ></i>
+
+        {{ item.type === 'reel' ? 'Reel' : 'Post' }}
+      </span>
+    </header>
+
+    <!-- Loading skeleton -->
+    <div
+      class="details-loading"
+      *ngIf="loading"
+      role="status"
+      aria-label="Loading post details"
+    >
+      <div class="skeleton-caption">
+        <span class="skeleton skeleton-avatar"></span>
+
+        <div class="skeleton-lines">
+          <span class="skeleton skeleton-line"></span>
+          <span class="skeleton skeleton-line short"></span>
+        </div>
+      </div>
+
+      <span class="skeleton skeleton-line"></span>
+      <span class="skeleton skeleton-line medium"></span>
+      <span class="skeleton skeleton-line short"></span>
+
+      <span class="loading-label">Loading comments...</span>
+    </div>
+
+    <!-- Caption and comments -->
+    <div
+      class="post-body"
+      *ngIf="!loading"
+    >
+      <!-- Caption -->
+      <article
+        class="caption-row"
+        *ngIf="item.caption"
+      >
+        <span class="caption-avatar">
+          <img
+            [src]="item.createdBy?.profilePic "
+            [alt]="item.createdBy?.userName || 'User avatar'"
+            loading="lazy"
+          />
+        </span>
+
+        <div class="caption-content">
+          <p>
+            <strong>{{ item.createdBy?.userName || 'Instagram user' }}</strong>
+            <span>{{ item.caption }}</span>
+          </p>
+        </div>
+      </article>
+
+      <!-- Comments heading -->
+      <div class="comments-heading">
+        <div>
+          <h3>Comments</h3>
+
+          <span class="comments-count">
+            {{ item.commentsCount || item.comments?.length || 0 }}
+          </span>
+        </div>
+
+        <i class="bi bi-chat-square-text" aria-hidden="true"></i>
+      </div>
+
+  <!-- Comments -->
+<div
+  class="comments"
+  *ngIf="(item.comments?.length ?? 0) > 0"
+>
+  <article
+    class="comment"
+    *ngFor="let comment of item.comments; trackBy: trackById"
+  >
+    <app-comments
+      [size]="36"
+      [commentDetails]="comment"
+    ></app-comments>
+  </article>
+</div>
+
+<!-- Empty comments state -->
+<div
+  class="no-comments"
+  *ngIf="
+    !loading &&
+    (item.comments?.length ?? 0) === 0 &&
+    (item.commentsCount ?? 0) === 0
+  "
+>
+  <div class="empty-comments-icon">
+    <i class="bi bi-chat-dots"></i>
+  </div>
+
+  <h4>No comments yet</h4>
+
+  <p>Start the conversation by sharing your thoughts.</p>
+</div>
+
+<!-- Comments count exists, but comment data is unavailable -->
+<div
+  class="no-comments"
+  *ngIf="
+    !loading &&
+    (item.commentsCount ?? 0) > 0 &&
+    (item.comments?.length ?? 0) === 0
+  "
+>
+  <div class="empty-comments-icon">
+    <i class="bi bi-chat-dots"></i>
+  </div>
+
+  <h4>Comments unavailable</h4>
+
+  <p>We couldn't load the comments for this post.</p>
+</div>
+    </div>
+
+    <!-- Actions footer -->
+    <footer class="post-actions">
+      <div class="action-row">
+        <div class="primary-actions">
+          <!-- Like -->
+          <button
+            type="button"
+            class="icon-button like-button"
+            [class.liked]="item.viewerLiked"
+            [disabled]="liking || loading"
+            [attr.aria-pressed]="!!item.viewerLiked"
+            [attr.aria-label]="item.viewerLiked ? 'Unlike post' : 'Like post'"
+            title="Like"
+            (click)="like()"
+          >
+            <i
+              class="bi"
+              [ngClass]="item.viewerLiked ? 'bi-heart-fill' : 'bi-heart'"
+            ></i>
+          </button>
+
+          <!-- Comment -->
+          <button
+            type="button"
+            class="icon-button"
+            aria-label="Write a comment"
+            title="Comment"
+            (click)="focusComment(commentInput)"
+          >
+            <i class="bi bi-chat"></i>
+          </button>
+        </div>
+
+        <!-- Save -->
+        <button
+          type="button"
+          class="icon-button save-button"
+          [class.saved]="isSaved"
+          [disabled]="saving || loading"
+          [attr.aria-pressed]="isSaved"
+          [attr.aria-label]="isSaved ? 'Remove from saved' : 'Save post'"
+          title="Save"
+          (click)="save()"
+        >
+          <i
+            class="bi"
+            [ngClass]="isSaved ? 'bi-bookmark-fill' : 'bi-bookmark'"
+          ></i>
+        </button>
+      </div>
+
+      <!-- Like count -->
+      <div class="likes-summary">
+        <strong>
+          {{ item.likesCount || 0 }} {{ (item.likesCount || 0) === 1 ? 'like' : 'likes' }}
+        </strong>
+      </div>
+
+      <!-- Action feedback -->
+      <p
+        class="action-feedback"
+        *ngIf="actionError"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-circle"></i>
+        {{ actionError }}
+      </p>
+
+      <!-- Add comment -->
+      <form
+        class="add-comment"
+        (ngSubmit)="addComment()"
+      >
+        <i class="bi bi-chat-left-text comment-input-icon"></i>
+
+        <input
+          #commentInput
+          type="text"
+          name="comment"
+          [(ngModel)]="comment"
+          placeholder="Add a comment..."
+          maxlength="1000"
+          autocomplete="off"
+          aria-label="Write a comment"
+          [disabled]="submittingComment || loading"
+        />
+
+        <button
+          type="submit"
+          [disabled]="!comment.trim() || submittingComment || loading"
+        >
+          {{ submittingComment ? 'Posting...' : 'Post' }}
+        </button>
+      </form>
+
+      <p
+        class="comment-error"
+        *ngIf="commentError"
+        role="alert"
+      >
+        {{ commentError }}
+      </p>
+    </footer>
+  </section>
+</div>

@@ -1,0 +1,287 @@
+<section
+  class="messages-page"
+  [class.has-active-chat]="!!activeChatId"
+>
+  <!-- Conversations sidebar -->
+  <aside class="conversation-panel">
+    <!-- Sidebar header -->
+    <header class="messages-header">
+      <div class="messages-brand">
+        <span class="messages-brand-icon">
+          <i class="bi bi-send-fill"></i>
+        </span>
+
+        <div>
+          <span class="header-eyebrow">YOUR COMMUNITY</span>
+          <h1>Messages</h1>
+        </div>
+      </div>
+
+      <span class="messages-count" *ngIf="chats.length">
+        {{ chats.length }}
+      </span>
+    </header>
+
+    <!-- Current user -->
+    <div class="sidebar-user" *ngIf="userData">
+      <span class="sidebar-avatar">
+        <img
+          [src]="userData.profilePic "
+          [alt]="userData.userName || 'Your profile'"
+          (error)="onAvatarError($event)"
+        />
+      </span>
+
+      <div class="sidebar-user-info">
+        <strong>{{ userData.userName }}</strong>
+        <span>{{ userData.fullName || 'Your account' }}</span>
+      </div>
+
+      <span class="private-indicator" title="Private messages">
+        <i class="bi bi-shield-lock"></i>
+      </span>
+    </div>
+
+    <!-- Search -->
+    <div class="search-section">
+      <label class="search-label" for="messageSearch">
+        Find people
+      </label>
+
+      <div class="search-box">
+        <i class="bi bi-search search-icon"></i>
+
+        <input
+          #searchInput
+          id="messageSearch"
+          type="search"
+          [value]="searchText"
+          placeholder="Search by username..."
+          autocomplete="off"
+          aria-label="Search people"
+          (input)="onSearch(searchInput.value)"
+        />
+
+        <button
+          *ngIf="searchText"
+          type="button"
+          class="clear-search"
+          (click)="clearSearch(searchInput)"
+          aria-label="Clear search"
+          title="Clear search"
+        >
+          <i class="bi bi-x-circle-fill"></i>
+        </button>
+
+            </div>
+    </div>
+
+    <!-- Search results -->
+
+    <!-- Search results -->
+    <section
+      class="search-results"
+      *ngIf="searchText.trim()"
+      aria-label="Search results"
+    >
+      <div class="section-heading">
+        <span>People</span>
+
+        <span *ngIf="!searchLoading && !searchError">
+          {{ searchResults.length }}
+        </span>
+      </div>
+
+      <!-- Searching -->
+      <div
+        class="search-loading"
+        *ngIf="searchLoading"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="search-spinner"></span>
+        <span>Searching...</span>
+      </div>
+
+      <!-- Search error -->
+      <div class="search-state error" *ngIf="searchError">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ searchError }}</span>
+      </div>
+
+      <!-- Results -->
+      <button
+        type="button"
+        class="search-result"
+        *ngFor="let person of searchResults; trackBy: trackById"
+        (click)="selectChat(person._id)"
+        [attr.aria-label]="'Start conversation with ' + person.userName"
+      >
+        <span class="result-avatar">
+          <img
+            [src]="person.profilePic "
+            [alt]="person.userName || 'User avatar'"
+            loading="lazy"
+            (error)="onAvatarError($event)"
+          />
+        </span>
+
+        <span class="person-info">
+          <strong>{{ person.userName || 'Instagram user' }}</strong>
+          <small>{{ person.fullName || 'Instagram member' }}</small>
+        </span>
+
+        <span class="start-chat-icon">
+          <i class="bi bi-arrow-up-left"></i>
+        </span>
+      </button>
+
+      <!-- No results -->
+      <div
+        class="search-state"
+        *ngIf="
+          !searchLoading &&
+          !searchError &&
+          !searchResults.length
+        "
+      >
+        <i class="bi bi-person-x"></i>
+        <strong>No people found</strong>
+        <span>Try a different username.</span>
+      </div>
+    </section>
+
+    <!-- Conversation list -->
+    <section
+      class="conversation-list"
+      *ngIf="!searchText.trim()"
+      aria-label="Your conversations"
+    >
+      <div class="section-heading">
+        <span>Recent messages</span>
+
+        <span class="section-subtitle" *ngIf="chats.length">
+          {{ chats.length }} conversations
+        </span>
+      </div>
+
+      <button
+        type="button"
+        class="conversation"
+        *ngFor="let chat of chats; trackBy: trackById"
+        [class.active]="isConversationActive(chat)"
+        [attr.aria-current]="isConversationActive(chat) ? 'true' : null"
+        (click)="selectChat(otherUser(chat)?._id || '')"
+      >
+        <span class="conversation-avatar">
+          <img
+            [src]="otherUser(chat)?.profilePic "
+            [alt]="otherUser(chat)?.userName || 'Conversation'"
+            loading="lazy"
+            (error)="onAvatarError($event)"
+          />
+        </span>
+
+        <span class="conversation-details">
+          <strong>
+            {{
+              otherUser(chat)?.userName ||
+              otherUser(chat)?.fullName ||
+              'Conversation'
+            }}
+          </strong>
+
+          <small [class.has-preview]="!!chatPreview(chat)">
+            {{ chatPreview(chat) || 'Start a conversation' }}
+          </small>
+        </span>
+
+        <span class="conversation-meta">
+          <time *ngIf="chat.updatedAt">
+            {{ chat.updatedAt | date:'shortTime' }}
+          </time>
+
+          <i
+            class="bi bi-chevron-right active-indicator"
+            *ngIf="isConversationActive(chat)"
+            aria-hidden="true"
+          ></i>
+        </span>
+      </button>
+
+      <!-- Empty conversation list -->
+      <div class="empty-list" *ngIf="!chats.length">
+        <span class="empty-list-icon">
+          <i class="bi bi-chat-square-heart"></i>
+        </span>
+
+        <strong>Your messages</strong>
+
+        <p>
+          Find someone from the community and start a private conversation.
+        </p>
+
+        <button
+          type="button"
+          class="empty-search-button"
+          (click)="focusSearch(searchInput)"
+        >
+          <i class="bi bi-search"></i>
+          Find people
+        </button>
+      </div>
+    </section>
+
+    <!-- Sidebar footer -->
+    <footer class="messages-sidebar-footer">
+      <span><i class="bi bi-lock"></i> Private conversations</span>
+      <span>Made for your community</span>
+    </footer>
+  </aside>
+
+  <!-- Active chat panel -->
+  <main class="chat-panel">
+    <app-chat *ngIf="activeChatId; else noChat"></app-chat>
+
+    <!-- Welcome / no conversation selected -->
+    <ng-template #noChat>
+      <div class="no-chat">
+        <span class="no-chat-art">
+          <span class="art-circle circle-one"></span>
+          <span class="art-circle circle-two"></span>
+
+          <span class="art-main-icon">
+            <i class="bi bi-send"></i>
+          </span>
+
+          <span class="art-small-icon">
+            <i class="bi bi-chat-heart-fill"></i>
+          </span>
+        </span>
+
+        <span class="no-chat-eyebrow">YOUR SPACE TO CONNECT</span>
+
+        <h2>Your messages</h2>
+
+        <p>
+          Share a thought, catch up with a friend, or start something new.
+          Your conversations live here.
+        </p>
+
+        <button
+          type="button"
+          class="start-conversation-button"
+          (click)="focusSearch(searchInput)"
+        >
+          <i class="bi bi-plus-lg"></i>
+          Start a conversation
+        </button>
+
+        <div class="no-chat-private">
+          <i class="bi bi-shield-lock"></i>
+          Your personal messaging space
+        </div>
+      </div>
+    </ng-template>
+  </main>
+</section>

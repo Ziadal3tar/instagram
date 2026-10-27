@@ -1,0 +1,40 @@
+:host {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  pointer-events: none;
+}
+
+.story-progress {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 28%);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 15%);
+}
+
+.inLoad {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: block;
+  width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #feda75 0%, #fa7e1e 23%, #d62976 52%, #962fbf 76%, #4f5bd5 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: story-progress-fill 5s linear forwards;
+  will-change: transform;
+}
+
+@keyframes story-progress-fill {
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inLoad { animation-duration: 0.01ms; }
+}

@@ -1,0 +1,93 @@
+<section class="comments-panel" role="region" aria-label="Reel comments">
+  <header class="comments-header">
+    <div class="header-copy">
+      <div class="title-row">
+        <h2>Comments</h2>
+        <span class="comment-count" aria-label="Comment count">
+          {{ current?.commentsCount || current?.comments?.length || 0 }}
+        </span>
+      </div>
+      <p>Join the conversation</p>
+    </div>
+
+    <button
+      type="button"
+      class="close-button"
+      (click)="close()"
+      aria-label="Close comments"
+      title="Close comments"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <div class="comments-list scrollStyle" aria-live="polite" [attr.aria-busy]="loading">
+    <div class="comments-state loading-state" *ngIf="loading">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <strong>Loading comments</strong>
+      <span>Getting the conversation ready…</span>
+    </div>
+
+    <div class="comments-state error-state" *ngIf="!loading && loadError" role="alert">
+      <span class="state-icon"><i class="bi bi-cloud-slash" aria-hidden="true"></i></span>
+      <strong>Couldn't load comments</strong>
+      <span>{{ loadError }}</span>
+      <button type="button" class="retry-button" (click)="retryLoad()" [disabled]="loading">
+        <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+        Try again
+      </button>
+    </div>
+
+    <div class="comments-state empty-state" *ngIf="!loading && !loadError && !current?.comments?.length">
+      <span class="state-icon"><i class="bi bi-chat-heart" aria-hidden="true"></i></span>
+      <strong>Be the first to comment</strong>
+      <span>Start a conversation about this Reel.</span>
+    </div>
+
+    <div class="comment" *ngFor="let item of current?.comments; trackBy: trackByComment">
+      <app-comments [commentDetails]="item" [size]="38"></app-comments>
+    </div>
+  </div>
+
+  <footer class="comments-composer-wrap">
+    <p class="submit-error" *ngIf="submitError" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      {{ submitError }}
+    </p>
+
+    <form class="comments-composer" (ngSubmit)="addReelComment()">
+      <div class="composer-avatar">
+        <app-user-image
+          [story]="false"
+          [size]="36"
+          [data]="{ profilePic: userData?.profilePic }"
+        ></app-user-image>
+      </div>
+
+      <label class="visually-hidden" for="reel-comment-input">Write a comment</label>
+      <input
+        id="reel-comment-input"
+        name="reelComment"
+        type="text"
+        maxlength="1000"
+        autocomplete="off"
+        [disabled]="submitting"
+        placeholder="Add a comment…"
+        [(ngModel)]="comment"
+      />
+
+      <button
+        type="submit"
+        class="post-button"
+        [disabled]="!comment.trim() || submitting"
+        [attr.aria-label]="submitting ? 'Posting comment' : 'Post comment'"
+      >
+        <span *ngIf="!submitting">Post</span>
+        <span class="button-spinner" *ngIf="submitting" aria-hidden="true"></span>
+      </button>
+    </form>
+    <div class="composer-hint" *ngIf="comment.length > 800">
+      {{ comment.length }}/1000 characters
+    </div>
+  </footer>
+</section>

@@ -1,0 +1,15 @@
+<div
+  class="user-avatar"
+  [class.user-avatar--story]="story"
+  [style.width.px]="size || 40"
+  [style.height.px]="size || 40"
+>
+  <img
+    class="user-avatar__image"
+    [src]="data?.profilePic "
+    [alt]="data?.userName ? data.userName + ' profile picture' : 'Profile picture'"
+    loading="lazy"
+    decoding="async"
+    (error)="onImageError($event)"
+  />
+</div>

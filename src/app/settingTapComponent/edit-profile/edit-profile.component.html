@@ -1,0 +1,126 @@
+<section class="settings-subpage edit-profile-page">
+  <header class="subpage-header">
+    <span class="subpage-icon">
+      <i class="bi bi-person-gear" aria-hidden="true"></i>
+    </span>
+
+    <div>
+      <span class="subpage-eyebrow">YOUR ACCOUNT</span>
+      <h2 class="subpage-title">Edit profile</h2>
+      <p class="subpage-description">
+        Personalize your profile and tell people a little about yourself.
+      </p>
+    </div>
+  </header>
+
+  <section class="setting-panel profile-photo-panel">
+    <div class="profile-photo-identity">
+      <div class="profile-avatar">
+        <img
+          [src]="previewUrl "
+          [alt]="userData?.userName || 'Profile picture'"
+        />
+
+        <span class="avatar-edit-icon">
+          <i class="bi bi-camera" aria-hidden="true"></i>
+        </span>
+      </div>
+
+      <div class="profile-identity-copy">
+        <strong>{{ userData?.userName || 'Your username' }}</strong>
+        <span>{{ userData?.fullName || 'Your name' }}</span>
+        <small>Profile picture</small>
+      </div>
+    </div>
+
+    <div class="profile-photo-actions">
+      <input
+        id="profilePhoto"
+        type="file"
+        accept="image/*"
+        hidden
+        [disabled]="savingImage"
+        (change)="upload($event)"
+      />
+
+      <label
+        class="settings-button settings-button-secondary"
+        for="profilePhoto"
+        [class.is-disabled]="savingImage"
+      >
+        <i class="bi bi-image" aria-hidden="true"></i>
+        Change photo
+      </label>
+
+      <button
+        *ngIf="selectedImage"
+        type="button"
+        class="settings-button settings-button-primary"
+        [disabled]="savingImage"
+        (click)="saveImage()"
+      >
+        <i class="bi bi-check2" aria-hidden="true"></i>
+        {{ savingImage ? 'Saving...' : 'Save photo' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="setting-panel profile-bio-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="subpage-eyebrow">ABOUT YOU</span>
+        <h3>Bio</h3>
+        <p>
+          Share something that helps people get to know you.
+        </p>
+      </div>
+
+      <i class="bi bi-card-text panel-heading-icon" aria-hidden="true"></i>
+    </div>
+
+    <label class="settings-field-label" for="bio">
+      Profile bio
+    </label>
+
+    <div class="settings-textarea-wrap">
+      <textarea
+        id="bio"
+        class="settings-textarea"
+        [(ngModel)]="bio"
+        maxlength="300"
+        rows="5"
+        placeholder="Tell people a little about you..."
+        [disabled]="savingBio"
+      ></textarea>
+
+      <div class="textarea-footer">
+        <span>Keep it personal and authentic.</span>
+        <span [class.limit-near]="bio.length >= 280">
+          {{ bio.length }}/300
+        </span>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <span class="save-hint">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        Your bio appears on your profile.
+      </span>
+
+      <button
+        type="button"
+        class="settings-button settings-button-primary"
+        [disabled]="savingBio"
+        (click)="saveBio()"
+      >
+        <i class="bi bi-check2" aria-hidden="true"></i>
+        {{ savingBio ? 'Saving...' : 'Save bio' }}
+      </button>
+    </div>
+  </section>
+
+  <div class="settings-alert settings-alert-error" *ngIf="error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ error }}</span>
+  </div>
+</section>

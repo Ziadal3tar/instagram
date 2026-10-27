@@ -1,0 +1,251 @@
+<section class="explore-page" (scroll)="onScroll($event)">
+  <!-- Page header -->
+  <header class="explore-header">
+    <div class="header-copy">
+      <span class="eyebrow">
+        <i class="bi bi-stars"></i>
+        DISCOVER YOUR COMMUNITY
+      </span>
+
+      <h1>Explore</h1>
+      <p>Find inspiration, discover creators, and explore new moments.</p>
+    </div>
+
+    <div class="header-meta" *ngIf="items.length">
+      <span class="results-count">{{ items.length }}</span>
+      <span class="results-label">posts discovered</span>
+    </div>
+
+    <div class="explore-icon" aria-hidden="true">
+      <i class="bi bi-compass"></i>
+      <span></span>
+    </div>
+  </header>
+
+  <!-- Initial loading skeleton -->
+  <div
+    class="content-grid skeleton-grid"
+    *ngIf="loading && !items.length"
+    aria-label="Loading explore posts"
+    aria-busy="true"
+  >
+    <div
+      class="skeleton-card"
+      *ngFor="let card of skeletonCards; let i = index"
+      [class.skeleton-featured]="isFeatured(i)"
+    >
+      <span class="skeleton-shimmer"></span>
+    </div>
+  </div>
+
+  <!-- Explore masonry-like grid -->
+  <div
+    class="content-grid"
+    *ngIf="items.length"
+    aria-label="Explore posts"
+  >
+    <button
+      type="button"
+      class="media-card"
+      *ngFor="let item of items; let i = index; trackBy: trackById"
+      [class.featured]="isFeatured(i)"
+      [attr.aria-label]="
+        'Open ' +
+        (item.type === 'reel' ? 'reel' : 'post') +
+        (item.createdBy?.userName ? ' by ' + item.createdBy.userName : '')
+      "
+      (click)="open(item)"
+    >
+      <!-- Image preview -->
+      <img
+        *ngIf="!isVideo(item)"
+        class="media-preview"
+        [src]="mediaUrl(item)"
+        [alt]="item.caption || 'Explore post'"
+        loading="lazy"
+        decoding="async"
+        (error)="onImageError($event)"
+      />
+
+      <!-- Video / Reel preview -->
+      <video
+        *ngIf="isVideo(item) && !isVideoUnavailable(item)"
+        class="media-preview video-preview"
+        [src]="mediaUrl(item)"
+        muted
+        playsinline
+        preload="none"
+        tabindex="-1"
+        aria-hidden="true"
+        (mouseenter)="previewVideo($event)"
+        (mouseleave)="pausePreview($event)"
+        (error)="onVideoError(item)"
+      ></video>
+
+      <!-- Video fallback -->
+      <span
+        class="media-unavailable"
+        *ngIf="isVideoUnavailable(item)"
+        aria-hidden="true"
+      >
+        <i class="bi bi-camera-video-off"></i>
+        <span>Preview unavailable</span>
+      </span>
+
+      <!-- Dark hover layer and engagement details -->
+      <span class="media-overlay">
+        <span class="engagement-stats">
+          <span class="engagement-item">
+            <i class="bi bi-heart-fill"></i>
+            {{ item.likesCount || 0 }}
+          </span>
+
+          <span class="engagement-item">
+            <i class="bi bi-chat-fill"></i>
+            {{ item.commentsCount || 0 }}
+          </span>
+        </span>
+
+        <span class="media-caption" *ngIf="item.caption">
+          {{ item.caption }}
+        </span>
+
+        <span class="open-indicator">
+          <i class="bi bi-arrow-up-right"></i>
+        </span>
+      </span>
+
+      <!-- Top-right media type badge -->
+      <span
+        class="media-badge"
+        *ngIf="
+          item.type === 'reel' ||
+          isCarousel(item) ||
+          isVideo(item)
+        "
+        aria-hidden="true"
+      >
+        <i
+          class="bi"
+          [ngClass]="
+            item.type === 'reel'
+              ? 'bi-play-fill'
+              : isCarousel(item)
+                ? 'bi-images'
+                : 'bi-camera-video-fill'
+          "
+        ></i>
+      </span>
+
+      <!-- Featured tile indicator -->
+      <span
+        class="featured-badge"
+        *ngIf="isFeatured(i)"
+        aria-hidden="true"
+      >
+        <i class="bi bi-stars"></i>
+      </span>
+    </button>
+  </div>
+
+  <!-- Loading more -->
+  <div
+    class="loading-more"
+    *ngIf="loadingMore && items.length"
+    role="status"
+    aria-live="polite"
+  >
+    <span class="loading-spinner"></span>
+    <span>Discovering more posts...</span>
+  </div>
+
+  <!-- Loading error with existing content -->
+  <div
+    class="load-error"
+    *ngIf="loadError && items.length"
+    role="alert"
+  >
+    <i class="bi bi-cloud-slash"></i>
+
+    <span>{{ loadError }}</span>
+
+    <button type="button" (click)="retry()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Retry
+    </button>
+  </div>
+
+  <!-- Initial error -->
+  <section
+    class="state error-state"
+    *ngIf="!loading && loadError && !items.length"
+    role="alert"
+  >
+    <span class="state-icon">
+      <i class="bi bi-cloud-slash"></i>
+    </span>
+
+    <h2>Unable to load Explore</h2>
+
+    <p>{{ loadError }}</p>
+
+    <button type="button" class="state-button" (click)="retry()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Try again
+    </button>
+  </section>
+
+  <!-- Empty state -->
+  <section
+    class="state empty-state"
+    *ngIf="!loading && !loadError && !items.length"
+  >
+    <span class="state-icon">
+      <i class="bi bi-compass"></i>
+    </span>
+
+    <h2>Nothing to explore yet</h2>
+
+    <p>
+      New photos and Reels will appear here as the community shares them.
+    </p>
+
+    <button type="button" class="state-button" (click)="refresh()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Refresh Explore
+    </button>
+  </section>
+
+  <!-- End of content -->
+  <div
+    class="end-of-explore"
+    *ngIf="items.length && !hasMore && !loadingMore && !loadError"
+  >
+    <span class="end-icon">
+      <i class="bi bi-check2"></i>
+    </span>
+
+    <span>You're all caught up</span>
+    <small>You've explored all the content available right now.</small>
+  </div>
+
+  <!-- Post details modal -->
+  <div
+    class="modal-backdrop"
+    *ngIf="selected"
+    (click)="close()"
+  >
+    <div
+      class="modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Post details"
+      (click)="$event.stopPropagation()"
+    >
+      <app-display-explore
+        [exploreData]="selected"
+        (open)="close()"
+      ></app-display-explore>
+    </div>
+  </div>
+</section>

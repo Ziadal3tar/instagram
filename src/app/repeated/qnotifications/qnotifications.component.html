@@ -1,0 +1,51 @@
+<section class="notification-setting" *ngIf="data as setting">
+  <header class="notification-setting__header">
+    <span class="notification-setting__icon" aria-hidden="true">
+      <i class="bi bi-bell"></i>
+    </span>
+    <div class="notification-setting__heading">
+      <h3>{{ setting.title }}</h3>
+      <p *ngIf="setting.explain">{{ setting.explain }}</p>
+    </div>
+  </header>
+
+  <div class="notification-options" *ngIf="setting.type == 2" role="radiogroup" [attr.aria-label]="setting.title">
+    <label
+      class="notification-option"
+      *ngFor="let item of if2; let index = index"
+      [class.selected]="Value === item"
+    >
+      <input
+        type="radio"
+        [name]="'notification-' + setting.id"
+        [id]="setting.id + '-' + index"
+        [value]="item"
+        [checked]="Value === item"
+        (change)="check($event, setting.id, item)"
+      />
+      <span class="notification-option__radio" aria-hidden="true"></span>
+      <span class="notification-option__label">{{ item }}</span>
+      <i class="bi bi-check2 notification-option__check" aria-hidden="true"></i>
+    </label>
+  </div>
+
+  <div class="notification-options" *ngIf="setting.type == 3" role="radiogroup" [attr.aria-label]="setting.title">
+    <label
+      class="notification-option"
+      *ngFor="let item of if3; let index = index"
+      [class.selected]="Value === item"
+    >
+      <input
+        type="radio"
+        [name]="'notification-' + setting.id"
+        [id]="setting.id + '-' + index"
+        [value]="item"
+        [checked]="Value === item"
+        (change)="check($event, setting.id, item)"
+      />
+      <span class="notification-option__radio" aria-hidden="true"></span>
+      <span class="notification-option__label">{{ item }}</span>
+      <i class="bi bi-check2 notification-option__check" aria-hidden="true"></i>
+    </label>
+  </div>
+</section>

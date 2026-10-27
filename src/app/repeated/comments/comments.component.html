@@ -1,0 +1,28 @@
+<article class="comment-row">
+  <div
+    class="comment-avatar"
+    [ngStyle]="{ 'width.px': size || 38, 'height.px': size || 38 }"
+    role="img"
+    [attr.aria-label]="'Profile picture of ' + (commentDetails?.userId?.userName || 'user')"
+  >
+    <app-user-image
+      [size]="size || 38"
+      [story]="false"
+      [data]="{ profilePic: commentDetails?.userId?.profilePic, userName: commentDetails?.userId?.userName }"
+    ></app-user-image>
+  </div>
+
+  <div class="comment-content">
+    <p class="comment-copy">
+      <strong>{{ commentDetails?.userId?.userName || 'Instagram user' }}</strong>
+      <span>{{ commentDetails?.comment }}</span>
+    </p>
+
+    <div class="comment-meta">
+     <span class="comment-age">
+  {{ getTimeAgo(commentDetails.updatedAt) }}
+</span>
+      <button type="button" class="reply-action">Reply</button>
+    </div>
+  </div>
+</article>

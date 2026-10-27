@@ -1,0 +1,228 @@
+<section class="chat-view">
+  <!-- Conversation header -->
+  <header class="chat-header" *ngIf="user">
+    <button
+      type="button"
+      class="back-button"
+      (click)="backToList()"
+      aria-label="Back to messages"
+      title="Back to messages"
+    >
+      <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <button
+      type="button"
+      class="chat-user"
+      (click)="openUserProfile()"
+      aria-label="Open conversation profile"
+    >
+      <span class="chat-avatar">
+        <img
+          [src]="user.profilePic "
+          [alt]="user.userName || 'Profile picture'"
+          (error)="onAvatarError($event)"
+        />
+      </span>
+
+      <span class="chat-user-info">
+        <strong>{{ user.userName || 'Instagram user' }}</strong>
+        <span>{{ user.fullName || 'Instagram member' }}</span>
+      </span>
+    </button>
+
+    <div class="header-actions">
+      <span class="private-label" title="Private conversation">
+        <i class="bi bi-shield-lock"></i>
+        <span>Private</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Loading state -->
+  <div
+    class="chat-loading"
+    *ngIf="loading"
+    role="status"
+    aria-label="Loading conversation"
+    aria-busy="true"
+  >
+    <div class="loading-user">
+      <span class="skeleton skeleton-avatar"></span>
+
+      <div>
+        <span class="skeleton skeleton-line"></span>
+        <span class="skeleton skeleton-line short"></span>
+      </div>
+    </div>
+
+    <div class="loading-bubble incoming"></div>
+    <div class="loading-bubble outgoing"></div>
+    <div class="loading-bubble incoming short-bubble"></div>
+    <div class="loading-bubble outgoing"></div>
+  </div>
+
+  <!-- Loading error -->
+  <div
+    class="chat-load-error"
+    *ngIf="!loading && loadError"
+    role="alert"
+  >
+    <span class="error-icon">
+      <i class="bi bi-chat-square-x"></i>
+    </span>
+
+    <strong>Couldn't load this conversation</strong>
+    <p>{{ loadError }}</p>
+
+    <button type="button" (click)="retryLoad()">
+      <i class="bi bi-arrow-clockwise"></i>
+      Try again
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div
+    #chatContainer
+    class="chat-messages"
+    *ngIf="!loading && !loadError"
+    role="log"
+    aria-label="Conversation messages"
+    aria-live="polite"
+    aria-relevant="additions"
+  >
+    <!-- Intro card -->
+    <div class="conversation-intro" *ngIf="user && messages.length">
+      <span class="intro-avatar">
+        <img
+          [src]="user.profilePic "
+          [alt]="user.userName || 'Profile picture'"
+          (error)="onAvatarError($event)"
+        />
+      </span>
+
+      <strong>{{ user.userName || 'Instagram user' }}</strong>
+      <span>{{ user.fullName || 'Instagram member' }}</span>
+
+      <p>
+        This is the beginning of your conversation.
+      </p>
+
+      <span class="intro-private">
+        <i class="bi bi-shield-lock"></i>
+        Private messages
+      </span>
+    </div>
+
+    <!-- Empty state -->
+    <div class="chat-empty" *ngIf="!messages.length">
+      <span class="empty-chat-icon">
+        <i class="bi bi-chat-heart"></i>
+      </span>
+
+      <strong>Say hello</strong>
+      <p>Send the first message and start the conversation.</p>
+    </div>
+
+    <!-- Message list -->
+    <div
+      class="message-row"
+      *ngFor="let item of messages; trackBy: trackById"
+      [class.mine]="isMine(item)"
+      [class.theirs]="!isMine(item)"
+    >
+      <!-- Other user's avatar -->
+      <span class="message-avatar" *ngIf="!isMine(item)">
+        <img
+          [src]="user?.profilePic"
+          [alt]="user?.userName || 'User avatar'"
+          loading="lazy"
+          (error)="onAvatarError($event)"
+        />
+      </span>
+
+      <div class="message-content">
+        <div class="bubble">
+          <p>{{ item.message }}</p>
+
+          <div class="message-meta">
+            <time *ngIf="item.time">{{ item.time }}</time>
+
+            <span
+              class="message-pending"
+              *ngIf="isOptimistic(item)"
+              aria-label="Sending message"
+              title="Sending"
+            >
+              <i class="bi bi-clock"></i>
+            </span>
+
+            <span
+              class="message-sent"
+              *ngIf="isMine(item) && !isOptimistic(item)"
+              aria-label="Sent"
+              title="Sent"
+            >
+              <i class="bi bi-check2-all"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sending indicator -->
+    <div class="typing-row" *ngIf="sending">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div #messagesEnd class="messages-end"></div>
+  </div>
+
+  <!-- Composer -->
+  <footer class="chat-footer" *ngIf="user && !loadError">
+    <!-- Send error -->
+    <p class="send-error" *ngIf="sendError" role="alert">
+      <i class="bi bi-exclamation-circle"></i>
+      {{ sendError }}
+    </p>
+
+    <form class="chat-composer" (ngSubmit)="send()">
+      <textarea
+        #messageInput
+        name="message"
+        [(ngModel)]="message"
+        rows="1"
+        autocomplete="off"
+        maxlength="5000"
+        placeholder="Message..."
+        aria-label="Write a message"
+        [disabled]="sending"
+        (keydown)="onComposerKeydown($event)"
+        (input)="resizeComposer($event)"
+      ></textarea>
+
+      <span class="composer-hint">
+        <i class="bi bi-lock"></i>
+      </span>
+
+      <button
+        type="submit"
+        class="send-button"
+        [disabled]="!message.trim() || sending"
+        aria-label="Send message"
+        title="Send message"
+      >
+        <i
+          class="bi"
+          [ngClass]="sending ? 'bi-hourglass-split' : 'bi-send-fill'"
+        ></i>
+      </button>
+    </form>
+
+    <p class="composer-footnote">
+      Press Enter to send · Shift + Enter for a new line
+    </p>
+  </footer>
+</section>
